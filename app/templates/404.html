@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block baslik %}Bulunamadı · Yıldız Academy{% endblock %}
+{% macro icerik() %}
+<section class="acilis">
+  <h1>404</h1>
+  <p class="lede">Aradığın sayfa burada değil.</p>
+  <a class="btn" href="/">Başa dön</a>
+</section>
+{% endmacro %}
+{% block govde %}{{ icerik() }}{% endblock %}
+{% block anonim %}{{ icerik() }}{% endblock %}

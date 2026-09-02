@@ -1,0 +1,53 @@
+{% macro nav(href, etiket) -%}
+<a class="navlink" href="{{ href }}"
+   {% if request.url.path == href or (href != '/' and request.url.path.startswith(href ~ '/')) %}aria-current="page"{% endif %}>
+  {{ etiket }}
+</a>
+{%- endmacro %}
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block baslik %}Yıldız Academy{% endblock %}</title>
+<link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="on-paper">
+
+{% if user %}
+<div class="shell">
+  <aside class="side">
+    <div class="side__brand">
+      Yıldız Academy
+      <small>Yıldız CTI</small>
+    </div>
+
+    <nav class="side__group">
+      <p class="side__label">Akademi</p>
+      {{ nav("/panel", "Panel") }}
+      {{ nav("/kutuphane", "Kütüphane") }}
+      {{ nav("/lab", "Laboratuvar") }}
+      {{ nav("/ara", "Arama") }}
+    </nav>
+
+    <nav class="side__group">
+      <p class="side__label">Hesap</p>
+      {{ nav("/ayarlar", "Ayarlar") }}
+      <a class="navlink" href="#" onclick="cikisYap(event)">Çıkış</a>
+    </nav>
+
+    <div class="side__foot">{{ user.display_name }}</div>
+  </aside>
+
+  <main class="main">
+    {% block govde %}{% endblock %}
+  </main>
+</div>
+{% else %}
+  {% block anonim %}{% endblock %}
+{% endif %}
+
+<script src="/static/js/app.js"></script>
+{% block script %}{% endblock %}
+</body>
+</html>

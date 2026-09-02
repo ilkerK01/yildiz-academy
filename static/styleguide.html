@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yıldız Academy · stil rehberi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<style>
+  .wrap{max-width:1100px;margin:0 auto;padding:var(--primitive-spacing-12) var(--primitive-spacing-8)}
+  .band{padding:var(--primitive-spacing-12) 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:var(--primitive-spacing-8);margin-top:var(--primitive-spacing-6)}
+  .swatches{display:flex;flex-wrap:wrap;gap:var(--primitive-spacing-2);margin-top:var(--primitive-spacing-4)}
+  .sw{width:104px}
+  .sw i{display:block;height:52px;border:1px solid var(--color-rule)}
+  .sw span{display:block;font-family:var(--type-data);font-size:var(--primitive-fontSize-xs);margin-top:var(--primitive-spacing-1);color:var(--color-ink-muted)}
+  .row{display:flex;gap:var(--primitive-spacing-3);align-items:center;flex-wrap:wrap;margin-top:var(--primitive-spacing-4)}
+  h2{margin-bottom:var(--primitive-spacing-2)}
+  h3{margin-bottom:var(--primitive-spacing-3)}
+  .sec-label{margin-bottom:var(--primitive-spacing-6)}
+</style>
+</head>
+<body>
+
+<div class="on-paper band">
+  <div class="wrap">
+    <div class="label sec-label">Kağıt zemin</div>
+    <h1>Yıldız Academy stil rehberi</h1>
+    <p class="prose">Bu sayfadaki her renk, boşluk ve yazı tipi <code>tokens.css</code> dosyasından geliyor. Burada tek bir renk değeri yazılı değil. Aynı bileşenler aşağıda gece zemininde tekrar ediyor; ikisi arasındaki tek fark bir sınıf adı.</p>
+
+    <div class="swatches">
+      <div class="sw"><i style="background:var(--color-surface)"></i><span>surface</span></div>
+      <div class="sw"><i style="background:var(--color-surface-raised)"></i><span>raised</span></div>
+      <div class="sw"><i style="background:var(--color-surface-sunk)"></i><span>sunk</span></div>
+      <div class="sw"><i style="background:var(--color-ink)"></i><span>ink</span></div>
+      <div class="sw"><i style="background:var(--color-ink-muted)"></i><span>ink-muted</span></div>
+      <div class="sw"><i style="background:var(--color-accent)"></i><span>accent</span></div>
+      <div class="sw"><i style="background:var(--color-correct)"></i><span>correct</span></div>
+      <div class="sw"><i style="background:var(--color-incorrect)"></i><span>incorrect</span></div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <h3>Düğmeler ve etiketler</h3>
+        <div class="row">
+          <button class="btn">Cevabı gönder</button>
+          <button class="btn btn--quiet">İpucu aç</button>
+          <button class="btn btn--quiet" disabled>Gönderildi</button>
+        </div>
+        <div class="row">
+          <span class="chip" data-difficulty="easy">Kolay</span>
+          <span class="chip" data-difficulty="medium">Orta</span>
+          <span class="chip" data-difficulty="hard">Zor</span>
+          <span class="chip">OSINT</span>
+        </div>
+      </div>
+
+      <div>
+        <h3>Cevap durumları</h3>
+        <div class="row"><input class="answer" data-state="correct" value="exploit.in" readonly><span class="answer-msg" data-state="correct">✓ doğru · +40 p</span></div>
+        <div class="row"><input class="answer" data-state="incorrect" value="raidforums" readonly><span class="answer-msg" data-state="incorrect">✗ yanlış · tekrar dene</span></div>
+        <div class="row"><input class="answer" placeholder="cevabını yaz"></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="panel__head"><span>Lab 07 · Kayıp kullanıcı adı</span><span class="points">120 p</span></div>
+        <div class="panel__body">
+          <div class="artifact"><code>9f2b4c1e7a08d5f3b6e2c94a17d0e8bb</code><button class="btn btn--quiet">Kopyala</button></div>
+          <div class="solution"><p style="margin:0">Çözüm yazısı bloğu. Yalnızca lab çözüldükten sonra açılır.</p></div>
+          <div class="hintrow"><span>İPUCU 1 / 3 AÇILDI</span><button class="btn btn--quiet">İpucu aç</button></div>
+        </div>
+      </div>
+      <a class="labcard" href="#">
+        <div class="label">LAB 03 · 80 P</div>
+        <h3>Yeniden kullanılan avatar</h3>
+        <p style="margin:0">Aynı profil fotoğrafı üç ayrı forumda çıkıyor. Hesapların aynı kişiye ait olduğunu kanıtla.</p>
+        <div class="row" style="margin:0"><span class="chip" data-difficulty="easy">Kolay</span><span class="chip">OSINT</span></div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="on-night band">
+  <div class="wrap">
+    <div class="label sec-label">Gece zemini · aynı işaretleme, tek sınıf farkı</div>
+    <h2>Aynı bileşenler, ikinci zemin ailesi</h2>
+
+    <div class="swatches">
+      <div class="sw"><i style="background:var(--color-surface)"></i><span>surface</span></div>
+      <div class="sw"><i style="background:var(--color-surface-raised)"></i><span>raised</span></div>
+      <div class="sw"><i style="background:var(--color-ink)"></i><span>ink</span></div>
+      <div class="sw"><i style="background:var(--color-ink-muted)"></i><span>ink-muted</span></div>
+      <div class="sw"><i style="background:var(--color-accent)"></i><span>accent</span></div>
+      <div class="sw"><i style="background:var(--color-correct)"></i><span>correct</span></div>
+      <div class="sw"><i style="background:var(--color-incorrect)"></i><span>incorrect</span></div>
+      <div class="sw"><i style="background:var(--color-rule)"></i><span>rule</span></div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <h3>Düğmeler ve etiketler</h3>
+        <div class="row">
+          <button class="btn">Laboratuvara gir</button>
+          <button class="btn btn--quiet">Önce temelleri oku</button>
+        </div>
+        <div class="row">
+          <span class="chip" data-difficulty="easy">Kolay</span>
+          <span class="chip" data-difficulty="medium">Orta</span>
+          <span class="chip" data-difficulty="hard">Zor</span>
+          <span class="chip">Dark Web</span>
+        </div>
+      </div>
+      <div>
+        <h3>Metin</h3>
+        <p class="prose">Gece zemininde gövde metni. Açık metin koyu zeminde daha ince görünür, bu yüzden satır aralığı ve harf aralığı biraz açılır. <a href="#">Bir bağlantı</a> altın vurgu rengini alır.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

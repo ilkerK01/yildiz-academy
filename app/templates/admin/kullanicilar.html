@@ -1,0 +1,62 @@
+{% extends "admin/_kabuk.html" %}
+{% block baslik %}Kullanıcılar · Yönetim{% endblock %}
+
+{% block govde %}
+<div class="main__head">
+  <h1>Kullanıcılar</h1>
+  <span class="label">{{ satirlar|length }} hesap</span>
+</div>
+
+{% if yeni_parola %}
+<div class="bilgi" style="margin-bottom:20px">
+  <b>{{ yeni_parola.ad }}</b> için geçici parola:
+  <code>{{ yeni_parola.parola }}</code><br>
+  Bu ekran yenilenince bir daha görünmez, şimdi kopyala.
+  Kullanıcının açık oturumları düşürüldü.
+</div>
+{% endif %}
+
+<table class="rank">
+  <thead>
+    <tr>
+      <th>Ad</th><th>E-posta</th><th>Puan</th><th>Lab</th><th>Ders</th>
+      <th>Durum</th><th>İşlem</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for satir in satirlar %}
+    <tr>
+      <td>{{ satir.user.display_name }}</td>
+      <td><code>{{ satir.user.email }}</code></td>
+      <td>{{ satir.stats.puan }}</td>
+      <td>{{ satir.stats.cozulen_lab }}</td>
+      <td>{{ satir.stats.okunan_ders }}</td>
+      <td>{{ "aktif" if satir.user.is_active else "askıda" }}</td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <form method="post" action="/academy/admin/kullanicilar/{{ satir.user.id }}/parola">
+            <button class="btn btn--quiet" type="submit">Parola sıfırla</button>
+          </form>
+          <form method="post" action="/academy/admin/kullanicilar/{{ satir.user.id }}/askiya-al">
+            <button class="btn btn--quiet" type="submit">
+              {{ "Askıdan al" if not satir.user.is_active else "Askıya al" }}
+            </button>
+          </form>
+          <form method="post"
+                action="/academy/admin/kullanicilar/{{ satir.user.id }}/ilerleme-sifirla"
+                data-onay="İlerleme silinsin mi?">
+            <button class="btn btn--quiet" type="submit">İlerleme sıfırla</button>
+          </form>
+          <form method="post" action="/academy/admin/kullanicilar/{{ satir.user.id }}/sil"
+                data-onay="Hesap kalıcı olarak silinsin mi?">
+            <button class="btn btn--quiet" type="submit">Sil</button>
+          </form>
+        </div>
+      </td>
+    </tr>
+  {% else %}
+    <tr><td colspan="7">Henüz kullanıcı yok.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

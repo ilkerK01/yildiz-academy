@@ -1,0 +1,54 @@
+:root {
+  --cursor-default: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 26 26'%3E%3Cpath d='M3 1 L20.6 17.3 L10.7 17.9 L3.1 24.4 Z' fill='%23000000' stroke='%23ffffff' stroke-width='1.7' stroke-linejoin='round'/%3E%3C/svg%3E") 2 1;
+  --cursor-press: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 26 26'%3E%3Cpath d='M3 1 L20.6 17.3 L10.7 17.9 L3.1 24.4 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.7' stroke-linejoin='round'/%3E%3C/svg%3E") 2 1;
+}
+
+html {
+  cursor: var(--cursor-default), auto;
+}
+
+a,
+button,
+summary,
+label[for],
+[role="button"],
+[role="tab"],
+.chip,
+.hint-toggle {
+  cursor: var(--cursor-default), pointer;
+}
+
+html:active,
+a:active,
+button:active,
+summary:active,
+label[for]:active,
+[role="button"]:active,
+[role="tab"]:active {
+  cursor: var(--cursor-press), pointer;
+}
+
+input,
+textarea,
+select,
+code,
+pre,
+.artifact,
+[contenteditable] {
+  cursor: auto;
+}
+
+input[type="submit"],
+input[type="button"] {
+  cursor: var(--cursor-default), pointer;
+}
+
+:disabled {
+  cursor: not-allowed;
+}
+
+@media (hover: none) {
+  html, a, button, summary, label[for], [role="button"], [role="tab"] {
+    cursor: auto;
+  }
+}

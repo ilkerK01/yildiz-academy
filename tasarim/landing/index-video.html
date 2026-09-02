@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yıldız Academy · CTI ve OSINT laboratuvarları</title>
+
+<meta name="description" content="Siber tehdit istihbaratı, OSINT ve APT temelleri. Kısa dersler ve gerçek verilerle kurulmuş araştırma laboratuvarları. Kayıt gerekmez.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b1027'/><circle cx='14' cy='16' r='8' fill='%23e0bc6a'/><circle cx='17' cy='15' r='7' fill='%230b1027'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../static/css/base.css">
+<style>
+:root{
+  --wrap:1180px;
+  --edge:clamp(20px,5vw,64px);
+}
+
+.wrap{max-width:var(--wrap);margin:0 auto;padding-inline:var(--edge)}
+.stack>*+*{margin-top:var(--primitive-spacing-4)}
+
+.bar{
+  position:sticky;top:0;z-index:50;
+  background:var(--color-surface);
+  border-bottom:var(--primitive-border-hairline) solid var(--color-rule);
+}
+.bar__in{display:flex;align-items:center;justify-content:space-between;height:66px;gap:var(--primitive-spacing-6)}
+.brand{display:flex;align-items:center;gap:var(--primitive-spacing-3);text-decoration:none;color:inherit}
+.brand svg{width:26px;height:26px;display:block;flex:none}
+.brand b{font-family:var(--type-display);font-size:1.0625rem;font-weight:600;letter-spacing:-0.02em;display:block}
+.brand i{font-family:var(--type-data);font-size:0.625rem;letter-spacing:.2em;text-transform:uppercase;font-style:normal;color:var(--color-ink-muted);display:block;margin-top:1px}
+.nav{display:flex;gap:var(--primitive-spacing-6);font-family:var(--type-display);font-size:0.9375rem;font-weight:500}
+.nav a{text-decoration:none;color:var(--color-ink-soft);padding-block:var(--primitive-spacing-1);border-bottom:2px solid transparent}
+.nav a:hover{color:var(--color-ink)}
+.nav a[aria-current]{color:var(--color-ink);border-bottom-color:var(--color-accent)}
+@media(max-width:860px){.nav{display:none}}
+
+.scene{position:relative;height:320svh}
+.scene__stage{
+  position:sticky;top:0;height:100svh;overflow:hidden;
+  background-color:var(--color-surface);
+  display:flex;align-items:center;
+}
+.scene__stage video,.scene__stage .poster{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:60% 50%;
+}
+.scene__stage .poster{z-index:0}
+.scene__stage video{z-index:1;opacity:0;transition:opacity var(--primitive-duration-slow) var(--primitive-easing-out)}
+.scene__stage video.ready{opacity:1}
+.scene__stage::after{
+  content:"";position:absolute;inset:0;z-index:2;
+  background:linear-gradient(100deg,var(--color-surface) 0%,var(--color-surface) 32%,color-mix(in srgb,var(--color-surface) 74%,transparent) 54%,transparent 76%);
+}
+.scene__copy{position:absolute;inset:0;z-index:3;display:grid;align-items:center}
+.scene__copy>.wrap{grid-area:1/1;width:100%}
+.cue{grid-area:1/1;opacity:0;will-change:opacity,transform}
+.cue>.wrap{width:100%}
+.cue__in{max-width:min(100%,42rem)}
+.hero .wrap{padding-block:clamp(56px,9vh,104px)}
+
+.line{
+  font-family:var(--type-display);font-weight:600;
+  font-size:clamp(1.75rem,3.4vw,2.875rem);line-height:1.14;
+  letter-spacing:-0.035em;margin:0;max-width:19ch;text-wrap:balance;
+}
+.line em{font-style:normal;color:var(--color-accent)}
+.line+.sub{
+  margin-top:var(--primitive-spacing-5);max-width:40ch;
+  font-size:1.0625rem;line-height:1.6;color:var(--color-ink-soft);
+}
+.cue .cta{margin-top:var(--primitive-spacing-8)}
+
+.rail{
+  position:absolute;left:var(--edge);bottom:clamp(24px,6vh,56px);z-index:4;
+  display:flex;gap:var(--primitive-spacing-2);align-items:center;pointer-events:none;
+}
+.rail i{
+  display:block;width:34px;height:2px;background:var(--color-rule);
+  transition:background var(--primitive-duration-normal) var(--primitive-easing-out);
+}
+.rail i.on{background:var(--color-accent)}
+@media(max-width:860px){.rail{display:none}}
+@media(max-width:860px){.scene{height:200svh}}
+.hero__in{max-width:min(100%,42rem)}
+.hero h1{
+  font-size:clamp(2.5rem,5.4vw,4.25rem);font-weight:700;
+  letter-spacing:-0.045em;line-height:1.04;margin-block:var(--primitive-spacing-5);
+}
+.hero h1 span{color:var(--color-accent)}
+.hero p{max-width:46ch;font-size:clamp(1.0625rem,1.4vw,1.1875rem);line-height:1.62;color:var(--color-ink-soft);margin:0}
+.cta{display:flex;gap:var(--primitive-spacing-3);margin-top:var(--primitive-spacing-8);flex-wrap:wrap}
+.cta .btn{font-size:0.9375rem;padding:var(--primitive-spacing-3) var(--primitive-spacing-6);text-decoration:none;display:inline-block}
+.stats{
+  display:flex;gap:clamp(24px,4vw,56px);flex-wrap:wrap;
+  margin-top:clamp(32px,5vh,56px);padding-top:var(--primitive-spacing-4);
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.08em;color:var(--color-ink-muted);
+}
+.stats b{display:block;font-family:var(--type-display);font-size:1.5rem;font-weight:600;letter-spacing:-0.03em;color:var(--color-ink);margin-bottom:2px}
+
+section{padding-block:clamp(64px,10vh,120px)}
+.sechead{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:var(--primitive-spacing-6);
+  border-bottom:var(--primitive-border-rule) solid var(--color-ink);
+  padding-bottom:var(--primitive-spacing-3);margin-bottom:var(--primitive-spacing-10);
+}
+.sechead h2{font-size:clamp(1.75rem,3.2vw,2.375rem);font-weight:700}
+.sechead a{font-family:var(--type-display);font-size:0.875rem;font-weight:500;color:var(--color-ink-muted);text-decoration:none;white-space:nowrap}
+.sechead a:hover{color:var(--color-ink)}
+
+.topics{display:grid;gap:clamp(32px,4vw,56px)}
+.topic{display:grid;gap:var(--primitive-spacing-6);align-items:center}
+.topic--wide{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.topics__pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(32px,4vw,56px)}
+.topic figure{margin:0;border:var(--primitive-border-hairline) solid var(--color-rule);background:var(--color-surface-sunk)}
+.topic img{display:block;width:100%;height:auto}
+.topic .n{font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.18em;color:var(--color-accent);margin-bottom:var(--primitive-spacing-3)}
+.topic h3{font-size:1.4375rem;margin-bottom:var(--primitive-spacing-3)}
+.topic p{margin:0;color:var(--color-ink-soft);max-width:38ch}
+.topic ul{margin:var(--primitive-spacing-5) 0 0;padding:0;list-style:none;font-family:var(--type-display);font-size:0.875rem;font-weight:500;color:var(--color-ink-muted)}
+.topic li{padding-block:var(--primitive-spacing-2);border-top:var(--primitive-border-hairline) solid var(--color-rule)}
+@media(max-width:860px){
+  .topic--wide,.topics__pair{grid-template-columns:1fr}
+}
+
+.labs{background:var(--color-surface-sunk);border-block:var(--primitive-border-hairline) solid var(--color-rule)}
+.labgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:var(--primitive-spacing-6)}
+.labcard h3{font-size:1.1875rem;line-height:1.25}
+.labcard p{margin:0;font-size:0.9375rem;color:var(--color-ink-soft);flex:1}
+.labcard__top{display:flex;justify-content:space-between;align-items:center}
+.labcard__top .id{font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.16em;color:var(--color-ink-muted)}
+.labcard__top .pts{font-family:var(--type-display);font-size:0.875rem;font-weight:600}
+.chips{display:flex;gap:var(--primitive-spacing-2);flex-wrap:wrap;align-items:center}
+.solved{font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.1em;color:var(--color-correct)}
+
+.method{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:start}
+.method figure{margin:0;border:var(--primitive-border-hairline) solid var(--color-rule);background:var(--color-surface-sunk)}
+.method img{display:block;width:100%;height:auto}
+.steps{list-style:none;margin:var(--primitive-spacing-8) 0 0;padding:0;counter-reset:s}
+.steps li{
+  counter-increment:s;position:relative;
+  padding:var(--primitive-spacing-5) 0 var(--primitive-spacing-5) 3.25rem;
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  color:var(--color-ink-soft);
+}
+.steps li::before{
+  content:counter(s,decimal-leading-zero);position:absolute;left:0;top:var(--primitive-spacing-5);
+  font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.12em;color:var(--color-accent);
+}
+.steps b{font-family:var(--type-display);font-weight:600;color:var(--color-ink)}
+@media(max-width:860px){.method{grid-template-columns:1fr}}
+
+.panel .qlabel{font-family:var(--type-data);font-size:0.625rem;letter-spacing:.16em;text-transform:uppercase;color:var(--color-ink-muted);margin-bottom:var(--primitive-spacing-2)}
+.panel h3{margin-bottom:var(--primitive-spacing-2)}
+.panel__body>p{font-size:0.9375rem;color:var(--color-ink-soft)}
+.field{display:flex;gap:var(--primitive-spacing-2)}
+.field .answer{flex:1}
+.q{margin-bottom:var(--primitive-spacing-5)}
+.q p{margin-bottom:var(--primitive-spacing-2);font-size:1rem}
+
+.close{
+  background-color:var(--color-surface);
+  background-image:url("img/06-close.webp");
+  background-size:cover;background-position:50% 22%;
+  position:relative;
+}
+.close::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--color-surface) 15%,transparent) 0%,color-mix(in srgb,var(--color-surface) 62%,transparent) 45%,var(--color-surface) 88%);
+}
+.close .wrap{position:relative;z-index:1}
+.close h2{font-size:clamp(1.625rem,2.8vw,2.125rem);max-width:22ch}
+.close p{margin-top:var(--primitive-spacing-5);max-width:56ch;line-height:1.8;color:var(--color-ink-soft)}
+.imprint{
+  margin-top:clamp(48px,8vh,88px);padding-top:var(--primitive-spacing-4);
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  display:flex;justify-content:space-between;gap:var(--primitive-spacing-4);flex-wrap:wrap;
+  font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.14em;text-transform:uppercase;color:var(--color-ink-muted);
+}
+</style>
+</head>
+<body>
+
+<header class="bar on-paper">
+  <div class="wrap bar__in">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <mask id="c"><rect width="120" height="120" fill="#fff"></rect><circle cx="78" cy="52" r="37" fill="#000"></circle></mask>
+        <circle cx="56" cy="64" r="46" fill="var(--color-accent)" mask="url(#c)"></circle>
+        <path d="M98 14l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5-11.3-5.9-11.2 5.9 2.1-12.5-9.1-8.9 12.6-1.8z" fill="var(--color-accent)"></path>
+      </svg>
+      <span><b>Yıldız Academy</b><i>Threat Intelligence</i></span>
+    </a>
+    <nav class="nav">
+      <a href="#kutuphane" aria-current="page">Kütüphane</a>
+      <a href="#laboratuvar">Laboratuvar</a>
+      <a href="#yontem">Yöntem</a>
+      <a href="#basla">İlerlemem</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <div class="scene on-night" id="scene" data-phase="0">
+    <div class="scene__stage">
+      <img class="poster" src="img/01-hero.webp" alt="">
+      <video id="scrub" muted playsinline preload="auto" aria-hidden="true"></video>
+      <div class="scene__copy">
+
+        <div class="cue" data-cue="0 0.22 0 0.04">
+          <div class="hero"><div class="wrap"><div class="cue__in">
+            <div class="label">Siber Tehdit İstihbaratı · Açık Erişim</div>
+            <h1>Bir hash, bir takma ad, bir sızıntı. <span>Gerisi iz sürmek.</span></h1>
+            <p>Yıldız Academy istihbaratı anlatarak değil, araştırtarak öğretir. Kısa dersler, gerçek verilerle kurulmuş laboratuvarlar, sunucuda doğrulanan cevaplar.</p>
+            <div class="cta">
+              <a class="btn" href="#laboratuvar">Laboratuvara gir</a>
+              <a class="btn btn--quiet" href="#kutuphane">Önce temelleri oku</a>
+            </div>
+            <div class="stats">
+              <div><b>24</b>ders ve not</div>
+              <div><b>18</b>araştırma labı</div>
+              <div><b>7</b>APT dosyası</div>
+              <div><b>0₺</b>kayıt gerekmez</div>
+            </div>
+          </div></div></div>
+        </div>
+
+        <div class="cue" data-cue="0.18 0.50 0.04 0.04">
+          <div class="wrap"><div class="cue__in">
+            <p class="line">Elinde tek bir satır var. <em>Tek başına hiçbir şey söylemiyor.</em></p>
+            <p class="sub">Bir hash. Bir takma ad. Bir forumda bırakılmış tek bir gönderi. Sahada karşına çıkan şey bir çerçeve değil, bu.</p>
+          </div></div>
+        </div>
+
+        <div class="cue" data-cue="0.46 0.78 0.04 0.04">
+          <div class="wrap"><div class="cue__in">
+            <p class="line">Aynı iz <em>üç ayrı yerde</em> beliriyor.</p>
+            <p class="sub">İstihbarat tek bir kaynaktan çıkmaz. Kesişimden çıkar, ve kesişimi görmek öğrenilebilir bir beceridir.</p>
+          </div></div>
+        </div>
+
+        <div class="cue" data-cue="0.74 1 0.04 0">
+          <div class="wrap"><div class="cue__in">
+            <p class="line">Noktalar birleşince <em>ortaya bir isim çıkar.</em></p>
+            <p class="sub">Yıldız Academy tam olarak bunu çalıştırır. On sekiz lab, gerçek artefaktlar, sunucuda doğrulanan cevaplar.</p>
+            <div class="cta">
+              <a class="btn" href="#laboratuvar">Laboratuvara gir</a>
+              <a class="btn btn--quiet" href="#kutuphane">Önce temelleri oku</a>
+            </div>
+          </div></div>
+        </div>
+
+      </div>
+      <div class="rail" id="rail" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    </div>
+  </div>
+
+  <section id="kutuphane" class="on-paper">
+    <div class="wrap">
+      <div class="sechead">
+        <h2>Kütüphane</h2>
+        <a href="#">Tüm dersler →</a>
+      </div>
+
+      <div class="topics">
+        <article class="topic topic--wide">
+          <div>
+            <div class="n">01</div>
+            <h3>CTI Temelleri</h3>
+            <p>İstihbaratın ne olduğu, neyin gösterge neyin davranış sayıldığı, bir raporun neden derecelendirildiği.</p>
+            <ul>
+              <li>İstihbarat döngüsü nedir</li>
+              <li>Gösterge mi, davranış mı</li>
+              <li>TLP ve PAP ne işe yarar</li>
+              <li>Bir raporu nasıl derecelendiririz</li>
+            </ul>
+          </div>
+          <figure>
+            <img src="img/02-cti.webp" width="1200" height="900" alt="İstihbarat döngüsünü altı duraklı kapalı bir yörünge olarak gösteren gravür" onerror="this.closest('figure').hidden=true">
+          </figure>
+        </article>
+
+        <div class="topics__pair">
+          <article class="topic">
+            <figure>
+              <img src="img/03-osint.webp" width="1200" height="900" alt="Üç ayrı takımyıldızda tekrar eden aynı yıldızı birleştiren ince bir hat" onerror="this.closest('figure').hidden=true">
+            </figure>
+            <div>
+              <div class="n">02</div>
+              <h3>OSINT Temelleri</h3>
+              <p>Açık kaynakta bir izin nasıl bırakıldığı ve o izin nasıl doğrulanabilir hale getirildiği.</p>
+              <ul>
+                <li>Takma ad nasıl iz bırakır</li>
+                <li>Sertifika şeffaflığı kayıtları</li>
+                <li>Silinen sayfayı geri getirmek</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="topic">
+            <figure>
+              <img src="img/04-apt.webp" width="1200" height="900" alt="Aynı takımyıldızın üç farklı açıyla üç kez çizilmiş hali" onerror="this.closest('figure').hidden=true">
+            </figure>
+            <div>
+              <div class="n">03</div>
+              <h3>APT Dosyaları</h3>
+              <p>Grupların neden farklı isimlerle anıldığı, tekniklerin nasıl eşlendiği, atfın nerede bittiği.</p>
+              <ul>
+                <li>Adlandırma karmaşası</li>
+                <li>MITRE ATT&amp;CK eşlemesi</li>
+                <li>Atıf nerede biter</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="laboratuvar" class="labs on-paper">
+    <div class="wrap">
+      <div class="sechead">
+        <h2>Laboratuvar</h2>
+        <a href="#">18 labın tamamı →</a>
+      </div>
+      <div class="labgrid">
+        <a class="labcard" href="#">
+          <div class="labcard__top"><span class="id">LAB 03</span><span class="pts">80 p</span></div>
+          <h3>Yeniden kullanılan avatar</h3>
+          <p>Aynı profil fotoğrafı üç ayrı forumda karşımıza çıkıyor. Hesapların aynı kişiye ait olduğunu kanıtla.</p>
+          <div class="chips"><span class="chip" data-difficulty="easy">Kolay</span><span class="chip">OSINT</span><span class="solved">✓ çözüldü</span></div>
+        </a>
+        <a class="labcard" href="#">
+          <div class="labcard__top"><span class="id">LAB 07</span><span class="pts">120 p</span></div>
+          <h3>Kayıp kullanıcı adı</h3>
+          <p>Bir fidye yazılımı sızıntı sitesinde bırakılan takma ad, aktörün coğrafyasına götürüyor. İzi sür.</p>
+          <div class="chips"><span class="chip" data-difficulty="medium">Orta</span><span class="chip">Dark Web</span><span class="chip">Atıf</span></div>
+        </a>
+        <a class="labcard" href="#">
+          <div class="labcard__top"><span class="id">LAB 11</span><span class="pts">200 p</span></div>
+          <h3>Hangi aileye ait</h3>
+          <p>Elinde yalnızca bir SHA-256 var. Zararlının ailesini, kampanyasını ve ilişkili grubu bul.</p>
+          <div class="chips"><span class="chip" data-difficulty="hard">Zor</span><span class="chip">Malware</span><span class="chip">ATT&amp;CK</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="yontem" class="on-paper">
+    <div class="wrap">
+      <div class="sechead">
+        <h2>Bir lab nasıl işler</h2>
+        <a href="#">Örnek labı aç →</a>
+      </div>
+
+      <div class="method">
+        <div>
+          <figure>
+            <img src="img/05-method.webp" width="1600" height="1200" alt="Tek bir yıldızdan dört durakla bir takımyıldıza uzanan basamaklı rota" onerror="this.closest('figure').hidden=true">
+          </figure>
+          <ol class="steps">
+            <li><b>Senaryo verilir.</b> Ne aradığın ve neyin kanıt sayıldığı baştan yazılıdır.</li>
+            <li><b>Artefakt elinize geçer.</b> Bir hash, bir onion adresi ya da bir takma ad. Araştırma sitenin dışında yapılır.</li>
+            <li><b>Sorular sırayla açılır.</b> Her adım ayrı doğrulanır, böylece nerede saptığın belli olur.</li>
+            <li><b>İpucu puana mal olur.</b> Sırayla açılır, her biri toplamdan düşer.</li>
+            <li><b>Çözüm yazısı en sonda açılır.</b> Asıl öğretici kısım burasıdır ve labı çözmeden okunamaz.</li>
+          </ol>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head"><span>Lab 07 · Kayıp kullanıcı adı</span><span class="points">120 p</span></div>
+          <div class="panel__body">
+            <h3>Senaryo</h3>
+            <p>Bir fidye yazılımı grubunun sızıntı sitesinde yayımlanan gönderinin altında tek bir takma ad duruyor. Aynı ad üç ayrı platformda beliriyor. Aktörü tek bir coğrafyaya bağla.</p>
+
+            <div class="qlabel">Artefakt · SHA-256</div>
+            <div class="artifact">
+              <code>9f2b4c1e7a08d5f3b6e2c94a17d0e8bb</code>
+              <button class="btn btn--quiet" type="button">Kopyala</button>
+            </div>
+
+            <div class="q">
+              <div class="qlabel">Soru 1 / 3</div>
+              <p>Takma adın ilk göründüğü forum hangisi?</p>
+              <div class="field">
+                <input class="answer" data-state="correct" value="exploit.in" readonly aria-label="Soru 1 cevabı, doğru">
+                <button class="btn btn--quiet" type="button" disabled>Gönderildi</button>
+              </div>
+              <span class="answer-msg" data-state="correct">✓ doğru · +40 p</span>
+            </div>
+
+            <div class="q">
+              <div class="qlabel">Soru 2 / 3</div>
+              <p>Aynı ad hangi kod deposunda kullanılmış?</p>
+              <div class="field">
+                <input class="answer" placeholder="cevabını yaz" aria-label="Soru 2 cevabı">
+                <button class="btn" type="button">Gönder</button>
+              </div>
+            </div>
+
+            <div class="hintrow">
+              <span>İPUCU 1 / 3 AÇILDI · KALAN İKİSİ 10'AR PUAN</span>
+              <button class="btn btn--quiet" type="button">İpucu aç</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="basla" class="close on-night">
+    <div class="wrap">
+      <h2>Kayıt yok, ücret yok, ilerlemen tarayıcında kalır.</h2>
+      <p>Başlamak için tek yapman gereken bir lab açmak. Nereden başlayacağını bilmiyorsan Lab 03 kolay olanı, tek bir avatarın üç platformda nasıl iz bıraktığını gösteriyor. Önce okumayı tercih edersen <a href="#kutuphane">kütüphanedeki üç eksen</a> sırayla okunacak şekilde yazıldı. İkisi de aynı yere çıkıyor: <a href="#laboratuvar">laboratuvara gir</a>.</p>
+      <div class="imprint">
+        <span>Yıldız Academy · Yıldız CTI</span>
+        <span>2026</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  var scene=document.getElementById('scene'),
+      v=document.getElementById('scrub'),
+      cap=document.getElementById('cap');
+  if(!scene||!v) return;
+
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var small=matchMedia('(max-width: 860px)').matches;
+  if(reduce||small){
+    var first=scene.querySelector('[data-cue]');
+    if(first){ first.style.opacity=1; first.style.transform='none'; }
+    var rest=[].slice.call(scene.querySelectorAll('[data-cue]')).slice(1);
+    rest.forEach(function(el){ el.hidden=true; });
+    scene.style.height='auto';
+    var st=scene.querySelector('.scene__stage');
+    if(st){ st.style.position='relative'; st.style.height='auto'; st.style.minHeight='88svh'; }
+    return;
+  }
+
+  var target=0, current=0, dur=0, raf=null, ready=false;
+
+  var cues=[].slice.call(scene.querySelectorAll('[data-cue]')).map(function(el){
+    var v=el.dataset.cue.trim().split(/\s+/).map(Number);
+    return {el:el, from:v[0], to:isNaN(v[1])?1:v[1],
+            rin:isNaN(v[2])?0.09:v[2], rout:isNaN(v[3])?0.09:v[3]};
+  });
+  var bars=[].slice.call(document.querySelectorAll('#rail i'));
+
+  function alpha(c,p){
+    if(p<=c.from) return c.rin===0?1:0;
+    if(p>=c.to) return c.rout===0?1:0;
+    var a=c.rin>0?Math.min(1,(p-c.from)/c.rin):1;
+    var b=c.rout>0?Math.min(1,(c.to-p)/c.rout):1;
+    return Math.max(0,Math.min(a,b));
+  }
+
+  v.addEventListener('loadedmetadata',function(){ dur=v.duration||0; v.currentTime=0; });
+  v.addEventListener('seeked',function(){ if(!ready){ ready=true; v.classList.add('ready'); } });
+  v.src='img/hero.mp4';
+
+  function progress(){
+    var r=scene.getBoundingClientRect();
+    var travel=scene.offsetHeight-innerHeight;
+    if(travel<=0) return 0;
+    var p=(-r.top)/travel;
+    return p<0?0:p>1?1:p;
+  }
+
+  function paint(p){
+    var active=0;
+    for(var i=0;i<cues.length;i++){
+      var c=cues[i], a=alpha(c,p);
+      c.el.style.opacity=a.toFixed(3);
+      c.el.style.transform='translate3d(0,'+((1-a)*14).toFixed(1)+'px,0)';
+      c.el.style.pointerEvents = a>0.6 ? 'auto' : 'none';
+      c.el.setAttribute('aria-hidden', a>0.2 ? 'false' : 'true');
+      if(a>0.5) active=i;
+    }
+    for(var j=0;j<bars.length;j++) bars[j].classList.toggle('on', j<=active);
+  }
+
+  function loop(){
+    raf=null;
+    var p=progress();
+    paint(p);
+    if(dur){
+      target=p*dur;
+      current+=(target-current)*0.18;
+      if(Math.abs(target-current)>0.012 && v.readyState>=2 && !v.seeking){
+        try{ v.currentTime=current; }catch(e){}
+        raf=requestAnimationFrame(loop);
+        return;
+      }
+    }
+  }
+  function tick(){ if(!raf) raf=requestAnimationFrame(loop); }
+  addEventListener('scroll',tick,{passive:true});
+  addEventListener('resize',tick);
+  tick();
+})();
+</script>
+</body>
+</html>

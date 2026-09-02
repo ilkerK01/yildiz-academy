@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yönetim girişi · Yıldız Academy</title>
+<link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="on-night">
+<section class="acilis">
+  <h1>Yönetim</h1>
+  <p class="lede">Bu kapı akademi hesaplarından ayrıdır.</p>
+
+  <form class="form" method="post" action="/academy/admin/giris" style="text-align:left">
+    <div>
+      <label for="kullanici">Kullanıcı adı</label>
+      <input id="kullanici" name="kullanici" autocomplete="username" required autofocus>
+    </div>
+    <div>
+      <label for="parola">Parola</label>
+      <input id="parola" name="parola" type="password" autocomplete="current-password" required>
+    </div>
+    {% if hata %}<div class="uyari">{{ hata }}</div>{% endif %}
+    <button class="btn" type="submit">Gir</button>
+  </form>
+
+  <p class="label"><a href="/">Siteye dön</a></p>
+</section>
+</body>
+</html>

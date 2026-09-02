@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yıldız Academy · CTI ve OSINT laboratuvarları</title>
+<meta name="description" content="Siber tehdit istihbaratı, OSINT ve APT temelleri. Kısa dersler ve gerçek verilerle kurulmuş araştırma laboratuvarları. Kayıt gerekmez.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b1027'/><circle cx='14' cy='16' r='8' fill='%23e0bc6a'/><circle cx='17' cy='15' r='7' fill='%230b1027'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../static/css/base.css">
+<style>
+:root{
+  --wrap:1180px;
+  --edge:clamp(20px,5vw,64px);
+}
+
+.wrap{max-width:var(--wrap);margin:0 auto;padding-inline:var(--edge)}
+.stack>*+*{margin-top:var(--primitive-spacing-4)}
+
+.bar{
+  position:sticky;top:0;z-index:50;
+  background:var(--color-surface);
+  border-bottom:var(--primitive-border-hairline) solid var(--color-rule);
+}
+.bar__in{display:flex;align-items:center;justify-content:space-between;height:66px;gap:var(--primitive-spacing-6)}
+.brand{display:flex;align-items:center;gap:var(--primitive-spacing-3);text-decoration:none;color:inherit}
+.brand svg{width:26px;height:26px;display:block;flex:none}
+.brand b{font-family:var(--type-display);font-size:1.0625rem;font-weight:600;letter-spacing:-0.02em;display:block}
+.brand i{font-family:var(--type-data);font-size:0.625rem;letter-spacing:.2em;text-transform:uppercase;font-style:normal;color:var(--color-ink-muted);display:block;margin-top:1px}
+.nav{display:flex;gap:var(--primitive-spacing-6);font-family:var(--type-display);font-size:0.9375rem;font-weight:500}
+.nav a{text-decoration:none;color:var(--color-ink-soft);padding-block:var(--primitive-spacing-1);border-bottom:2px solid transparent}
+.nav a:hover{color:var(--color-ink)}
+.nav a[aria-current]{color:var(--color-ink);border-bottom-color:var(--color-accent)}
+@media(max-width:860px){.nav{display:none}}
+
+.hero{
+  position:relative;overflow:hidden;
+  background-color:var(--color-surface);
+  background-image:url("img/01-hero.webp");
+  background-size:cover;background-position:60% 50%;
+  min-height:min(88svh,760px);display:flex;align-items:center;
+}
+.hero::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(100deg,var(--color-surface) 0%,var(--color-surface) 34%,color-mix(in srgb,var(--color-surface) 72%,transparent) 55%,transparent 78%);
+}
+.hero .wrap{position:relative;z-index:1;padding-block:clamp(56px,9vh,104px)}
+.hero__in{max-width:min(100%,42rem)}
+.hero h1{
+  font-size:clamp(2.5rem,5.4vw,4.25rem);font-weight:700;
+  letter-spacing:-0.045em;line-height:1.04;margin-block:var(--primitive-spacing-5);
+}
+.hero h1 span{color:var(--color-accent)}
+.hero p{max-width:46ch;font-size:clamp(1.0625rem,1.4vw,1.1875rem);line-height:1.62;color:var(--color-ink-soft);margin:0}
+.cta{display:flex;gap:var(--primitive-spacing-3);margin-top:var(--primitive-spacing-8);flex-wrap:wrap}
+.cta .btn{font-size:0.9375rem;padding:var(--primitive-spacing-3) var(--primitive-spacing-6);text-decoration:none;display:inline-block}
+.stats{
+  display:flex;gap:clamp(24px,4vw,56px);flex-wrap:wrap;
+  margin-top:clamp(32px,5vh,56px);padding-top:var(--primitive-spacing-4);
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.08em;color:var(--color-ink-muted);
+}
+.stats b{display:block;font-family:var(--type-display);font-size:1.5rem;font-weight:600;letter-spacing:-0.03em;color:var(--color-ink);margin-bottom:2px}
+
+section{padding-block:clamp(64px,10vh,120px)}
+.sechead{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:var(--primitive-spacing-6);
+  border-bottom:var(--primitive-border-rule) solid var(--color-ink);
+  padding-bottom:var(--primitive-spacing-3);margin-bottom:var(--primitive-spacing-10);
+}
+.sechead h2{font-size:clamp(1.75rem,3.2vw,2.375rem);font-weight:700}
+.sechead a{font-family:var(--type-display);font-size:0.875rem;font-weight:500;color:var(--color-ink-muted);text-decoration:none;white-space:nowrap}
+.sechead a:hover{color:var(--color-ink)}
+
+.topics{display:grid;gap:clamp(32px,4vw,56px)}
+.topic{display:grid;gap:var(--primitive-spacing-6);align-items:center}
+.topic--wide{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}
+.topics__pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(32px,4vw,56px)}
+.topic figure{margin:0;border:var(--primitive-border-hairline) solid var(--color-rule);background:var(--color-surface-sunk)}
+.topic img{display:block;width:100%;height:auto}
+.topic .n{font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.18em;color:var(--color-accent);margin-bottom:var(--primitive-spacing-3)}
+.topic h3{font-size:1.4375rem;margin-bottom:var(--primitive-spacing-3)}
+.topic p{margin:0;color:var(--color-ink-soft);max-width:38ch}
+.topic ul{margin:var(--primitive-spacing-5) 0 0;padding:0;list-style:none;font-family:var(--type-display);font-size:0.875rem;font-weight:500;color:var(--color-ink-muted)}
+.topic li{padding-block:var(--primitive-spacing-2);border-top:var(--primitive-border-hairline) solid var(--color-rule)}
+@media(max-width:860px){
+  .topic--wide,.topics__pair{grid-template-columns:1fr}
+}
+
+.labs{background:var(--color-surface-sunk);border-block:var(--primitive-border-hairline) solid var(--color-rule)}
+.labgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,17rem),1fr));gap:var(--primitive-spacing-6)}
+.labcard h3{font-size:1.1875rem;line-height:1.25}
+.labcard p{margin:0;font-size:0.9375rem;color:var(--color-ink-soft);flex:1}
+.labcard__top{display:flex;justify-content:space-between;align-items:center}
+.labcard__top .id{font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.16em;color:var(--color-ink-muted)}
+.labcard__top .pts{font-family:var(--type-display);font-size:0.875rem;font-weight:600}
+.chips{display:flex;gap:var(--primitive-spacing-2);flex-wrap:wrap;align-items:center}
+.solved{font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.1em;color:var(--color-correct)}
+
+.method{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,5vw,72px);align-items:start}
+.method figure{margin:0;border:var(--primitive-border-hairline) solid var(--color-rule);background:var(--color-surface-sunk)}
+.method img{display:block;width:100%;height:auto}
+.steps{list-style:none;margin:var(--primitive-spacing-8) 0 0;padding:0;counter-reset:s}
+.steps li{
+  counter-increment:s;position:relative;
+  padding:var(--primitive-spacing-5) 0 var(--primitive-spacing-5) 3.25rem;
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  color:var(--color-ink-soft);
+}
+.steps li::before{
+  content:counter(s,decimal-leading-zero);position:absolute;left:0;top:var(--primitive-spacing-5);
+  font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.12em;color:var(--color-accent);
+}
+.steps b{font-family:var(--type-display);font-weight:600;color:var(--color-ink)}
+@media(max-width:860px){.method{grid-template-columns:1fr}}
+
+.panel .qlabel{font-family:var(--type-data);font-size:0.625rem;letter-spacing:.16em;text-transform:uppercase;color:var(--color-ink-muted);margin-bottom:var(--primitive-spacing-2)}
+.panel h3{margin-bottom:var(--primitive-spacing-2)}
+.panel__body>p{font-size:0.9375rem;color:var(--color-ink-soft)}
+.field{display:flex;gap:var(--primitive-spacing-2)}
+.field .answer{flex:1}
+.q{margin-bottom:var(--primitive-spacing-5)}
+.q p{margin-bottom:var(--primitive-spacing-2);font-size:1rem}
+
+.close{
+  background-color:var(--color-surface);
+  background-image:url("img/06-close.webp");
+  background-size:cover;background-position:50% 22%;
+  position:relative;
+}
+.close::before{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--color-surface) 15%,transparent) 0%,color-mix(in srgb,var(--color-surface) 62%,transparent) 45%,var(--color-surface) 88%);
+}
+.close .wrap{position:relative;z-index:1}
+.close h2{font-size:clamp(1.625rem,2.8vw,2.125rem);max-width:22ch}
+.close p{margin-top:var(--primitive-spacing-5);max-width:56ch;line-height:1.8;color:var(--color-ink-soft)}
+.imprint{
+  margin-top:clamp(48px,8vh,88px);padding-top:var(--primitive-spacing-4);
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  display:flex;justify-content:space-between;gap:var(--primitive-spacing-4);flex-wrap:wrap;
+  font-family:var(--type-data);font-size:0.6875rem;letter-spacing:.14em;text-transform:uppercase;color:var(--color-ink-muted);
+}
+</style>
+</head>
+<body>
+
+<header class="bar on-paper">
+  <div class="wrap bar__in">
+    <a class="brand" href="#top">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <mask id="c"><rect width="120" height="120" fill="#fff"></rect><circle cx="78" cy="52" r="37" fill="#000"></circle></mask>
+        <circle cx="56" cy="64" r="46" fill="var(--color-accent)" mask="url(#c)"></circle>
+        <path d="M98 14l5.6 11.4 12.6 1.8-9.1 8.9 2.2 12.5-11.3-5.9-11.2 5.9 2.1-12.5-9.1-8.9 12.6-1.8z" fill="var(--color-accent)"></path>
+      </svg>
+      <span><b>Yıldız Academy</b><i>Threat Intelligence</i></span>
+    </a>
+    <nav class="nav">
+      <a href="#kutuphane" aria-current="page">Kütüphane</a>
+      <a href="#laboratuvar">Laboratuvar</a>
+      <a href="#yontem">Yöntem</a>
+      <a href="#basla">İlerlemem</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <div class="hero on-night">
+    <div class="wrap">
+      <div class="hero__in">
+        <div class="label">Siber Tehdit İstihbaratı · Açık Erişim</div>
+        <h1>Bir hash, bir takma ad, bir sızıntı. <span>Gerisi iz sürmek.</span></h1>
+        <p>Yıldız Academy istihbaratı anlatarak değil, araştırtarak öğretir. Kısa dersler, gerçek verilerle kurulmuş laboratuvarlar, sunucuda doğrulanan cevaplar.</p>
+        <div class="cta">
+          <a class="btn" href="#laboratuvar">Laboratuvara gir</a>
+          <a class="btn btn--quiet" href="#kutuphane">Önce temelleri oku</a>
+        </div>
+        <div class="stats">
+          <div><b>24</b>ders ve not</div>
+          <div><b>18</b>araştırma labı</div>
+          <div><b>7</b>APT dosyası</div>
+          <div><b>0₺</b>kayıt gerekmez</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section id="kutuphane" class="on-paper">
+    <div class="wrap">
+      <div class="sechead">
+        <h2>Kütüphane</h2>
+        <a href="#">Tüm dersler →</a>
+      </div>
+
+      <div class="topics">
+        <article class="topic topic--wide">
+          <div>
+            <div class="n">01</div>
+            <h3>CTI Temelleri</h3>
+            <p>İstihbaratın ne olduğu, neyin gösterge neyin davranış sayıldığı, bir raporun neden derecelendirildiği.</p>
+            <ul>
+              <li>İstihbarat döngüsü nedir</li>
+              <li>Gösterge mi, davranış mı</li>
+              <li>TLP ve PAP ne işe yarar</li>
+              <li>Bir raporu nasıl derecelendiririz</li>
+            </ul>
+          </div>
+          <figure>
+            <img src="img/02-cti.webp" width="1200" height="900" alt="İstihbarat döngüsünü altı duraklı kapalı bir yörünge olarak gösteren gravür" onerror="this.closest('figure').hidden=true">
+          </figure>
+        </article>
+
+        <div class="topics__pair">
+          <article class="topic">
+            <figure>
+              <img src="img/03-osint.webp" width="1200" height="900" alt="Üç ayrı takımyıldızda tekrar eden aynı yıldızı birleştiren ince bir hat" onerror="this.closest('figure').hidden=true">
+            </figure>
+            <div>
+              <div class="n">02</div>
+              <h3>OSINT Temelleri</h3>
+              <p>Açık kaynakta bir izin nasıl bırakıldığı ve o izin nasıl doğrulanabilir hale getirildiği.</p>
+              <ul>
+                <li>Takma ad nasıl iz bırakır</li>
+                <li>Sertifika şeffaflığı kayıtları</li>
+                <li>Silinen sayfayı geri getirmek</li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="topic">
+            <figure>
+              <img src="img/04-apt.webp" width="1200" height="900" alt="Aynı takımyıldızın üç farklı açıyla üç kez çizilmiş hali" onerror="this.closest('figure').hidden=true">
+            </figure>
+            <div>
+              <div class="n">03</div>
+              <h3>APT Dosyaları</h3>
+              <p>Grupların neden farklı isimlerle anıldığı, tekniklerin nasıl eşlendiği, atfın nerede bittiği.</p>
+              <ul>
+                <li>Adlandırma karmaşası</li>
+                <li>MITRE ATT&amp;CK eşlemesi</li>
+                <li>Atıf nerede biter</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="laboratuvar" class="labs on-paper">
+    <div class="wrap">
+      <div class="sechead">
+        <h2>Laboratuvar</h2>
+        <a href="#">18 labın tamamı →</a>
+      </div>
+      <div class="labgrid">
+        <a class="labcard" href="#">
+          <div class="labcard__top"><span class="id">LAB 03</span><span class="pts">80 p</span></div>
+          <h3>Yeniden kullanılan avatar</h3>
+          <p>Aynı profil fotoğrafı üç ayrı forumda karşımıza çıkıyor. Hesapların aynı kişiye ait olduğunu kanıtla.</p>
+          <div class="chips"><span class="chip" data-difficulty="easy">Kolay</span><span class="chip">OSINT</span><span class="solved">✓ çözüldü</span></div>
+        </a>
+        <a class="labcard" href="#">
+          <div class="labcard__top"><span class="id">LAB 07</span><span class="pts">120 p</span></div>
+          <h3>Kayıp kullanıcı adı</h3>
+          <p>Bir fidye yazılımı sızıntı sitesinde bırakılan takma ad, aktörün coğrafyasına götürüyor. İzi sür.</p>
+          <div class="chips"><span class="chip" data-difficulty="medium">Orta</span><span class="chip">Dark Web</span><span class="chip">Atıf</span></div>
+        </a>
+        <a class="labcard" href="#">
+          <div class="labcard__top"><span class="id">LAB 11</span><span class="pts">200 p</span></div>
+          <h3>Hangi aileye ait</h3>
+          <p>Elinde yalnızca bir SHA-256 var. Zararlının ailesini, kampanyasını ve ilişkili grubu bul.</p>
+          <div class="chips"><span class="chip" data-difficulty="hard">Zor</span><span class="chip">Malware</span><span class="chip">ATT&amp;CK</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="yontem" class="on-paper">
+    <div class="wrap">
+      <div class="sechead">
+        <h2>Bir lab nasıl işler</h2>
+        <a href="#">Örnek labı aç →</a>
+      </div>
+
+      <div class="method">
+        <div>
+          <figure>
+            <img src="img/05-method.webp" width="1600" height="1200" alt="Tek bir yıldızdan dört durakla bir takımyıldıza uzanan basamaklı rota" onerror="this.closest('figure').hidden=true">
+          </figure>
+          <ol class="steps">
+            <li><b>Senaryo verilir.</b> Ne aradığın ve neyin kanıt sayıldığı baştan yazılıdır.</li>
+            <li><b>Artefakt elinize geçer.</b> Bir hash, bir onion adresi ya da bir takma ad. Araştırma sitenin dışında yapılır.</li>
+            <li><b>Sorular sırayla açılır.</b> Her adım ayrı doğrulanır, böylece nerede saptığın belli olur.</li>
+            <li><b>İpucu puana mal olur.</b> Sırayla açılır, her biri toplamdan düşer.</li>
+            <li><b>Çözüm yazısı en sonda açılır.</b> Asıl öğretici kısım burasıdır ve labı çözmeden okunamaz.</li>
+          </ol>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head"><span>Lab 07 · Kayıp kullanıcı adı</span><span class="points">120 p</span></div>
+          <div class="panel__body">
+            <h3>Senaryo</h3>
+            <p>Bir fidye yazılımı grubunun sızıntı sitesinde yayımlanan gönderinin altında tek bir takma ad duruyor. Aynı ad üç ayrı platformda beliriyor. Aktörü tek bir coğrafyaya bağla.</p>
+
+            <div class="qlabel">Artefakt · SHA-256</div>
+            <div class="artifact">
+              <code>9f2b4c1e7a08d5f3b6e2c94a17d0e8bb</code>
+              <button class="btn btn--quiet" type="button">Kopyala</button>
+            </div>
+
+            <div class="q">
+              <div class="qlabel">Soru 1 / 3</div>
+              <p>Takma adın ilk göründüğü forum hangisi?</p>
+              <div class="field">
+                <input class="answer" data-state="correct" value="exploit.in" readonly aria-label="Soru 1 cevabı, doğru">
+                <button class="btn btn--quiet" type="button" disabled>Gönderildi</button>
+              </div>
+              <span class="answer-msg" data-state="correct">✓ doğru · +40 p</span>
+            </div>
+
+            <div class="q">
+              <div class="qlabel">Soru 2 / 3</div>
+              <p>Aynı ad hangi kod deposunda kullanılmış?</p>
+              <div class="field">
+                <input class="answer" placeholder="cevabını yaz" aria-label="Soru 2 cevabı">
+                <button class="btn" type="button">Gönder</button>
+              </div>
+            </div>
+
+            <div class="hintrow">
+              <span>İPUCU 1 / 3 AÇILDI · KALAN İKİSİ 10'AR PUAN</span>
+              <button class="btn btn--quiet" type="button">İpucu aç</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="basla" class="close on-night">
+    <div class="wrap">
+      <h2>Kayıt yok, ücret yok, ilerlemen tarayıcında kalır.</h2>
+      <p>Başlamak için tek yapman gereken bir lab açmak. Nereden başlayacağını bilmiyorsan Lab 03 kolay olanı, tek bir avatarın üç platformda nasıl iz bıraktığını gösteriyor. Önce okumayı tercih edersen <a href="#kutuphane">kütüphanedeki üç eksen</a> sırayla okunacak şekilde yazıldı. İkisi de aynı yere çıkıyor: <a href="#laboratuvar">laboratuvara gir</a>.</p>
+      <div class="imprint">
+        <span>Yıldız Academy · Yıldız CTI</span>
+        <span>2026</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

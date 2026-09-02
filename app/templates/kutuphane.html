@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block baslik %}Kütüphane · Yıldız Academy{% endblock %}
+
+{% block govde %}
+<div class="main__head">
+  <h1>Kütüphane</h1>
+  <span class="label">{{ dersler|length }} ders</span>
+</div>
+
+{% if not dersler %}
+  <p class="lede">Henüz ders yok. Admin panelinden içerik yükleyebilirsin.</p>
+{% endif %}
+
+<div class="grid">
+{% for ders in dersler %}
+  <a class="rowcard" href="/kutuphane/{{ ders.slug }}">
+    <h3>{{ ders.title }}</h3>
+    <p>{{ ders.summary }}</p>
+    <div class="rowcard__meta">
+      <span>{{ ders.reading_minutes }} dk</span>
+      {% for etiket in etiketler.get(ders.id, []) %}
+        <span class="chip">{{ etiket.name }}</span>
+      {% endfor %}
+      {% if ders.id in okunanlar %}<span class="badge-done">okundu</span>{% endif %}
+    </div>
+  </a>
+{% endfor %}
+</div>
+{% endblock %}

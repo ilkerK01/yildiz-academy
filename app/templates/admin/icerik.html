@@ -1,0 +1,91 @@
+{% extends "admin/_kabuk.html" %}
+{% block baslik %}İçerik · Yönetim{% endblock %}
+
+{% block govde %}
+<div class="main__head"><h1>İçerik</h1></div>
+
+<section class="panel" style="margin-bottom:28px">
+  <div class="panel__head">Dosya yükle</div>
+  <div class="panel__body">
+    <form method="post" action="/academy/admin/icerik/yukle"
+          enctype="multipart/form-data" class="form">
+      <div>
+        <label for="dosya">Ders (.md) veya lab (.yaml)</label>
+        <input id="dosya" type="file" name="dosya" accept=".md,.yaml,.yml" required>
+        <p class="yardim">En fazla 1 MB. Yükleme kaydetmez, önce önizleme gösterir.</p>
+      </div>
+      <button class="btn" type="submit">Önizle</button>
+    </form>
+
+    {% if hata %}<div class="uyari" style="margin-top:16px">{{ hata }}</div>{% endif %}
+
+    {% if onizleme %}
+    <div class="bilgi" style="margin-top:16px">
+      <b>{{ onizleme.title }}</b>
+      ({{ onizleme.kind }} · <code>{{ onizleme.slug }}</code>)
+      <ul>{% for satir in onizleme.lines %}<li>{{ satir }}</li>{% endfor %}</ul>
+    </div>
+    <form method="post" action="/academy/admin/icerik/onayla" style="margin-top:12px">
+      <input type="hidden" name="dosya_adi" value="{{ dosya_adi }}">
+      <textarea name="icerik_metni" hidden>{{ icerik_metni }}</textarea>
+      <button class="btn" type="submit">Veritabanına bas</button>
+    </form>
+    {% endif %}
+  </div>
+</section>
+
+<div class="grid grid--2">
+  <section class="panel">
+    <div class="panel__head">Dersler</div>
+    <div class="panel__body">
+      {% for ders in dersler %}
+      <div class="rowcard">
+        <h3>{{ ders.title }}</h3>
+        <div class="rowcard__meta">
+          <code>{{ ders.slug }}</code>
+          <span>{{ "yayında" if ders.published else "taslak" }}</span>
+          <form method="post" action="/academy/admin/icerik/ders/{{ ders.slug }}/yayin">
+            <button class="btn btn--quiet" type="submit">
+              {{ "Yayından kaldır" if ders.published else "Yayına al" }}
+            </button>
+          </form>
+          <form method="post" action="/academy/admin/icerik/ders/{{ ders.slug }}/sil"
+                data-onay="Ders silinsin mi?">
+            <button class="btn btn--quiet" type="submit">Sil</button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <p class="lede">Ders yok.</p>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head">Laboratuvarlar</div>
+    <div class="panel__body">
+      {% for lab in lablar %}
+      <div class="rowcard">
+        <h3>{{ lab.title }}</h3>
+        <div class="rowcard__meta">
+          <code>{{ lab.slug }}</code>
+          <span>{{ lab.steps|length }} adım · {{ lab.total_points }} puan</span>
+          <span>{{ "yayında" if lab.published else "taslak" }}</span>
+          <form method="post" action="/academy/admin/icerik/lab/{{ lab.slug }}/yayin">
+            <button class="btn btn--quiet" type="submit">
+              {{ "Yayından kaldır" if lab.published else "Yayına al" }}
+            </button>
+          </form>
+          <form method="post" action="/academy/admin/icerik/lab/{{ lab.slug }}/sil"
+                data-onay="Lab silinsin mi?">
+            <button class="btn btn--quiet" type="submit">Sil</button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <p class="lede">Lab yok.</p>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

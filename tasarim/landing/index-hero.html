@@ -1,0 +1,1055 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yıldız Academy · CTI ve OSINT laboratuvarları</title>
+<meta name="description" content="Siber tehdit istihbaratı, OSINT ve APT temelleri. Kısa dersler ve gerçek verilerle kurulmuş araştırma laboratuvarları.">
+<link rel="icon" type="image/png" sizes="64x64" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../static/css/base.css">
+<style>
+@font-face{
+  font-family:'Stokeda';
+  src:url('../../static/fonts/stokeda.woff2') format('woff2');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:'Hemmet';
+  src:url('../../static/fonts/hemmet.woff2') format('woff2');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+.sec h2,
+.half h3,
+.steps h3{
+  font-family:'Stokeda',var(--primitive-fontFamily-text);
+  font-weight:400;
+  letter-spacing:var(--primitive-letterSpacing-normal);
+}
+.sec__head h2{font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.06}
+.half h3{font-size:clamp(1.35rem,2vw,1.65rem);line-height:1.14}
+.steps h3{font-size:clamp(1.2rem,1.7vw,1.4rem);line-height:1.16}
+
+#yildiz-cti{position:relative;overflow:hidden}
+#yildiz-cti .wrap{position:relative;z-index:1}
+#yildiz-cti .sec__head{
+  max-width:none;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+#yildiz-cti .sec__head p{max-width:54ch}
+#yildiz-cti .sec__head h2{font-size:clamp(2.1rem,4vw,3.25rem)}
+
+.ctigrid{display:block}
+.ctitext{text-align:center}
+.ctitext p{
+  margin:0 auto var(--primitive-spacing-5);
+  max-width:68ch;
+  color:var(--color-ink-soft);
+}
+.ctilist{
+  margin:clamp(20px,3vh,36px) 0 0;
+  padding:0;
+  list-style:none;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:var(--primitive-spacing-3);
+}
+.ctilist li{
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  letter-spacing:var(--primitive-letterSpacing-label);
+  text-transform:uppercase;
+  color:var(--color-ink-muted);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+  border-radius:var(--chip-radius);
+  padding:var(--primitive-spacing-2) var(--primitive-spacing-3);
+}
+.ctimark{
+  position:absolute;
+  inset:0;
+  margin:0;
+  display:grid;
+  place-items:center;
+  z-index:0;
+  pointer-events:none;
+}
+.ctimark img{
+  width:min(122vh,94vw);
+  height:auto;
+  filter:invert(1);
+  opacity:.105;
+}
+
+.foot{
+  background:var(--primitive-color-night-950);
+  color:var(--primitive-color-night-300);
+  padding-block:clamp(24px,4vh,38px);
+}
+.foot__in{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:var(--primitive-spacing-4);
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  letter-spacing:.04em;
+}
+.foot__brand{display:flex;align-items:center;gap:var(--primitive-spacing-3)}
+.foot__brand img{width:26px;height:26px;opacity:.9}
+.foot a{color:inherit;text-decoration:none}
+.foot a:hover{color:var(--primitive-color-gold-400)}
+.foot__links{display:flex;flex-wrap:wrap;gap:var(--primitive-spacing-5)}
+
+dialog.modal{
+  border:0;
+  padding:0;
+  margin:auto;
+  background:transparent;
+  width:min(430px,92vw);
+  max-height:92svh;
+  overflow:visible;
+  color:var(--color-ink);
+}
+dialog.modal::backdrop{
+  background:color-mix(in srgb, var(--primitive-color-night-950) 62%, transparent);
+  backdrop-filter:blur(14px) saturate(.9);
+  -webkit-backdrop-filter:blur(14px) saturate(.9);
+}
+dialog.modal[open]{animation:modalIn .62s cubic-bezier(.22,.68,.24,1)}
+dialog.modal[open]::backdrop{animation:veilIn .62s ease}
+
+@keyframes modalIn{
+  from{opacity:0;transform:translateY(16px) scale(.97)}
+  to{opacity:1;transform:none}
+}
+@keyframes veilIn{from{opacity:0}to{opacity:1}}
+
+.modal__panel{
+  position:relative;
+  padding:clamp(26px,4vw,38px);
+  background:var(--color-surface-raised);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+  box-shadow:0 30px 80px color-mix(in srgb, var(--primitive-color-night-950) 62%, transparent);
+}
+.modal__mark{
+  display:block;
+  width:46px;
+  height:auto;
+  margin-bottom:var(--primitive-spacing-5);
+  opacity:.92;
+}
+.modal__title{
+  margin:0 0 var(--primitive-spacing-2);
+  font-family:'Stokeda',var(--primitive-fontFamily-text);
+  font-weight:400;
+  font-size:1.9rem;
+  line-height:1.1;
+  letter-spacing:var(--primitive-letterSpacing-normal);
+}
+.modal__sub{
+  margin:0 0 clamp(20px,3vh,28px);
+  font-size:var(--primitive-fontSize-sm);
+  color:var(--color-ink-soft);
+}
+.modal__close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  background:none;
+  border:0;
+  border-radius:999px;
+  color:var(--color-ink-muted);
+  font-size:1.15rem;
+  line-height:1;
+  cursor:var(--cursor-default),pointer;
+}
+.modal__close:hover{color:var(--color-ink);background:color-mix(in srgb, var(--primitive-color-white) 8%, transparent)}
+
+.field{display:block;margin-bottom:var(--primitive-spacing-4)}
+.field span{
+  display:block;
+  margin-bottom:var(--primitive-spacing-2);
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-sm);
+  font-weight:600;
+  letter-spacing:var(--primitive-letterSpacing-normal);
+  color:var(--color-ink-soft);
+}
+.field input{
+  width:100%;
+  min-height:44px;
+  padding:0 var(--primitive-spacing-4);
+  background:var(--color-surface-sunk);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+  color:var(--color-ink);
+  font-family:var(--type-body);
+  font-size:var(--primitive-fontSize-base);
+}
+.field input::placeholder{color:var(--color-ink-muted);opacity:.7}
+.field input:focus-visible{outline:2px solid var(--color-focus);outline-offset:1px;border-color:transparent}
+
+.modal__submit{
+  width:100%;
+  min-height:46px;
+  margin-top:var(--primitive-spacing-2);
+  border:0;
+  border-radius:999px;
+  background:var(--primitive-color-white);
+  color:var(--primitive-color-night-950);
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-sm);
+  font-weight:600;
+  cursor:var(--cursor-default),pointer;
+  transition:background-color .18s ease,transform .12s ease;
+}
+.modal__submit:hover{background:var(--primitive-color-night-100)}
+.modal__submit:active{transform:translateY(1px)}
+
+.modal__foot{
+  margin:clamp(18px,2.6vh,26px) 0 0;
+  padding-top:var(--primitive-spacing-4);
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  font-size:var(--primitive-fontSize-sm);
+  color:var(--color-ink-soft);
+  text-align:center;
+}
+.modal__foot button{
+  background:none;
+  border:0;
+  padding:0;
+  color:var(--color-accent);
+  font:inherit;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  cursor:var(--cursor-default),pointer;
+}
+.modal__gizli{
+  margin:0 0 var(--primitive-spacing-4);
+  padding:var(--primitive-spacing-3) var(--primitive-spacing-4);
+  background:var(--color-surface-sunk);
+  border-left:2px solid var(--color-term-green);
+  font-size:var(--primitive-fontSize-sm);
+  line-height:1.5;
+  color:var(--color-ink-soft);
+}
+.modal__note{
+  margin:var(--primitive-spacing-4) 0 0;
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+  text-align:center;
+}
+
+@media (prefers-reduced-motion:reduce){
+  dialog.modal[open],dialog.modal[open]::backdrop{animation:none}
+}
+</style>
+<style>
+:root{
+  --hero-edge:clamp(20px,5vw,64px);
+  --hero-fg:var(--primitive-color-white);
+  --hero-fg-soft:var(--primitive-color-night-100);
+  --hero-btn-bg:var(--primitive-color-white);
+  --hero-btn-fg:var(--primitive-color-night-950);
+}
+
+.hero{
+  position:relative;
+  min-height:100svh;
+  display:grid;
+  place-items:center;
+  padding:clamp(88px,13vh,132px) var(--hero-edge) var(--primitive-spacing-12);
+  overflow:hidden;
+  isolation:isolate;
+  background:var(--primitive-color-night-950);
+}
+
+.hero__video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center 42%;
+  z-index:-2;
+}
+
+.hero__veil{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:
+    radial-gradient(120% 78% at 50% 40%, color-mix(in srgb, var(--primitive-color-night-950) 70%, transparent) 0%, color-mix(in srgb, var(--primitive-color-night-950) 34%, transparent) 46%, transparent 78%),
+    linear-gradient(to bottom, color-mix(in srgb, var(--primitive-color-night-950) 46%, transparent) 0%, transparent 26%, transparent 62%, color-mix(in srgb, var(--primitive-color-night-950) 58%, transparent) 100%);
+}
+
+.hero__in{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  max-width:44rem;
+}
+
+.hero__title{
+  margin:0;
+  font-family:'Stokeda',var(--primitive-fontFamily-text);
+  font-weight:400;
+  font-size:clamp(2.6rem,7.4vw,5.4rem);
+  line-height:1.02;
+  letter-spacing:var(--primitive-letterSpacing-normal);
+  color:var(--hero-fg);
+  text-wrap:balance;
+  text-shadow:0 2px 40px color-mix(in srgb, var(--primitive-color-night-950) 55%, transparent);
+}
+
+.hero__logo{
+  width:clamp(104px,11.8vw,152px);
+  height:auto;
+  margin-top:clamp(20px,3vh,34px);
+  opacity:.94;
+  filter:drop-shadow(0 2px 22px color-mix(in srgb, var(--primitive-color-night-950) 60%, transparent));
+}
+
+.hero__topbar{
+  position:absolute;
+  top:clamp(16px,2.6vh,28px);
+  right:var(--hero-edge);
+  z-index:2;
+  display:flex;
+  align-items:center;
+  gap:var(--primitive-spacing-2);
+}
+
+.hero__btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 var(--primitive-spacing-5);
+  border-radius:999px;
+  border:var(--primitive-border-hairline) solid transparent;
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-sm);
+  font-weight:600;
+  letter-spacing:.01em;
+  text-decoration:none;
+  cursor:var(--cursor-default),pointer;
+  transition:background-color .18s ease,border-color .18s ease,color .18s ease,transform .12s ease;
+}
+.hero__btn:active{transform:translateY(1px)}
+.hero__btn:focus-visible{
+  outline:2px solid var(--hero-fg);
+  outline-offset:3px;
+}
+
+.hero__btn--solid{
+  background:var(--hero-btn-bg);
+  color:var(--hero-btn-fg);
+}
+.hero__btn--solid:hover{background:var(--hero-fg-soft)}
+
+.hero__btn--ghost{
+  background:color-mix(in srgb, var(--primitive-color-white) 6%, transparent);
+  color:var(--hero-fg);
+  border-color:color-mix(in srgb, var(--primitive-color-white) 42%, transparent);
+  backdrop-filter:blur(6px);
+}
+.hero__btn--ghost:hover{
+  background:color-mix(in srgb, var(--primitive-color-white) 13%, transparent);
+  border-color:var(--hero-fg);
+}
+
+.hero__lede{
+  margin:clamp(30px,4.6vh,50px) 0 0;
+  max-width:24ch;
+  font-family:'Hemmet',var(--primitive-fontFamily-text);
+  font-size:clamp(1.75rem,3.6vw,2.9rem);
+  line-height:1.34;
+  color:var(--hero-fg);
+  text-wrap:balance;
+}
+
+.hero__cue{
+  position:absolute;
+  left:50%;
+  bottom:clamp(18px,3vh,34px);
+  translate:-50% 0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:var(--primitive-spacing-2);
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-xs);
+  letter-spacing:var(--primitive-letterSpacing-label);
+  text-transform:uppercase;
+  color:var(--hero-fg-soft);
+  opacity:.72;
+  text-decoration:none;
+}
+.hero__cue span{display:block;width:1px;height:26px;background:currentColor;animation:cue 2.6s ease-in-out infinite}
+
+@keyframes cue{
+  0%,100%{transform:scaleY(.35);transform-origin:top;opacity:.35}
+  50%{transform:scaleY(1);transform-origin:top;opacity:.9}
+}
+
+@media (max-width:640px){
+  .hero__title{font-size:clamp(2.3rem,9.6vw,3.1rem)}
+  .hero__topbar{gap:var(--primitive-spacing-1)}
+  .hero__btn{min-height:36px;padding:0 var(--primitive-spacing-4);font-size:var(--primitive-fontSize-xs)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hero__video{display:none}
+  .hero{
+    background-image:url("img/hero-sky-poster.jpg");
+    background-size:cover;
+    background-position:center 42%;
+  }
+  .hero__cue span{animation:none;transform:scaleY(1);opacity:.6}
+  .hero__btn{transition:none}
+}
+
+.wrap{width:100%;max-width:1120px;margin:0 auto;padding-inline:var(--hero-edge)}
+
+.sec{
+  min-height:100svh;
+  display:grid;
+  align-content:center;
+  padding-block:clamp(34px,5vh,76px);
+}
+
+.sec__head{max-width:52ch;margin-bottom:clamp(14px,2.4vh,42px)}
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:var(--primitive-spacing-2) var(--primitive-spacing-4);
+  border-radius:999px;
+  background:var(--color-accent);
+  color:var(--color-accent-ink);
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  font-weight:600;
+  letter-spacing:var(--primitive-letterSpacing-label);
+  text-transform:uppercase;
+}
+.sec__head .badge{margin-bottom:var(--primitive-spacing-5)}
+.sec__head h2{
+  margin:0 0 var(--primitive-spacing-5);
+  font-size:clamp(1.75rem,3.6vw,2.75rem);
+}
+.sec__head p{margin:0;max-width:46ch;color:var(--color-ink-soft)}
+
+.duo{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+  gap:clamp(24px,3vw,44px);
+}
+
+.half{
+  display:flex;
+  flex-direction:column;
+  gap:clamp(10px,1.5vh,18px);
+  padding:clamp(16px,2.1vh,30px);
+  background:var(--color-surface-raised);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+}
+.half__fig{
+  margin:0;
+  height:clamp(72px,13vh,180px);
+  overflow:hidden;
+  background:var(--color-surface-sunk);
+}
+.half__fig img{width:100%;height:100%;object-fit:cover;display:block}
+.half h3{margin:0;font-size:var(--primitive-fontSize-xl)}
+.half__kicker{align-self:flex-start}
+.half p{margin:0;color:var(--color-ink-soft)}
+.half__foot{margin-top:auto;padding-top:clamp(10px,1.5vh,16px);border-top:var(--primitive-border-hairline) solid var(--color-rule)}
+.tagrow{display:flex;flex-wrap:wrap;gap:var(--primitive-spacing-2)}
+
+.bridge{
+  margin-top:clamp(18px,2.4vh,32px);
+  padding-top:var(--primitive-spacing-4);
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  max-width:56ch;
+  color:var(--color-ink-muted);
+  font-size:var(--primitive-fontSize-sm);
+}
+.bridge b{color:var(--color-ink);font-weight:600}
+
+.labshow{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));
+  gap:clamp(32px,4vw,64px);
+  align-items:start;
+}
+
+.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.steps li{
+  counter-increment:s;
+  position:relative;
+  padding-left:2.75rem;
+  padding-bottom:var(--primitive-spacing-4);
+}
+.steps li::before{
+  content:counter(s);
+  position:absolute;
+  left:0;
+  top:.1em;
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-accent);
+  letter-spacing:var(--primitive-letterSpacing-label);
+}
+.steps li:last-child{padding-bottom:0}
+.steps h3{margin:0 0 var(--primitive-spacing-1);font-size:var(--primitive-fontSize-lg)}
+.steps p{margin:0;color:var(--color-ink-soft);font-size:var(--primitive-fontSize-sm)}
+
+.demo{position:sticky;top:var(--primitive-spacing-8)}
+.demo .panel{pointer-events:none;user-select:none}
+.demo__q{margin:0 0 var(--primitive-spacing-4);font-weight:600}
+.demo__row{display:flex;gap:var(--primitive-spacing-3);flex-wrap:wrap}
+.demo__row .answer{flex:1 1 12rem;min-width:0}
+.demo__note{
+  margin:var(--primitive-spacing-5) 0 0;
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+  font-family:var(--type-data);
+}
+.demo .artifact{margin-bottom:var(--primitive-spacing-5)}
+.demo__brief{margin:0 0 var(--primitive-spacing-5);color:var(--color-ink-soft);font-size:var(--primitive-fontSize-sm)}
+
+@media (max-width:900px){
+  .demo{position:static}
+  .sec{min-height:auto;padding-block:clamp(64px,10vh,104px)}
+}
+
+.reveal{
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity 1.7s ease,transform 1.7s cubic-bezier(.22,.68,.24,1);
+  transition-delay:var(--d,0ms);
+}
+.reveal.is-in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+}
+
+.sec h2,
+.half h3,
+.steps h3{
+  font-family:'Stokeda',var(--primitive-fontFamily-text);
+  font-weight:400;
+  letter-spacing:var(--primitive-letterSpacing-normal);
+}
+.sec__head h2{font-size:clamp(1.9rem,3.6vw,2.9rem);line-height:1.06}
+.half h3{font-size:clamp(1.35rem,2vw,1.65rem);line-height:1.14}
+.steps h3{font-size:clamp(1.2rem,1.7vw,1.4rem);line-height:1.16}
+
+#yildiz-cti{position:relative;overflow:hidden}
+#yildiz-cti .wrap{position:relative;z-index:1}
+#yildiz-cti .sec__head{
+  max-width:none;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+#yildiz-cti .sec__head p{max-width:54ch}
+#yildiz-cti .sec__head h2{font-size:clamp(2.1rem,4vw,3.25rem)}
+
+.ctigrid{display:block}
+.ctitext{text-align:center}
+.ctitext p{
+  margin:0 auto var(--primitive-spacing-5);
+  max-width:68ch;
+  color:var(--color-ink-soft);
+}
+.ctilist{
+  margin:clamp(20px,3vh,36px) 0 0;
+  padding:0;
+  list-style:none;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:var(--primitive-spacing-3);
+}
+.ctilist li{
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  letter-spacing:var(--primitive-letterSpacing-label);
+  text-transform:uppercase;
+  color:var(--color-ink-muted);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+  border-radius:var(--chip-radius);
+  padding:var(--primitive-spacing-2) var(--primitive-spacing-3);
+}
+.ctimark{
+  position:absolute;
+  inset:0;
+  margin:0;
+  display:grid;
+  place-items:center;
+  z-index:0;
+  pointer-events:none;
+}
+.ctimark img{
+  width:min(122vh,94vw);
+  height:auto;
+  filter:invert(1);
+  opacity:.105;
+}
+
+.foot{
+  background:var(--primitive-color-night-950);
+  color:var(--primitive-color-night-300);
+  padding-block:clamp(24px,4vh,38px);
+}
+.foot__in{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:var(--primitive-spacing-4);
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  letter-spacing:.04em;
+}
+.foot__brand{display:flex;align-items:center;gap:var(--primitive-spacing-3)}
+.foot__brand img{width:26px;height:26px;opacity:.9}
+.foot a{color:inherit;text-decoration:none}
+.foot a:hover{color:var(--primitive-color-gold-400)}
+.foot__links{display:flex;flex-wrap:wrap;gap:var(--primitive-spacing-5)}
+
+dialog.modal{
+  border:0;
+  padding:0;
+  margin:auto;
+  background:transparent;
+  width:min(430px,92vw);
+  max-height:92svh;
+  overflow:visible;
+  color:var(--color-ink);
+}
+dialog.modal::backdrop{
+  background:color-mix(in srgb, var(--primitive-color-night-950) 62%, transparent);
+  backdrop-filter:blur(14px) saturate(.9);
+  -webkit-backdrop-filter:blur(14px) saturate(.9);
+}
+dialog.modal[open]{animation:modalIn .62s cubic-bezier(.22,.68,.24,1)}
+dialog.modal[open]::backdrop{animation:veilIn .62s ease}
+
+@keyframes modalIn{
+  from{opacity:0;transform:translateY(16px) scale(.97)}
+  to{opacity:1;transform:none}
+}
+@keyframes veilIn{from{opacity:0}to{opacity:1}}
+
+.modal__panel{
+  position:relative;
+  padding:clamp(26px,4vw,38px);
+  background:var(--color-surface-raised);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+  box-shadow:0 30px 80px color-mix(in srgb, var(--primitive-color-night-950) 62%, transparent);
+}
+.modal__mark{
+  display:block;
+  width:46px;
+  height:auto;
+  margin-bottom:var(--primitive-spacing-5);
+  opacity:.92;
+}
+.modal__title{
+  margin:0 0 var(--primitive-spacing-2);
+  font-family:'Stokeda',var(--primitive-fontFamily-text);
+  font-weight:400;
+  font-size:1.9rem;
+  line-height:1.1;
+  letter-spacing:var(--primitive-letterSpacing-normal);
+}
+.modal__sub{
+  margin:0 0 clamp(20px,3vh,28px);
+  font-size:var(--primitive-fontSize-sm);
+  color:var(--color-ink-soft);
+}
+.modal__close{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:32px;
+  height:32px;
+  display:grid;
+  place-items:center;
+  background:none;
+  border:0;
+  border-radius:999px;
+  color:var(--color-ink-muted);
+  font-size:1.15rem;
+  line-height:1;
+  cursor:var(--cursor-default),pointer;
+}
+.modal__close:hover{color:var(--color-ink);background:color-mix(in srgb, var(--primitive-color-white) 8%, transparent)}
+
+.field{display:block;margin-bottom:var(--primitive-spacing-4)}
+.field span{
+  display:block;
+  margin-bottom:var(--primitive-spacing-2);
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-sm);
+  font-weight:600;
+  letter-spacing:var(--primitive-letterSpacing-normal);
+  color:var(--color-ink-soft);
+}
+.field input{
+  width:100%;
+  min-height:44px;
+  padding:0 var(--primitive-spacing-4);
+  background:var(--color-surface-sunk);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+  color:var(--color-ink);
+  font-family:var(--type-body);
+  font-size:var(--primitive-fontSize-base);
+}
+.field input::placeholder{color:var(--color-ink-muted);opacity:.7}
+.field input:focus-visible{outline:2px solid var(--color-focus);outline-offset:1px;border-color:transparent}
+
+.modal__submit{
+  width:100%;
+  min-height:46px;
+  margin-top:var(--primitive-spacing-2);
+  border:0;
+  border-radius:999px;
+  background:var(--primitive-color-white);
+  color:var(--primitive-color-night-950);
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-sm);
+  font-weight:600;
+  cursor:var(--cursor-default),pointer;
+  transition:background-color .18s ease,transform .12s ease;
+}
+.modal__submit:hover{background:var(--primitive-color-night-100)}
+.modal__submit:active{transform:translateY(1px)}
+
+.modal__foot{
+  margin:clamp(18px,2.6vh,26px) 0 0;
+  padding-top:var(--primitive-spacing-4);
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  font-size:var(--primitive-fontSize-sm);
+  color:var(--color-ink-soft);
+  text-align:center;
+}
+.modal__foot button{
+  background:none;
+  border:0;
+  padding:0;
+  color:var(--color-accent);
+  font:inherit;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  cursor:var(--cursor-default),pointer;
+}
+.modal__gizli{
+  margin:0 0 var(--primitive-spacing-4);
+  padding:var(--primitive-spacing-3) var(--primitive-spacing-4);
+  background:var(--color-surface-sunk);
+  border-left:2px solid var(--color-term-green);
+  font-size:var(--primitive-fontSize-sm);
+  line-height:1.5;
+  color:var(--color-ink-soft);
+}
+.modal__note{
+  margin:var(--primitive-spacing-4) 0 0;
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+  text-align:center;
+}
+
+@media (prefers-reduced-motion:reduce){
+  dialog.modal[open],dialog.modal[open]::backdrop{animation:none}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <video class="hero__video" autoplay muted loop playsinline preload="auto"
+         poster="img/hero-sky-poster.jpg" aria-hidden="true" tabindex="-1">
+    <source src="img/hero-sky.webm" type="video/webm">
+    <source src="img/hero-sky.mp4" type="video/mp4">
+  </video>
+  <div class="hero__veil" aria-hidden="true"></div>
+
+  <nav class="hero__topbar" aria-label="Hesap">
+    <a class="hero__btn hero__btn--ghost" href="#giris">Giriş yap</a>
+    <a class="hero__btn hero__btn--solid" href="#kayit">Kayıt ol</a>
+  </nav>
+
+  <div class="hero__in">
+    <h1 class="hero__title">Yıldız Academy</h1>
+
+    <img class="hero__logo" src="img/logo.png" width="200" height="200"
+         alt="Yıldız CTI">
+
+    <p class="hero__lede">
+      Ülkesini en çok seven işini en iyi yapandır.
+    </p>
+  </div>
+
+  <a class="hero__cue" href="#devam">Aşağı<span aria-hidden="true"></span></a>
+</header>
+
+<main id="devam">
+
+<section class="sec on-night" id="iki-yari">
+  <div class="wrap">
+    <div class="sec__head reveal">
+      <span class="badge">İki yarı</span>
+      <h2>Okumak ve aramak ayrı işlerdir</h2>
+      <p>
+        Bir tarafta okuyacağın şey var, diğer tarafta arayacağın şey.
+      </p>
+    </div>
+
+    <div class="duo">
+      <article class="half reveal">
+        <figure class="half__fig">
+          <img src="img/02-cti.webp" alt="" loading="lazy" decoding="async">
+        </figure>
+        <span class="badge half__kicker">Kütüphane</span>
+        <h3>Kısa dersler, giriş seviyesi</h3>
+        <p>
+          CTI temelleri, OSINT&#8217;in çalışma mantığı ve APT gruplarının kısa
+          dosyaları. Her ders tek oturumda okunacak uzunlukta.
+        </p>
+        <div class="half__foot">
+          <div class="tagrow">
+            <span class="chip">CTI temelleri</span>
+            <span class="chip">OSINT</span>
+            <span class="chip">APT dosyaları</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="half reveal">
+        <figure class="half__fig">
+          <img src="img/05-method.webp" alt="" loading="lazy" decoding="async">
+        </figure>
+        <span class="badge half__kicker">Laboratuvar</span>
+        <h3>Gerçek iz, gerçek araştırma</h3>
+        <p>
+          Eline gerçek bir iz veriliyor. Araştırmayı kendi makinende
+          yapıyorsun, doğrulama sunucuda oluyor. Giriş yaptıktan sonra açılıyor.
+        </p>
+        <div class="half__foot">
+          <div class="tagrow">
+            <span class="chip" data-difficulty="easy">kolay</span>
+            <span class="chip" data-difficulty="medium">orta</span>
+            <span class="chip" data-difficulty="hard">zor</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <p class="bridge reveal">
+      İkisi ayrı duruyor ama kopuk değil: aynı <b>etiketleri</b> taşıyorlar.
+    </p>
+  </div>
+</section>
+
+<section class="sec on-paper" id="yildiz-cti">
+  <div class="wrap">
+    <div class="sec__head reveal">
+      <span class="badge">Yıldız CTI</span>
+      <h2>Akademinin arkasında kim var?</h2>
+      <p>
+        Yıldız Academy, Yıldız CTI&#8217;nin açık erişimli öğrenme kolu.
+      </p>
+    </div>
+
+    <div class="ctigrid">
+      <div class="ctitext reveal">
+        <p>
+          Yıldız CTI siber tehdit istihbaratı alanında çalışıyor: dark web ve
+          Tor ağı üzerinde araştırma, açık kaynak istihbarat ve tehdit
+          aktörlerinin takibi.
+        </p>
+        <p>
+          Buradaki dersler ve laboratuvarlar o işin içinden çıkıyor. Bir
+          laboratuvarda eline verilen iz, uydurulmuş bir alıştırma değil,
+          gerçek bir araştırmanın sadeleştirilmiş hali.
+        </p>
+        <ul class="ctilist">
+          <li>Dark web ve Tor ağı araştırması</li>
+          <li>Açık kaynak istihbarat</li>
+          <li>Tehdit aktörü ve APT takibi</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <figure class="ctimark" aria-hidden="true">
+    <img src="img/logo.png" width="200" height="200" alt="">
+  </figure>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <div class="foot__brand">
+      <img src="img/logo.png" width="200" height="200" alt="">
+      <span>Yıldız CTI &middot; Tüm hakları saklıdır &middot; 2026</span>
+    </div>
+    <nav class="foot__links" aria-label="Alt bağlantılar">
+      <a href="#kutuphane">Kütüphane</a>
+      <a href="#yildiz-cti">Yıldız CTI</a>
+      <a href="#giris">Giriş yap</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var items = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window) ||
+     window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    items.forEach(function(el){ el.classList.add('is-in'); });
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var group = e.target.parentElement;
+      var peers = group ? Array.prototype.filter.call(group.children, function(c){
+        return c.classList.contains('reveal');
+      }) : [];
+      var i = peers.indexOf(e.target);
+      e.target.style.setProperty('--d', (i > 0 ? i * 280 : 0) + 'ms');
+      e.target.classList.add('is-in');
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' });
+  items.forEach(function(el){ io.observe(el); });
+})();
+</script>
+
+<dialog class="modal on-night" id="modal-kayit" aria-labelledby="kayit-baslik">
+  <form class="modal__panel" method="dialog" data-form="kayit">
+    <button class="modal__close" type="button" data-kapat aria-label="Kapat">&times;</button>
+    <img class="modal__mark" src="img/logo.png" width="200" height="200" alt="">
+    <h2 class="modal__title" id="kayit-baslik">Kayıt ol</h2>
+    <p class="modal__sub">
+      Kütüphane herkese açık. Laboratuvarlar giriş yaptıktan sonra açılıyor.
+    </p>
+
+    <label class="field">
+      <span>Takma ad</span>
+      <input type="text" name="kullanici" autocomplete="username" placeholder="Laboratuvarlarda görünecek ad" required>
+    </label>
+    <label class="field">
+      <span>E-posta</span>
+      <input type="email" name="eposta" autocomplete="email" placeholder="ornek@alan.com" required>
+    </label>
+    <label class="field">
+      <span>Parola</span>
+      <input type="password" name="parola" autocomplete="new-password" placeholder="En az 8 karakter" minlength="8" required>
+    </label>
+
+    <p class="modal__gizli">
+      E-postan yalnızca giriş için kullanılır. Sıralamada ve laboratuvarlarda
+      takma adın görünür, e-postan kimseye gösterilmez.
+    </p>
+
+    <button class="modal__submit" type="submit">Hesap oluştur</button>
+
+    <p class="modal__foot">
+      Zaten hesabın var mı? <button type="button" data-gec="modal-giris">Giriş yap</button>
+    </p>
+  </form>
+</dialog>
+
+<dialog class="modal on-night" id="modal-giris" aria-labelledby="giris-baslik">
+  <form class="modal__panel" method="dialog" data-form="giris">
+    <button class="modal__close" type="button" data-kapat aria-label="Kapat">&times;</button>
+    <img class="modal__mark" src="img/logo.png" width="200" height="200" alt="">
+    <h2 class="modal__title" id="giris-baslik">Giriş yap</h2>
+    <p class="modal__sub">
+      Kaldığın laboratuvardan devam et.
+    </p>
+
+    <label class="field">
+      <span>E-posta</span>
+      <input type="email" name="eposta" autocomplete="email" placeholder="ornek@alan.com" required>
+    </label>
+    <label class="field">
+      <span>Parola</span>
+      <input type="password" name="parola" autocomplete="current-password" placeholder="Parolan" required>
+    </label>
+
+    <button class="modal__submit" type="submit">Giriş yap</button>
+
+    <p class="modal__foot">
+      Hesabın yok mu? <button type="button" data-gec="modal-kayit">Kayıt ol</button>
+    </p>
+  </form>
+</dialog>
+
+<script>
+(function(){
+  var kayit = document.getElementById('modal-kayit');
+  var giris = document.getElementById('modal-giris');
+
+  function ac(d){
+    if(!d) return;
+    document.querySelectorAll('dialog.modal[open]').forEach(function(o){ o.close(); });
+    d.showModal();
+    var ilk = d.querySelector('input');
+    if(ilk) setTimeout(function(){ ilk.focus(); }, 60);
+  }
+
+  document.querySelectorAll('a[href="#kayit"]').forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault(); ac(kayit); });
+  });
+  document.querySelectorAll('a[href="#giris"]').forEach(function(a){
+    a.addEventListener('click', function(e){ e.preventDefault(); ac(giris); });
+  });
+
+  document.querySelectorAll('[data-kapat]').forEach(function(b){
+    b.addEventListener('click', function(){ b.closest('dialog').close(); });
+  });
+
+  document.querySelectorAll('[data-gec]').forEach(function(b){
+    b.addEventListener('click', function(){ ac(document.getElementById(b.dataset.gec)); });
+  });
+
+  document.querySelectorAll('dialog.modal').forEach(function(d){
+    d.addEventListener('click', function(e){
+      if(e.target === d) d.close();
+    });
+  });
+})();
+</script>
+</body>
+</html>

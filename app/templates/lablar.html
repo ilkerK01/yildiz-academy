@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block baslik %}Laboratuvar · Yıldız Academy{% endblock %}
+
+{% block govde %}
+<div class="main__head">
+  <h1>Laboratuvar</h1>
+  <span class="label">{{ lablar|length }} lab</span>
+</div>
+
+{% if not lablar %}
+  <p class="lede">Henüz lab yok. Admin panelinden bir .yaml yükleyebilirsin.</p>
+{% endif %}
+
+<div class="grid">
+{% for lab in lablar %}
+  {% set durum = durumlar.get(lab.id) %}
+  <a class="rowcard labcard" href="/lab/{{ lab.slug }}">
+    <h3>{{ lab.title }}</h3>
+    <p>{{ lab.summary }}</p>
+    <div class="rowcard__meta">
+      <span class="chip">{{ lab.difficulty }}</span>
+      <span>{{ lab.steps|length }} adım</span>
+      <span>{{ lab.total_points }} puan</span>
+      {% for etiket in etiketler.get(lab.id, []) %}
+        <span class="chip">{{ etiket.name }}</span>
+      {% endfor %}
+      {% if durum and durum.status == 'tamamlandi' %}
+        <span class="badge-done">tamamlandı · {{ durum.earned_points }} puan</span>
+      {% elif durum and durum.status == 'pes_etti' %}
+        <span class="badge-locked">pes edildi</span>
+      {% endif %}
+      {% if durum and durum.solution_seen %}
+        <span class="badge-locked">alıştırma modu</span>
+      {% endif %}
+    </div>
+  </a>
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block baslik %}Panel · Yıldız Academy{% endblock %}
+
+{% block govde %}
+<div class="main__head">
+  <h1>Merhaba {{ user.display_name }}</h1>
+  <span class="label">{% if kendi_sira %}Sıralamada {{ kendi_sira }}.{% else %}Henüz sıralamada değilsin{% endif %}</span>
+</div>
+
+<div class="grid grid--4" style="margin-bottom:32px">
+  <div class="stat"><b>{{ stats.puan }}</b><span>Toplam puan</span></div>
+  <div class="stat"><b>{{ stats.cozulen_lab }}</b><span>Çözülen lab</span></div>
+  <div class="stat"><b>{{ stats.okunan_ders }}</b><span>Okunan ders</span></div>
+  <div class="stat"><b>{{ stats.kullanilan_ipucu }}</b><span>Açılan ipucu</span></div>
+</div>
+
+<div class="grid grid--2">
+  <section class="panel">
+    <div class="panel__head">Sıralama</div>
+    <div class="panel__body">
+      {% if siralama %}
+      <table class="rank">
+        <thead><tr><th>#</th><th>Ad</th><th>Puan</th></tr></thead>
+        <tbody>
+        {% for satir in siralama %}
+          <tr data-ben="{{ 1 if satir.user_id == user.id else 0 }}">
+            <td>{{ satir.rank }}</td>
+            <td>{{ satir.display_name }}</td>
+            <td>{{ satir.points }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="lede">Henüz kimse lab bitirmedi. İlk sen ol.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head">Başarımlar</div>
+    <div class="panel__body">
+      <div class="grid" style="gap:10px">
+      {% for rozet in rozetler %}
+        <div class="rozet {{ '' if rozet.earned else 'rozet--kilitli' }}">
+          <b>{{ rozet.name }}</b>
+          <span>{{ rozet.description }}</span>
+        </div>
+      {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

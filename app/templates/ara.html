@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block baslik %}Arama · Yıldız Academy{% endblock %}
+
+{% block govde %}
+<div class="main__head"><h1>Arama</h1></div>
+
+<form class="form" method="get" action="/ara" style="max-width:520px;margin-bottom:28px">
+  <div>
+    <label for="q">Ne arıyorsun?</label>
+    <input id="q" name="q" value="{{ q }}" placeholder="hash, apt, onion..." autofocus>
+  </div>
+  <button class="btn" type="submit">Ara</button>
+</form>
+
+{% if q and q|length < 2 %}
+  <p class="bilgi">En az iki karakter yaz.</p>
+{% elif q %}
+  <p class="label">{{ dersler|length + lablar|length }} sonuç</p>
+  <div class="grid">
+  {% for ders in dersler %}
+    <a class="rowcard" href="/kutuphane/{{ ders.slug }}">
+      <h3>{{ ders.title }}</h3><p>{{ ders.summary }}</p>
+      <div class="rowcard__meta"><span class="chip">ders</span></div>
+    </a>
+  {% endfor %}
+  {% for lab in lablar %}
+    <a class="rowcard" href="/lab/{{ lab.slug }}">
+      <h3>{{ lab.title }}</h3><p>{{ lab.summary }}</p>
+      <div class="rowcard__meta"><span class="chip">lab</span></div>
+    </a>
+  {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

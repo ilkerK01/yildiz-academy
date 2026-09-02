@@ -1,0 +1,67 @@
+slug: hash-avi
+title: Bir hash'in izini sürmek
+summary: Elinde tek bir hash var. Ne olduğunu, hangi aileye ait olduğunu bul.
+difficulty: kolay
+tags: [hash-analizi, osint-temelleri, cti-temelleri]
+published: true
+
+briefing_md: |
+  Bir olay müdahale ekibi sana tek satırlık bir kanıt bıraktı: bir MD5 özeti.
+  Başka hiçbir bağlam yok.
+
+  Araştırmayı kendi makinende yap. Dosyayı indirmene gerek yok, gerekmiyor da.
+  Cevapları aşağıya yaz, doğrulama sunucuda yapılır.
+
+steps:
+  - prompt_md: "Bu özet hangi dosyaya ait? Dosyanın yaygın adını yaz."
+    artifact: "44d88612fea8a8f36de82e1278abb02f"
+    answer_type: exact
+    answer_value: "eicar"
+    points: 20
+    hints:
+      - text_md: "Dosyayı indirmene gerek yok, özeti aratman yeterli."
+        penalty: 5
+      - text_md: "Bu gerçek bir zararlı yazılım değil, antivirüs testi için üretilmiş bir dosya."
+        penalty: 10
+
+  - prompt_md: "Bu dosya gerçek bir zararlı yazılım mı?"
+    answer_type: choice
+    answer_value: "1"
+    choices:
+      - "Evet, bilinen bir fidye yazılımı"
+      - "Hayır, antivirüs testi için üretilmiş zararsız bir dosya"
+      - "Evet, bir bankacılık truva atı"
+    points: 10
+    hints: []
+
+  - prompt_md: "Bu test dosyasını tanımlayan standardı yayımlayan kurumun kısaltması nedir?"
+    answer_type: regex
+    answer_value: "^eicar$"
+    points: 15
+    hints:
+      - text_md: "Kısaltma dosyanın kendi adıyla aynı."
+        penalty: 8
+
+solution_md: |
+  ## Çözüm
+
+  **Adım 1.** `44d88612fea8a8f36de82e1278abb02f` özetini herhangi bir arama
+  motoruna veya VirusTotal'a yapıştırdığında karşına EICAR test dosyası çıkar.
+  Bu, tehdit istihbaratında en sık karşılaşılan "kanıt" biçimidir: bağlamsız
+  bir özet. Yapılacak ilk iş her zaman aynıdır, özeti bilinen kaynaklarda
+  aratmak.
+
+  **Adım 2.** EICAR gerçek bir zararlı yazılım değildir. 68 karakterlik,
+  yazdırılabilir ASCII karakterlerden oluşan bir dizgedir ve antivirüs
+  yazılımlarının çalışıp çalışmadığını test etmek için üretilmiştir. Hiçbir
+  zararlı davranışı yoktur ama bütün antivirüsler onu bilerek "tespit eder".
+
+  **Adım 3.** Standardı yayımlayan kurum EICAR'ın kendisidir: European Institute
+  for Computer Antivirus Research.
+
+  ## Buradan çıkan ders
+
+  Bir özetin antivirüs tarafından işaretlenmiş olması onu zararlı yapmaz.
+  Acı piramidinin en alt basamağındasın: hash, en ucuz ve en kırılgan
+  göstergedir. Bir sonraki adım her zaman "bu dosya ne yapıyor" sorusudur,
+  "kaç motor işaretledi" değil.

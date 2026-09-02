@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block baslik %}{{ ders.title }} · Yıldız Academy{% endblock %}
+
+{% block govde %}
+<div class="main__head">
+  <h1>{{ ders.title }}</h1>
+  <span class="label">{{ ders.reading_minutes }} dk okuma</span>
+</div>
+
+<div class="rowcard__meta" style="margin-bottom:24px">
+  {% for etiket in etiketler %}
+    <a class="chip" href="/etiket/{{ etiket.slug }}">{{ etiket.name }}</a>
+  {% endfor %}
+</div>
+
+<article class="prose">{{ ders.body_html|safe }}</article>
+
+<div style="margin:36px 0;border-top:1px solid var(--color-rule);padding-top:20px">
+  <button class="btn" id="okudum-btn" data-slug="{{ ders.slug }}"
+          {% if okundu %}disabled{% endif %}>
+    {% if okundu %}Okundu olarak işaretlendi{% else %}Okudum{% endif %}
+  </button>
+  <p class="cikti" id="okudum-cikti"></p>
+</div>
+
+{% if ilgili_lablar %}
+<section class="panel">
+  <div class="panel__head">Bu etiketlerdeki laboratuvarlar</div>
+  <div class="panel__body">
+    <div class="grid">
+    {% for lab in ilgili_lablar %}
+      <a class="rowcard" href="/lab/{{ lab.slug }}">
+        <h3>{{ lab.title }}</h3>
+        <div class="rowcard__meta">
+          <span class="chip">{{ lab.difficulty }}</span>
+          <span>{{ lab.total_points }} puan</span>
+        </div>
+      </a>
+    {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block script %}<script src="/static/js/ders.js"></script>{% endblock %}

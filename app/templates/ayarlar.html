@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block baslik %}Ayarlar · Yıldız Academy{% endblock %}
+
+{% block govde %}
+<div class="main__head"><h1>Ayarlar</h1></div>
+
+<div class="grid grid--2">
+
+  <section class="panel">
+    <div class="panel__head">Görünen ad</div>
+    <div class="panel__body">
+      <form class="form" onsubmit="return adDegistir(event)">
+        <div>
+          <label for="ad">Akademideki adın</label>
+          <input id="ad" name="gorunen_ad" value="{{ user.display_name }}" required>
+          <p class="yardim">30 günde bir değiştirilebilir.</p>
+        </div>
+        <button class="btn" type="submit">Kaydet</button>
+        <p class="cikti" id="ad-cikti"></p>
+      </form>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head">Parola</div>
+    <div class="panel__body">
+      <form class="form" onsubmit="return parolaDegistir(event)">
+        <div>
+          <label for="mevcut">Mevcut parola</label>
+          <input id="mevcut" name="mevcut" type="password" autocomplete="current-password" required>
+        </div>
+        <div>
+          <label for="yeni">Yeni parola</label>
+          <input id="yeni" name="yeni" type="password" autocomplete="new-password" required>
+          <p class="yardim">En az 8 karakter. Değiştirince diğer oturumların düşer.</p>
+        </div>
+        <button class="btn" type="submit">Parolayı değiştir</button>
+        <p class="cikti" id="parola-cikti"></p>
+      </form>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel__head">E-posta</div>
+    <div class="panel__body">
+
+      <p class="prose"><code>{{ user.email }}</code></p>
+      <p class="lede">
+        E-posta yalnızca giriş içindir. Sıralamada, laboratuvarlarda ve başka
+        hiçbir kullanıcının göreceği yerde yayımlanmaz. v1'de değiştirilemez.
+      </p>
+    </div>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block script %}<script src="/static/js/ayarlar.js"></script>{% endblock %}

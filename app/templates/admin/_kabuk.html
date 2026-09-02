@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block baslik %}Yönetim · Yıldız Academy{% endblock %}</title>
+<link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body class="on-night">
+<div class="shell">
+  <aside class="side">
+    <div class="side__brand">Yönetim<small>Yıldız Academy</small></div>
+
+    <nav class="side__group">
+      <p class="side__label">Panel</p>
+      <a class="navlink" href="/academy/admin">Genel</a>
+      <a class="navlink" href="/academy/admin/icerik">İçerik</a>
+      <a class="navlink" href="/academy/admin/kullanicilar">Kullanıcılar</a>
+    </nav>
+
+    <nav class="side__group">
+      <p class="side__label">Oturum</p>
+      <form method="post" action="/academy/admin/cikis">
+        <button class="btn btn--quiet" type="submit">Çıkış</button>
+      </form>
+    </nav>
+
+    <div class="side__foot"><a class="navlink" href="/">Siteye dön</a></div>
+  </aside>
+
+  <main class="main">
+    {% block govde %}{% endblock %}
+  </main>
+</div>
+
+<script>
+  document.querySelectorAll("form[data-onay]").forEach(function (form) {
+    form.addEventListener("submit", function (event) {
+      if (!confirm(form.dataset.onay)) event.preventDefault();
+    });
+  });
+</script>
+</body>
+</html>

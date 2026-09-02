@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratuvar · Yıldız Academy</title>
+<link rel="icon" type="image/png" sizes="64x64" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../static/css/base.css">
+<style>
+@font-face{
+  font-family:'Stokeda';
+  src:url('../../static/fonts/stokeda.woff2') format('woff2');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+:root{
+  --edge:clamp(18px,3vw,40px);
+  --gap:clamp(16px,2vw,26px);
+  --yan:250px;
+}
+
+body{background:var(--primitive-color-night-900)}
+
+.wrap{width:100%;max-width:1240px;margin:0 auto;padding-inline:var(--edge)}
+
+h1,h2,h3{
+  font-family:'Stokeda',var(--primitive-fontFamily-text);
+  font-weight:400;
+  letter-spacing:var(--primitive-letterSpacing-normal);
+}
+
+.shell{display:grid;grid-template-columns:var(--yan) 1fr;min-height:100svh}
+
+.yan{
+  position:sticky;
+  top:0;
+  height:100svh;
+  display:flex;
+  flex-direction:column;
+  gap:var(--primitive-spacing-6);
+  padding:var(--primitive-spacing-6) var(--primitive-spacing-5);
+  background:var(--primitive-color-night-950);
+  border-right:var(--primitive-border-hairline) solid var(--color-rule);
+}
+.brand{display:flex;align-items:center;gap:var(--primitive-spacing-3);text-decoration:none;color:inherit}
+.brand img{width:32px;height:32px;flex:none}
+.brand b{
+  font-family:'Stokeda',var(--primitive-fontFamily-text);
+  font-weight:400;
+  font-size:1.15rem;
+  line-height:1.1;
+}
+
+.yan__grup{display:flex;flex-direction:column;gap:2px}
+.yan__k{
+  padding:0 var(--primitive-spacing-3) var(--primitive-spacing-2);
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  letter-spacing:var(--primitive-letterSpacing-label);
+  text-transform:uppercase;
+  color:var(--color-ink-muted);
+  opacity:.7;
+}
+.yan a{
+  display:flex;
+  align-items:center;
+  gap:var(--primitive-spacing-3);
+  padding:10px var(--primitive-spacing-3);
+  border-radius:3px;
+  border-left:2px solid transparent;
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-sm);
+  font-weight:600;
+  color:var(--color-ink-soft);
+  text-decoration:none;
+}
+.yan a svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.5}
+.yan a:hover{color:var(--color-ink);background:color-mix(in srgb, var(--primitive-color-white) 5%, transparent)}
+.yan a[aria-current]{
+  color:var(--color-ink);
+  background:color-mix(in srgb, var(--primitive-color-white) 7%, transparent);
+  border-left-color:var(--color-accent);
+}
+.yan a[aria-current] svg{color:var(--color-accent)}
+.yan a .sayi{
+  margin-left:auto;
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+}
+
+.yan__alt{margin-top:auto;padding-top:var(--primitive-spacing-5);border-top:var(--primitive-border-hairline) solid var(--color-rule)}
+.who{display:flex;align-items:center;gap:var(--primitive-spacing-3);padding:var(--primitive-spacing-2) var(--primitive-spacing-3)}
+.avatar{
+  width:32px;
+  height:32px;
+  flex:none;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  background:var(--color-accent);
+  color:var(--color-accent-ink);
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-sm);
+  font-weight:700;
+}
+.who__ad{display:block;font-family:var(--primitive-fontFamily-display);font-size:var(--primitive-fontSize-sm);font-weight:600;line-height:1.2}
+.who__rol{display:block;font-family:var(--type-data);font-size:var(--primitive-fontSize-xs);color:var(--color-ink-muted)}
+
+.hi{padding-block:clamp(30px,5vh,52px) clamp(20px,3vh,30px)}
+.hi h1{margin:0 0 var(--primitive-spacing-2);font-size:clamp(1.9rem,3.4vw,2.6rem);line-height:1.08}
+.hi p{margin:0;color:var(--color-ink-soft);max-width:56ch}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,178px),1fr));
+  gap:var(--gap);
+  margin-bottom:clamp(28px,4vh,44px);
+}
+.stat{
+  padding:var(--primitive-spacing-5);
+  background:var(--color-surface-raised);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+}
+.stat__k{
+  display:block;
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  letter-spacing:var(--primitive-letterSpacing-label);
+  text-transform:uppercase;
+  color:var(--color-ink-muted);
+  margin-bottom:var(--primitive-spacing-3);
+}
+.stat__v{
+  display:block;
+  font-family:var(--primitive-fontFamily-display);
+  font-size:clamp(1.7rem,3vw,2.2rem);
+  font-weight:600;
+  line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.stat__v small{font-size:.5em;font-weight:500;color:var(--color-ink-muted);margin-left:.35em}
+.bar{
+  display:block;
+  height:4px;
+  margin-top:var(--primitive-spacing-4);
+  background:var(--color-surface-sunk);
+  overflow:hidden;
+}
+.bar i{display:block;height:100%;background:var(--color-accent)}
+
+.blok{margin-bottom:clamp(32px,5vh,56px)}
+.blok__head{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:var(--primitive-spacing-4);
+  margin-bottom:var(--primitive-spacing-5);
+  padding-bottom:var(--primitive-spacing-3);
+  border-bottom:var(--primitive-border-hairline) solid var(--color-rule);
+}
+.blok__head h2{margin:0;font-size:clamp(1.35rem,2.2vw,1.7rem)}
+.blok__head a{
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-sm);
+  font-weight:600;
+  color:var(--color-accent);
+  text-decoration:none;
+  white-space:nowrap;
+}
+.blok__head a:hover{text-decoration:underline;text-underline-offset:3px}
+
+.devam{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:var(--gap);
+  align-items:center;
+  padding:clamp(20px,2.6vw,30px);
+  background:var(--color-surface-raised);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+  border-left:3px solid var(--color-accent);
+}
+.devam h3{margin:0 0 var(--primitive-spacing-2);font-size:clamp(1.3rem,2.2vw,1.65rem)}
+.devam p{margin:0 0 var(--primitive-spacing-4);color:var(--color-ink-soft);font-size:var(--primitive-fontSize-sm)}
+.devam__meta{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:var(--primitive-spacing-3);
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+}
+.devam .btn{white-space:nowrap}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,268px),1fr));
+  gap:var(--gap);
+}
+.lab{
+  display:flex;
+  flex-direction:column;
+  gap:var(--primitive-spacing-3);
+  padding:var(--primitive-spacing-5);
+  background:var(--color-surface-raised);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+  border-top:3px solid var(--color-surface-sunk);
+  text-decoration:none;
+  color:inherit;
+  transition:border-top-color .2s ease,transform .2s ease;
+}
+.lab:hover{border-top-color:var(--color-accent);transform:translateY(-2px)}
+.lab__row{display:flex;align-items:center;justify-content:space-between;gap:var(--primitive-spacing-3)}
+.lab h3{margin:0;font-size:var(--primitive-fontSize-xl);line-height:1.15}
+.lab p{margin:0;font-size:var(--primitive-fontSize-sm);color:var(--color-ink-soft)}
+.lab__foot{
+  margin-top:auto;
+  padding-top:var(--primitive-spacing-4);
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:var(--primitive-spacing-3);
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+}
+.durum{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+.durum::before{content:"";width:7px;height:7px;border-radius:999px;background:currentColor}
+.durum[data-d="bitti"]{color:var(--color-correct)}
+.durum[data-d="devam"]{color:var(--color-hint)}
+.durum[data-d="yeni"]{color:var(--color-ink-muted)}
+
+.dersler{display:flex;flex-direction:column}
+.ders{
+  display:flex;
+  align-items:center;
+  gap:var(--primitive-spacing-4);
+  padding-block:var(--primitive-spacing-4);
+  border-bottom:var(--primitive-border-hairline) solid var(--color-rule);
+  text-decoration:none;
+  color:inherit;
+}
+.ders:hover .ders__t{color:var(--color-accent)}
+.ders__n{
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+  min-width:2ch;
+}
+.ders__t{font-family:var(--primitive-fontFamily-display);font-weight:600;font-size:var(--primitive-fontSize-base)}
+.ders__meta{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:var(--primitive-spacing-4);
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+  white-space:nowrap;
+}
+.okundu{color:var(--color-correct)}
+
+.foot{
+  border-top:var(--primitive-border-hairline) solid var(--color-rule);
+  padding-block:clamp(20px,3vh,30px);
+  margin-top:clamp(30px,5vh,60px);
+}
+.foot__in{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:var(--primitive-spacing-4);
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+}
+
+@media (max-width:1000px){
+  .shell{grid-template-columns:1fr}
+  .yan{
+    position:sticky;
+    top:0;
+    z-index:40;
+    height:auto;
+    flex-direction:row;
+    align-items:center;
+    gap:var(--primitive-spacing-4);
+    padding:var(--primitive-spacing-3) var(--edge);
+    border-right:0;
+    border-bottom:var(--primitive-border-hairline) solid var(--color-rule);
+    overflow-x:auto;
+  }
+  .yan__k,.who__rol{display:none}
+  .yan__grup{flex-direction:row;gap:var(--primitive-spacing-2)}
+  .yan a{border-left:0;border-bottom:2px solid transparent;white-space:nowrap}
+  .yan a[aria-current]{border-left-color:transparent;border-bottom-color:var(--color-accent)}
+  .yan a .sayi{display:none}
+  .yan__alt{margin-top:0;margin-left:auto;padding-top:0;border-top:0}
+  .brand b{display:none}
+}
+
+@media (max-width:640px){
+  .devam{grid-template-columns:1fr}
+  .who__ad{display:none}
+}
+
+.sira{display:flex;flex-direction:column}
+.sira__r{
+  display:grid;
+  grid-template-columns:34px 1fr auto;
+  align-items:center;
+  gap:var(--primitive-spacing-4);
+  padding:var(--primitive-spacing-4) var(--primitive-spacing-4);
+  border-bottom:var(--primitive-border-hairline) solid var(--color-rule);
+}
+.sira__r:first-child{border-top:var(--primitive-border-hairline) solid var(--color-rule)}
+.sira__n{
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-lg);
+  font-weight:700;
+  color:var(--color-ink-muted);
+  text-align:center;
+  font-variant-numeric:tabular-nums;
+}
+.sira__r[data-yer="1"] .sira__n{color:var(--color-accent);font-size:1.6rem}
+.sira__r[data-yer="2"] .sira__n,.sira__r[data-yer="3"] .sira__n{color:var(--color-ink-soft)}
+.sira__ad{font-family:var(--primitive-fontFamily-display);font-weight:600}
+.sira__alt{
+  display:block;
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+  margin-top:2px;
+}
+.sira__p{
+  font-family:var(--primitive-fontFamily-display);
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.sira__r[data-ben]{
+  background:color-mix(in srgb, var(--primitive-color-gold-400) 9%, transparent);
+  border-left:2px solid var(--color-accent);
+}
+.sira__ben{
+  margin-top:var(--primitive-spacing-4);
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+}
+
+.rozetler{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,164px),1fr));
+  gap:var(--gap);
+}
+.rozet{
+  padding:var(--primitive-spacing-4);
+  background:var(--color-surface-raised);
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+  text-align:center;
+}
+.rozet svg{width:26px;height:26px;stroke:var(--color-accent);fill:none;stroke-width:1.4;margin-bottom:var(--primitive-spacing-3)}
+.rozet b{display:block;font-family:var(--primitive-fontFamily-display);font-size:var(--primitive-fontSize-sm);font-weight:600}
+.rozet span{
+  display:block;
+  margin-top:4px;
+  font-family:var(--type-data);
+  font-size:var(--primitive-fontSize-xs);
+  color:var(--color-ink-muted);
+}
+.rozet[data-kilit] {opacity:.42}
+.rozet[data-kilit] svg{stroke:var(--color-ink-muted)}
+
+.filtre{
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--primitive-spacing-2);
+  margin-bottom:clamp(20px,3vh,32px);
+}
+.filtre button{
+  padding:8px var(--primitive-spacing-4);
+  background:none;
+  border:var(--primitive-border-hairline) solid var(--color-rule);
+  border-radius:999px;
+  color:var(--color-ink-soft);
+  font-family:var(--primitive-fontFamily-display);
+  font-size:var(--primitive-fontSize-sm);
+  font-weight:600;
+  cursor:var(--cursor-default),pointer;
+}
+.filtre button:hover{color:var(--color-ink);border-color:var(--color-ink-muted)}
+.filtre button[aria-pressed="true"]{
+  background:var(--color-accent);
+  border-color:var(--color-accent);
+  color:var(--color-accent-ink);
+}
+</style>
+</head>
+<body class="on-night">
+
+<div class="shell">
+
+<aside class="yan">
+  <a class="brand" href="index-hero.html">
+    <img src="img/logo.png" width="200" height="200" alt="">
+    <b>Yıldız<br>Academy</b>
+  </a>
+
+  <nav class="yan__grup" aria-label="Ana">
+    <span class="yan__k">Akademi</span>
+    <a href="dashboard.html" data-s="panel">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h7V4H4zM13 20h7v-9h-7zM4 20h7v-5H4zM13 9h7V4h-7z"/></svg>
+      Panel
+    </a>
+    <a href="kutuphane.html" data-s="kutuphane">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>
+      Kütüphane
+      <span class="sayi">6</span>
+    </a>
+    <a href="laboratuvar.html" data-s="laboratuvar" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3v6.2L4.6 18a2 2 0 0 0 1.7 3h11.4a2 2 0 0 0 1.7-3L14 9.2V3M9 3h6M8.5 14h7"/></svg>
+      Laboratuvar
+      <span class="sayi">4</span>
+    </a>
+    <a href="#">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11M3 12h18M3 17h7"/></svg>
+      Etiketler
+    </a>
+  </nav>
+
+  <nav class="yan__grup" aria-label="Hesap">
+    <span class="yan__k">Hesap</span>
+    <a href="#">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 8 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0-1.1-2.7H2a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 3.7 8a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H8a1.6 1.6 0 0 0 1-1.5V2a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V8a1.6 1.6 0 0 0 1.5 1H22a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>
+      Ayarlar
+    </a>
+    <a href="#">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      Çıkış yap
+    </a>
+  </nav>
+
+  <div class="yan__alt">
+    <div class="who">
+      <span class="avatar" aria-hidden="true">İ</span>
+      <span>
+        <span class="who__ad">ilker</span>
+        <span class="who__rol">85 puan</span>
+      </span>
+    </div>
+  </div>
+</aside>
+
+<div class="icerik">
+
+<main>
+  <div class="wrap">
+
+    <section class="hi">
+      <h1>Laboratuvar</h1>
+      <p>Eline gerçek bir iz veriliyor. Araştırmayı kendi makinende yapıyorsun, doğrulama sunucuda oluyor.</p>
+    </section>
+
+    <div class="filtre" role="group" aria-label="Süzgeç">
+      <button type="button" aria-pressed="true">Hepsi</button>
+      <button type="button" aria-pressed="false">Başlanmadı</button>
+      <button type="button" aria-pressed="false">Devam ediyor</button>
+      <button type="button" aria-pressed="false">Bitti</button>
+    </div>
+
+    <section class="blok">
+      <div class="grid">
+
+        <a class="lab" href="#">
+          <div class="lab__row">
+            <span class="durum" data-d="devam">Devam ediyor</span>
+            <span class="chip" data-difficulty="hard">zor</span>
+          </div>
+          <h3>Bir onion gönderisinin sahibi</h3>
+          <p>Bir sızıntı forumundaki tek gönderinin arkasındaki takma adı bul.</p>
+          <div class="lab__foot">
+            <span>4 adım</span>
+            <span>25 / 60 puan</span>
+          </div>
+        </a>
+
+        <a class="lab" href="#">
+          <div class="lab__row">
+            <span class="durum" data-d="bitti">Bitti</span>
+            <span class="chip" data-difficulty="medium">orta</span>
+          </div>
+          <h3>Bir hash'in izini sürmek</h3>
+          <p>Elindeki dosya özetinin hangi aileye ait olduğunu bul.</p>
+          <div class="lab__foot">
+            <span>2 adım</span>
+            <span>35 / 35 puan</span>
+          </div>
+        </a>
+
+        <a class="lab" href="#">
+          <div class="lab__row">
+            <span class="durum" data-d="bitti">Bitti</span>
+            <span class="chip" data-difficulty="easy">kolay</span>
+          </div>
+          <h3>Alan adının arkasındaki kayıt</h3>
+          <p>Bir alan adının ne zaman ve kim tarafından alındığını çıkar.</p>
+          <div class="lab__foot">
+            <span>2 adım</span>
+            <span>25 / 30 puan</span>
+          </div>
+        </a>
+
+        <a class="lab" href="#">
+          <div class="lab__row">
+            <span class="durum" data-d="yeni">Başlanmadı</span>
+            <span class="chip" data-difficulty="medium">orta</span>
+          </div>
+          <h3>Kampanyayı gruba bağlamak</h3>
+          <p>Üç göstergeden hangi APT grubuna işaret ettiğini çıkar.</p>
+          <div class="lab__foot">
+            <span>3 adım</span>
+            <span>45 puan</span>
+          </div>
+        </a>
+
+        <a class="lab" href="#">
+          <div class="lab__row">
+            <span class="durum" data-d="yeni">Başlanmadı</span>
+            <span class="chip" data-difficulty="hard">zor</span>
+          </div>
+          <h3>Sahte alan adı ağı</h3>
+          <p>Bir oltalama alan adından yola çıkıp aynı ağdaki diğerlerini bul.</p>
+          <div class="lab__foot">
+            <span>4 adım</span>
+            <span>55 puan</span>
+          </div>
+        </a>
+
+        <a class="lab" href="#">
+          <div class="lab__row">
+            <span class="durum" data-d="yeni">Başlanmadı</span>
+            <span class="chip" data-difficulty="easy">kolay</span>
+          </div>
+          <h3>Bir görselin çekildiği yer</h3>
+          <p>Üstveriden ve görüntüdeki ipuçlarından konumu daralt.</p>
+          <div class="lab__foot">
+            <span>2 adım</span>
+            <span>25 puan</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span>Yıldız CTI &middot; Tüm hakları saklıdır &middot; 2026</span>
+    <a href="#" style="color:inherit;text-decoration:none">Çıkış yap</a>
+  </div>
+</footer>
+
+</div>
+</div>
+
+</body>
+</html>
