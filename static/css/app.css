@@ -412,6 +412,7 @@ body[data-side-suruk] *{cursor:col-resize !important}
   display:block;
   transition:transform var(--t-norm),border-color var(--t-norm);
 }
+.labcard[hidden]{display:none}
 .labcard:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.18);color:inherit}
 .labcard[data-state="now"]{border-color:color-mix(in srgb,var(--acc) 55%,var(--line));box-shadow:0 0 40px var(--acc-glow)}
 .labcard[data-state="locked"]{opacity:.55}

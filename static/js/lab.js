@@ -52,6 +52,9 @@ async function ipucuAc(index) {
   const puan = adimEl(index).querySelector("[data-puan]");
   if (puan) puan.textContent = veri.yeni_puan + " puan (ipucu düştü)";
 
+  const sayac = document.querySelector("[data-ipucu-sayac]");
+  if (sayac) sayac.textContent = String(Number(sayac.textContent) + 1);
+
   if (veri.kalan_ipucu === 0) {
     const dugme = adimEl(index).querySelector("button[onclick^='ipucuAc']");
     if (dugme) dugme.remove();

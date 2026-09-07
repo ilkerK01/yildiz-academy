@@ -118,7 +118,7 @@
         <div class="facts">
           {{ durum.earned_points }} / {{ lab.total_points }} puan<br>
           {{ cozulen }} / {{ adimlar|length }} adım<br>
-          <b>{{ acik_ipucu }}</b> ipucu kullanıldı
+          <b data-ipucu-sayac>{{ acik_ipucu }}</b> ipucu kullanıldı
         </div>
       </div>
     </div>
@@ -140,4 +140,4 @@
 </div>
 {% endblock %}
 
-{% block script %}<script src="/static/js/lab.js"></script>{% endblock %}
+{% block script %}<script src="/static/js/lab.js?v={{ statik_surum('js/lab.js') }}"></script>{% endblock %}
