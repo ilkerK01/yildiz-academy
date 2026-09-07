@@ -12,11 +12,6 @@ templates.env.globals["zorluk_sinif"] = lambda d: ZORLUK_SINIF.get(d, "easy")
 
 
 def _statik_surum(yol: str) -> str:
-    """Statik dosyanın değişim zamanına göre bir sürüm damgası döner.
-
-    Böylece CSS/JS güncellendiğinde tarayıcı eski, önbelleğe alınmış
-    sürümü değil yeni dosyayı çeker.
-    """
     try:
         return str(int((STATIC_DIR / yol).stat().st_mtime))
     except OSError:
