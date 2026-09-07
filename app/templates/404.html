@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block baslik %}Bulunamadı · Yıldız Academy{% endblock %}
 {% macro icerik() %}
 <section class="acilis">
+  <div class="giris__cmd"><span class="p">$</span><span class="typed">cat {{ request.url.path }}</span></div>
   <h1>404</h1>
   <p class="lede">Aradığın sayfa burada değil.</p>
   <a class="btn" href="/">Başa dön</a>

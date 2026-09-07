@@ -1,34 +1,49 @@
 {% extends "base.html" %}
-{% block baslik %}Arama · Yıldız Academy{% endblock %}
 
 {% block govde %}
-<div class="main__head"><h1>Arama</h1></div>
-
-<form class="form" method="get" action="/ara" style="max-width:520px;margin-bottom:28px">
+<div class="main__head">
   <div>
-    <label for="q">Ne arıyorsun?</label>
-    <input id="q" name="q" value="{{ q }}" placeholder="hash, apt, onion..." autofocus>
+    <h1>Arama</h1>
+    <p class="lede">Ders ve lab başlıklarında, özetlerinde ara.</p>
   </div>
-  <button class="btn" type="submit">Ara</button>
-</form>
+</div>
+
+<section class="panel" style="max-width:640px;margin-bottom:32px">
+  <div class="panel__head">~/ara{% if q %}?q={{ q }}{% endif %}</div>
+  <div class="panel__body">
+    <form class="form" method="get" action="/ara" style="max-width:none">
+      <div class="giris__cmd"><span class="p">$</span><span>grep -ri</span></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <input id="q" name="q" value="{{ q }}" placeholder="hash, apt, onion..." autofocus style="flex:1;min-width:200px">
+        <button class="btn" type="submit">Ara</button>
+      </div>
+    </form>
+  </div>
+</section>
 
 {% if q and q|length < 2 %}
   <p class="bilgi">En az iki karakter yaz.</p>
 {% elif q %}
-  <p class="label">{{ dersler|length + lablar|length }} sonuç</p>
-  <div class="grid">
+  <div class="section-head" style="margin-top:0">
+    <h2>Sonuçlar</h2>
+    <span class="label">{{ dersler|length + lablar|length }} sonuç</span>
+  </div>
+  <div class="grid grid--2 rise" style="margin-top:20px">
   {% for ders in dersler %}
     <a class="rowcard" href="/kutuphane/{{ ders.slug }}">
       <h3>{{ ders.title }}</h3><p>{{ ders.summary }}</p>
-      <div class="rowcard__meta"><span class="chip">ders</span></div>
+      <div class="rowcard__meta"><span class="chip">ders</span><span>{{ ders.reading_minutes }} dk</span></div>
     </a>
   {% endfor %}
   {% for lab in lablar %}
     <a class="rowcard" href="/lab/{{ lab.slug }}">
       <h3>{{ lab.title }}</h3><p>{{ lab.summary }}</p>
-      <div class="rowcard__meta"><span class="chip">lab</span></div>
+      <div class="rowcard__meta"><span class="chip chip--acc">lab</span><span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ lab.difficulty }}</span><span>{{ lab.total_points }} puan</span></div>
     </a>
   {% endfor %}
   </div>
+  {% if not dersler and not lablar %}
+    <p class="lede" style="margin-top:20px">Hiçbir şey eşleşmedi.</p>
+  {% endif %}
 {% endif %}
 {% endblock %}

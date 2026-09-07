@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block baslik %}Hakkında · Yıldız Academy{% endblock %}
 
 {% macro icerik() %}
-<article class="prose" style="max-width:65ch;margin:0 auto;padding:60px 24px">
-  <h1>Hakkında</h1>
+<article class="prose rise" style="max-width:66ch;margin:0 auto;padding:60px 24px">
+  <span class="label">~/hakkinda</span>
+  <h1 style="margin:12px 0 24px">Hakkında</h1>
   <p>Yıldız Academy, siber tehdit istihbaratı öğrenmek isteyenler için kurulmuş
      bir öğrenme platformudur. Yıldız CTI marka ailesinin parçasıdır.</p>
   <p>İki yarısı vardır ve bunlar bilerek ayrı durur: <strong>Kütüphane</strong>
@@ -11,9 +11,9 @@
      egzersizlerini barındırır. Birbirine yalnızca etiketle bağlanırlar.</p>
   <p>Laboratuvarlarda cevap doğrulaması sunucuda yapılır. Doğru cevap hiçbir
      koşulda sayfa kaynağına girmez.</p>
-  <p><a href="/">Ana sayfa</a></p>
+  <p><a class="btn btn--quiet btn--sm" href="/">← Ana sayfa</a></p>
 </article>
 {% endmacro %}
 
 {% block govde %}{{ icerik() }}{% endblock %}
-{% block anonim %}{{ icerik() }}{% endblock %}
+{% block anonim %}<div class="page">{{ icerik() }}</div>{% endblock %}

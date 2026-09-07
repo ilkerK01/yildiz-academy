@@ -1,30 +1,47 @@
+{% from "base.html" import fx %}
 <!doctype html>
 <html lang="tr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Yönetim girişi · Yıldız Academy</title>
+<title>Yıldız Academy</title>
+<link rel="icon" type="image/png" sizes="64x64" href="/static/img/favicon.png">
+<link rel="apple-touch-icon" href="/static/img/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
 </head>
-<body class="on-night">
-<section class="acilis">
-  <h1>Yönetim</h1>
-  <p class="lede">Bu kapı akademi hesaplarından ayrıdır.</p>
+<body>
+{{ fx() }}
+<section class="giris">
+  <a class="logo giris__logo" href="/">
+    <span class="logo__mark"></span>
+    <span class="logo__text">Yıldız<br>Academy</span>
+  </a>
 
-  <form class="form" method="post" action="/academy/admin/giris" style="text-align:left">
-    <div>
-      <label for="kullanici">Kullanıcı adı</label>
-      <input id="kullanici" name="kullanici" autocomplete="username" required autofocus>
+  <div class="giris__card">
+    <div class="panel__head">~/academy/admin</div>
+    <div class="giris__body">
+      <div class="giris__cmd"><span class="p">$</span><span class="typed">sudo -i</span></div>
+      <div class="giris__title">Yönetim.</div>
+      <p class="lede" style="font-size:15px;margin:0">Bu kapı akademi hesaplarından ayrıdır.</p>
+      <form class="form" method="post" action="/academy/admin/giris">
+        <div>
+          <label for="kullanici">Kullanıcı adı</label>
+          <input id="kullanici" name="kullanici" autocomplete="username" required autofocus>
+        </div>
+        <div>
+          <label for="parola">Parola</label>
+          <input id="parola" name="parola" type="password" autocomplete="current-password" required>
+        </div>
+        {% if hata %}<div class="uyari">{{ hata }}</div>{% endif %}
+        <button class="btn btn--lg btn--block" type="submit">Gir →</button>
+      </form>
+      <div class="giris__alt"><span></span><a href="/">siteye dön</a></div>
     </div>
-    <div>
-      <label for="parola">Parola</label>
-      <input id="parola" name="parola" type="password" autocomplete="current-password" required>
-    </div>
-    {% if hata %}<div class="uyari">{{ hata }}</div>{% endif %}
-    <button class="btn" type="submit">Gir</button>
-  </form>
-
-  <p class="label"><a href="/">Siteye dön</a></p>
+  </div>
 </section>
+<script src="/static/js/app.js"></script>
 </body>
 </html>

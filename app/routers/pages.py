@@ -93,6 +93,7 @@ def panel(request: Request, db: DbSession = Depends(get_db), user: User = Depend
         siralama=ranking.leaderboard(db, limit=10),
         kendi_sira=ranking.own_rank(db, user.id),
         rozetler=ranking.badges(db, user.id),
+        devam=progress.active_lab(db, user.id),
     )
 
 

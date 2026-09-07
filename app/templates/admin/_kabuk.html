@@ -1,31 +1,54 @@
+{% from "base.html" import ikon, fx %}
 <!doctype html>
 <html lang="tr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{% block baslik %}Yönetim · Yıldız Academy{% endblock %}</title>
+<title>Yıldız Academy</title>
+<link rel="icon" type="image/png" sizes="64x64" href="/static/img/favicon.png">
+<link rel="apple-touch-icon" href="/static/img/favicon-180.png">
+<script>
+  try {
+    var t = localStorage.getItem("ya-tema"), e = localStorage.getItem("ya-efekt");
+    if (t) document.documentElement.setAttribute("data-tema", t);
+    if (e) document.documentElement.setAttribute("data-efekt", e);
+  } catch (_) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css">
 </head>
-<body class="on-night">
+<body>
+{{ fx() }}
 <div class="shell">
   <aside class="side">
-    <div class="side__brand">Yönetim<small>Yıldız Academy</small></div>
+    <a class="logo side__brand" href="/academy/admin">
+      <img class="logo__mark" src="/static/img/logo.png" alt="" width="200" height="200">
+      <span class="logo__text">Yönetim<br>Yıldız Academy</span>
+    </a>
 
     <nav class="side__group">
       <p class="side__label">Panel</p>
-      <a class="navlink" href="/academy/admin">Genel</a>
-      <a class="navlink" href="/academy/admin/icerik">İçerik</a>
-      <a class="navlink" href="/academy/admin/kullanicilar">Kullanıcılar</a>
+      <a class="navlink" href="/academy/admin" {% if request.url.path == '/academy/admin' %}aria-current="page"{% endif %}>{{ ikon("panel") }}<span>Genel</span></a>
+      <a class="navlink" href="/academy/admin/icerik" {% if request.url.path.startswith('/academy/admin/icerik') %}aria-current="page"{% endif %}>{{ ikon("kutuphane") }}<span>İçerik</span></a>
+      <a class="navlink" href="/academy/admin/kullanicilar" {% if request.url.path.startswith('/academy/admin/kullanicilar') %}aria-current="page"{% endif %}><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><circle cx="6" cy="5.5" r="2.4"/><path d="M1.8 13.4c.5-2.2 2.2-3.4 4.2-3.4s3.7 1.2 4.2 3.4"/><path d="M11 3.4a2.2 2.2 0 0 1 0 4.2M12.8 13.4c-.2-1.1-.7-2-1.4-2.6"/></svg><span>Kullanıcılar</span></a>
     </nav>
 
     <nav class="side__group">
       <p class="side__label">Oturum</p>
+      <a class="navlink" href="/">{{ ikon("ara") }}<span>Siteye dön</span></a>
       <form method="post" action="/academy/admin/cikis">
-        <button class="btn btn--quiet" type="submit">Çıkış</button>
+        <button class="navlink" type="submit">{{ ikon("cikis") }}<span>Çıkış</span></button>
       </form>
     </nav>
 
-    <div class="side__foot"><a class="navlink" href="/">Siteye dön</a></div>
+    <div class="side__foot">
+      <span class="avatar">y</span>
+      <div><b>Yönetici</b><span>~/academy/admin</span></div>
+    </div>
+    <button class="side__resize" data-side-resize type="button"
+            aria-label="Menü genişliğini ayarla" title="Sürükle, çift tıkla sıfırla"></button>
   </aside>
 
   <main class="main">
@@ -33,6 +56,7 @@
   </main>
 </div>
 
+<script src="/static/js/app.js"></script>
 <script>
   document.querySelectorAll("form[data-onay]").forEach(function (form) {
     form.addEventListener("submit", function (event) {

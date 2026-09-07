@@ -1,5 +1,4 @@
 {% extends "admin/_kabuk.html" %}
-{% block baslik %}Yönetim · Yıldız Academy{% endblock %}
 
 {% block govde %}
 <div class="main__head"><h1>Genel durum</h1></div>
@@ -20,8 +19,8 @@
       ayrıştırma mantığından geçer.
     </p>
     <p class="lede">
-      Admin parolası <code>.env</code> dosyasındaki <code>ADMIN_PASS</code>
-      değeridir. Yayına çıkmadan önce değiştirilecek.
+      Yönetici hesapları <code>admin_user</code> tablosunda tutulur. Yeni hesap
+      açmak veya parola değiştirmek için <code>hesap.py</code> kullanılır.
     </p>
   </div>
 </section>

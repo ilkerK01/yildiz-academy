@@ -12,7 +12,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session as DbSession
 
 from app import config
-from app.models import Session, User, now
+from app.models import AdminUser, Session, User, now
 
 _hasher = PasswordHasher()
 
@@ -129,12 +129,27 @@ def clear_session_cookie(response, *, kind: str) -> None:
     response.delete_cookie(name, path="/")
 
 
-def check_admin_credentials(username: str, password: str) -> bool:
-    if not config.ADMIN_PASS:
-        return False
-    user_ok = secrets.compare_digest(username.strip(), config.ADMIN_USER)
-    pass_ok = secrets.compare_digest(password, config.ADMIN_PASS)
-    return user_ok and pass_ok
+def verify_admin(db: DbSession, username: str, password: str) -> AdminUser | None:
+    admin = db.scalar(
+        select(AdminUser).where(
+            AdminUser.username == username.strip(), AdminUser.is_active.is_(True)
+        )
+    )
+    if admin is None:
+        _hasher.hash(password)
+        return None
+    if not verify_password(admin.password_hash, password):
+        return None
+    admin.last_login_at = now()
+    db.commit()
+    return admin
+
+
+def create_admin(db: DbSession, username: str, password: str) -> AdminUser:
+    admin = AdminUser(username=username.strip(), password_hash=hash_password(password))
+    db.add(admin)
+    db.commit()
+    return admin
 
 
 _hits: dict[str, deque[float]] = defaultdict(deque)

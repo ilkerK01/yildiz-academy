@@ -62,7 +62,7 @@ def giris(
             hata="Çok fazla deneme. Bir dakika sonra tekrar dene.",
         )
 
-    if not security.check_admin_credentials(kullanici, parola):
+    if security.verify_admin(db, kullanici, parola) is None:
         return page(request, "admin/giris.html", hata="Kullanıcı adı veya parola hatalı.")
 
     session = security.create_session(db, kind="admin")

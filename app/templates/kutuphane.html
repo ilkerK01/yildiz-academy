@@ -1,27 +1,39 @@
 {% extends "base.html" %}
-{% block baslik %}Kütüphane · Yıldız Academy{% endblock %}
 
 {% block govde %}
+{% set okunan = dersler|selectattr("id", "in", okunanlar)|list|length %}
+{% set kalan_dk = dersler|rejectattr("id", "in", okunanlar)|map(attribute="reading_minutes")|sum %}
 <div class="main__head">
-  <h1>Kütüphane</h1>
+  <div>
+    <h1>Kütüphane</h1>
+    <p class="lede">
+      {% if not dersler %}Henüz ders yok. Admin panelinden içerik yükleyebilirsin.
+      {% elif okunan == dersler|length %}{{ dersler|length }} dersin hepsini okudun.
+      {% else %}{{ dersler|length }} dersin {{ okunan }} tanesini okudun. Kalanı yaklaşık {{ kalan_dk }} dakika.{% endif %}
+    </p>
+  </div>
   <span class="label">{{ dersler|length }} ders</span>
 </div>
 
-{% if not dersler %}
-  <p class="lede">Henüz ders yok. Admin panelinden içerik yükleyebilirsin.</p>
-{% endif %}
-
-<div class="grid">
+<div class="lessongrid rise">
 {% for ders in dersler %}
-  <a class="rowcard" href="/kutuphane/{{ ders.slug }}">
-    <h3>{{ ders.title }}</h3>
-    <p>{{ ders.summary }}</p>
-    <div class="rowcard__meta">
-      <span>{{ ders.reading_minutes }} dk</span>
-      {% for etiket in etiketler.get(ders.id, []) %}
-        <span class="chip">{{ etiket.name }}</span>
-      {% endfor %}
-      {% if ders.id in okunanlar %}<span class="badge-done">okundu</span>{% endif %}
+  {% set ders_etiketleri = etiketler.get(ders.id, []) %}
+  <a class="lessoncard" href="/kutuphane/{{ ders.slug }}">
+    <div class="lessoncard__cover">
+      <span class="tag">{{ ders_etiketleri[0].name if ders_etiketleri else "ders" }}</span>
+      <span class="idx">{{ "%02d"|format(loop.index) }}</span>
+    </div>
+    <div class="lessoncard__body">
+      <div class="lessoncard__title">{{ ders.title }}</div>
+      <div class="lessoncard__desc">{{ ders.summary }}</div>
+      <div class="lessoncard__foot">
+        <span>{{ ders.reading_minutes }} dk</span>
+        {% if ders.id in okunanlar %}
+          <span class="status status--ok">Okundu</span>
+        {% else %}
+          <span class="status">Başla →</span>
+        {% endif %}
+      </div>
     </div>
   </a>
 {% endfor %}

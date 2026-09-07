@@ -28,9 +28,6 @@ CONTENT_DIR = BASE_DIR / "content"
 
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'yildiz.db'}")
 
-ADMIN_USER = os.getenv("ADMIN_USER", "yildiz")
-ADMIN_PASS = os.getenv("ADMIN_PASS", "")
-
 USER_COOKIE = "ya_oturum"
 ADMIN_COOKIE = "ya_admin"
 COOKIE_SECURE = _bool("COOKIE_SECURE", "0")

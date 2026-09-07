@@ -161,3 +161,29 @@ def user_stats(db: DbSession, user_id: int) -> dict:
         "okunan_ders": int(read_lessons or 0),
         "kullanilan_ipucu": int(hints_used or 0),
     }
+
+
+def active_lab(db: DbSession, user_id: int) -> dict | None:
+    rows = db.scalars(
+        select(LabProgress)
+        .where(LabProgress.user_id == user_id, LabProgress.status == "basladi")
+        .order_by(LabProgress.started_at.desc())
+    ).all()
+    for row in rows:
+        lab = db.get(Lab, row.lab_id)
+        if lab is None or not lab.published or not lab.steps:
+            continue
+        step_rows = get_step_rows(db, user_id, lab)
+        solved = sum(1 for r in step_rows.values() if r.solved)
+        hints = sum(r.hints_used for r in step_rows.values())
+        if solved == 0 and hints == 0:
+            continue
+        return {
+            "lab": lab,
+            "cozulen": solved,
+            "toplam": len(lab.steps),
+            "aktif": min(current_step_index(lab, step_rows), len(lab.steps)),
+            "puan": row.earned_points,
+            "ipucu": hints,
+        }
+    return None

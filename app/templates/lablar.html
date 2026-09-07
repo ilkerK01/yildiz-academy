@@ -1,39 +1,86 @@
 {% extends "base.html" %}
-{% block baslik %}Laboratuvar · Yıldız Academy{% endblock %}
 
 {% block govde %}
+{% set biten = durumlar.values()|selectattr("status", "equalto", "tamamlandi")|list|length %}
 <div class="main__head">
-  <h1>Laboratuvar</h1>
-  <span class="label">{{ lablar|length }} lab</span>
+  <div>
+    <h1>Laboratuvarlar</h1>
+    <p class="lede">
+      {% if not lablar %}Henüz lab yok. Admin panelinden bir .yaml yükleyebilirsin.
+      {% else %}{{ lablar|length }} laboratuvar. {{ biten }} tanesi tamamlandı.{% endif %}
+    </p>
+  </div>
+  <div class="pills" data-filtre>
+    <a class="pill" href="#" data-zorluk="" aria-current="true">Hepsi</a>
+    <a class="pill" href="#" data-zorluk="kolay">Kolay</a>
+    <a class="pill" href="#" data-zorluk="orta">Orta</a>
+    <a class="pill" href="#" data-zorluk="zor">Zor</a>
+  </div>
 </div>
 
-{% if not lablar %}
-  <p class="lede">Henüz lab yok. Admin panelinden bir .yaml yükleyebilirsin.</p>
-{% endif %}
-
-<div class="grid">
+<div class="labgrid rise">
 {% for lab in lablar %}
   {% set durum = durumlar.get(lab.id) %}
-  <a class="rowcard labcard" href="/lab/{{ lab.slug }}">
-    <h3>{{ lab.title }}</h3>
-    <p>{{ lab.summary }}</p>
-    <div class="rowcard__meta">
-      <span class="chip">{{ lab.difficulty }}</span>
-      <span>{{ lab.steps|length }} adım</span>
-      <span>{{ lab.total_points }} puan</span>
-      {% for etiket in etiketler.get(lab.id, []) %}
-        <span class="chip">{{ etiket.name }}</span>
-      {% endfor %}
-      {% if durum and durum.status == 'tamamlandi' %}
-        <span class="badge-done">tamamlandı · {{ durum.earned_points }} puan</span>
-      {% elif durum and durum.status == 'pes_etti' %}
-        <span class="badge-locked">pes edildi</span>
-      {% endif %}
-      {% if durum and durum.solution_seen %}
-        <span class="badge-locked">alıştırma modu</span>
-      {% endif %}
+  {% if durum and durum.status == 'tamamlandi' %}{% set state = "done" %}
+  {% elif durum and durum.status == 'pes_etti' %}{% set state = "gaveup" %}
+  {% elif durum and durum.earned_points > 0 %}{% set state = "now" %}
+  {% else %}{% set state = "new" %}{% endif %}
+  <a class="labcard" href="/lab/{{ lab.slug }}" data-state="{{ state }}"
+     data-difficulty="{{ zorluk_sinif(lab.difficulty) }}" data-zorluk="{{ lab.difficulty }}">
+    <div class="panel__head">
+      ~/lab/{{ lab.slug }}
+      <span class="labcard__state">
+        {% if state == "done" %}Tamamlandı
+        {% elif state == "now" %}Devam ediyor
+        {% elif state == "gaveup" %}Pes edildi
+        {% else %}Yeni{% endif %}
+      </span>
+    </div>
+    <div class="labcard__body">
+      <div class="labcard__icon">{{ "%02d"|format(loop.index) }}</div>
+      <div class="labcard__main">
+        <div class="labcard__meta">
+          <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ lab.difficulty }}</span>
+          <span>{{ lab.steps|length }} adım · {{ lab.total_points }} puan</span>
+        </div>
+        <div class="labcard__title">{{ lab.title }}</div>
+        <div class="labcard__desc">{{ lab.summary }}</div>
+        <div class="labcard__progress">
+          {% set kazanilan = durum.earned_points if durum else 0 %}
+          {% set yuzde = (kazanilan * 100 // lab.total_points) if lab.total_points else 0 %}
+          <div class="bar {% if state == 'done' %}bar--ok{% endif %}"><i style="width:{{ yuzde }}%"></i></div>
+          <span>{{ kazanilan }} / {{ lab.total_points }} puan</span>
+        </div>
+        <div class="labcard__foot">
+          <span class="tags">
+            {% for etiket in etiketler.get(lab.id, []) %}<span class="chip chip--dim">{{ etiket.name }}</span>{% endfor %}
+            {% if durum and durum.solution_seen and state != "done" %}<span class="chip chip--dim">alıştırma</span>{% endif %}
+          </span>
+          <span class="labcard__cta">
+            {% if state == "done" %}Tekrar aç →
+            {% elif state == "now" %}Devam et →
+            {% else %}Başla →{% endif %}
+          </span>
+        </div>
+      </div>
     </div>
   </a>
 {% endfor %}
 </div>
+{% endblock %}
+
+{% block script %}
+<script>
+  document.querySelectorAll("[data-filtre] .pill").forEach(function (pill) {
+    pill.addEventListener("click", function (event) {
+      event.preventDefault();
+      var secim = pill.dataset.zorluk;
+      document.querySelectorAll("[data-filtre] .pill").forEach(function (p) { p.removeAttribute("aria-current"); });
+      pill.setAttribute("aria-current", "true");
+      document.querySelectorAll(".labcard").forEach(function (kart) {
+        kart.hidden = Boolean(secim) && kart.dataset.zorluk !== secim;
+      });
+    });
+  });
+</script>
 {% endblock %}

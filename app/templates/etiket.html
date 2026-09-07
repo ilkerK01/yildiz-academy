@@ -1,28 +1,39 @@
 {% extends "base.html" %}
-{% block baslik %}{{ etiket.name }} · Yıldız Academy{% endblock %}
 
 {% block govde %}
 <div class="main__head">
-  <h1>{{ etiket.name }}</h1>
-  <span class="label">{{ dersler|length }} ders · {{ lablar|length }} lab</span>
+  <div>
+    <span class="label">Etiket</span>
+    <h1>{{ etiket.name }}</h1>
+    <p class="lede">{{ dersler|length }} ders, {{ lablar|length }} lab bu etiketle işaretli.</p>
+  </div>
 </div>
 
-<div class="grid grid--2">
+<div class="grid grid--2 rise">
   <section class="panel">
-    <div class="panel__head">Dersler</div>
+    <div class="panel__head">~/kutuphane/{{ etiket.slug }}</div>
     <div class="panel__body">
       {% for ders in dersler %}
-        <a class="rowcard" href="/kutuphane/{{ ders.slug }}"><h3>{{ ders.title }}</h3></a>
+        <a class="rowcard" href="/kutuphane/{{ ders.slug }}">
+          <h3>{{ ders.title }}</h3>
+          <div class="rowcard__meta"><span>{{ ders.reading_minutes }} dk</span></div>
+        </a>
       {% else %}
         <p class="lede">Bu etikette ders yok.</p>
       {% endfor %}
     </div>
   </section>
   <section class="panel">
-    <div class="panel__head">Laboratuvarlar</div>
+    <div class="panel__head">~/lab/{{ etiket.slug }}</div>
     <div class="panel__body">
       {% for lab in lablar %}
-        <a class="rowcard" href="/lab/{{ lab.slug }}"><h3>{{ lab.title }}</h3></a>
+        <a class="rowcard" href="/lab/{{ lab.slug }}">
+          <h3>{{ lab.title }}</h3>
+          <div class="rowcard__meta">
+            <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ lab.difficulty }}</span>
+            <span>{{ lab.total_points }} puan</span>
+          </div>
+        </a>
       {% else %}
         <p class="lede">Bu etikette lab yok.</p>
       {% endfor %}
