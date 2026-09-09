@@ -20,48 +20,21 @@
 
 <div class="labgrid rise">
 {% for lab in lablar %}
-  {% set durum = durumlar.get(lab.id) %}
-  {% if durum and durum.status == 'tamamlandi' %}{% set state = "done" %}
-  {% elif durum and durum.status == 'pes_etti' %}{% set state = "gaveup" %}
-  {% elif durum and durum.earned_points > 0 %}{% set state = "now" %}
-  {% else %}{% set state = "new" %}{% endif %}
-  <a class="labcard" href="/lab/{{ lab.slug }}" data-state="{{ state }}"
+  <a class="labcard" href="/lab/{{ lab.slug }}"
      data-difficulty="{{ zorluk_sinif(lab.difficulty) }}" data-zorluk="{{ lab.difficulty }}">
-    <div class="panel__head">
-      ~/lab/{{ lab.slug }}
-      <span class="labcard__state">
-        {% if state == "done" %}Tamamlandı
-        {% elif state == "now" %}Devam ediyor
-        {% elif state == "gaveup" %}Pes edildi
-        {% else %}Yeni{% endif %}
-      </span>
+    <div class="labcard__art">
+      <img src="/static/img/lablar/{{ lab.slug }}.webp?v={{ statik_surum('img/lablar/' ~ lab.slug ~ '.webp') }}"
+           alt="{{ lab.title }}" loading="lazy" width="900" height="338"
+           onerror="this.closest('.labcard__art').classList.add('labcard__art--empty')">
     </div>
     <div class="labcard__body">
-      <div class="labcard__icon">{{ "%02d"|format(loop.index) }}</div>
-      <div class="labcard__main">
-        <div class="labcard__meta">
-          <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ lab.difficulty }}</span>
-          <span>{{ lab.steps|length }} adım · {{ lab.total_points }} puan</span>
-        </div>
-        <div class="labcard__title">{{ lab.title }}</div>
-        <div class="labcard__desc">{{ lab.summary }}</div>
-        <div class="labcard__progress">
-          {% set kazanilan = durum.earned_points if durum else 0 %}
-          {% set yuzde = (kazanilan * 100 // lab.total_points) if lab.total_points else 0 %}
-          <div class="bar {% if state == 'done' %}bar--ok{% endif %}"><i style="width:{{ yuzde }}%"></i></div>
-          <span>{{ kazanilan }} / {{ lab.total_points }} puan</span>
-        </div>
-        <div class="labcard__foot">
-          <span class="tags">
-            {% for etiket in etiketler.get(lab.id, []) %}<span class="chip chip--dim">{{ etiket.name }}</span>{% endfor %}
-            {% if durum and durum.solution_seen and state != "done" %}<span class="chip chip--dim">alıştırma</span>{% endif %}
-          </span>
-          <span class="labcard__cta">
-            {% if state == "done" %}Tekrar aç →
-            {% elif state == "now" %}Devam et →
-            {% else %}Başla →{% endif %}
-          </span>
-        </div>
+      <div class="labcard__meta">
+        <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ lab.difficulty }}</span>
+        <span>{{ lab.total_points }} puan</span>
+      </div>
+      <h2 class="labcard__title">{{ lab.title }}</h2>
+      <div class="tags">
+        {% for etiket in etiketler.get(lab.id, []) %}<span class="chip chip--dim">{{ etiket.name }}</span>{% endfor %}
       </div>
     </div>
   </a>
