@@ -1,0 +1,107 @@
+slug: boru-hattindaki-saldiri
+title: Boru Hattındaki Saldırı
+difficulty: orta
+tags:
+  - cti
+  - ransomware
+  - threat-actor
+  - vaka-analizi
+  - osint-temelleri
+
+briefing_md: |
+  Mayıs 2021'de ABD'deki büyük bir yakıt boru hattı işletmesinde fidye yazılımı
+  olayı yaşandı. Olay yalnızca teknik etkisiyle değil, kritik altyapı üzerinde
+  yarattığı operasyonel sonuçlarla da dikkat çekti.
+
+  CTI analisti olarak bu olayı açık kaynaklardan araştır ve saldırının arkasındaki
+  fidye yazılımı ekosistemini belirle.
+
+  Başlangıç ipucu:
+
+  **Kurum:** Colonial Pipeline
+  **Tarih:** Mayıs 2021
+
+  Araştırma için FBI ve CISA'nın yayımladığı resmi açıklama ve danışmanlıkları
+  kullanabilirsin.
+
+steps:
+  - prompt_md: "Colonial Pipeline olayından sorumlu olduğu FBI tarafından doğrulanan ransomware ailesinin adı nedir?"
+    artifact: "Colonial Pipeline — Mayıs 2021"
+    answer_type: exact
+    answer_value: "darkside"
+    points: 15
+    hints:
+      - text_md: "FBI'nin 10 Mayıs 2021 tarihli Colonial Pipeline açıklamasını ara."
+        penalty: 5
+
+  - prompt_md: "DarkSide hangi hizmet modelini kullanıyordu? Kısaltmayı yaz."
+    artifact: "DarkSide ransomware"
+    answer_type: regex
+    answer_value: '^(raas|ransomware as a service|ransomware-as-a-service)$'
+    points: 15
+    hints:
+      - text_md: "FBI ve CISA DarkSide'ı bir 'as-a-service' modeli olarak tanımlıyor."
+        penalty: 5
+      - text_md: "Aradığın kısaltma dört harfli."
+        penalty: 5
+
+  - prompt_md: "CISA/FBI danışmanlığına göre ransomware doğrudan hangi ağ üzerinde konuşlandırıldı: IT mi OT mi?"
+    artifact: "Colonial Pipeline network compromise"
+    answer_type: regex
+    answer_value: '^(it|it network|bilgi teknolojileri|bilgi teknolojileri ağı)$'
+    points: 15
+    hints:
+      - text_md: "CISA açıklamasında OT sistemlerinin doğrudan etkilendiğine dair gösterge olmadığı belirtiliyor."
+        penalty: 5
+
+  - prompt_md: "FBI, DarkSide grubunu hangi ülke ile ilişkilendirmiştir?"
+    artifact: "DarkSide threat group"
+    answer_type: regex
+    answer_value: '^(russia|russian|rusya|rusya merkezli)$'
+    points: 15
+    hints:
+      - text_md: "FBI'nin Haziran 2021 açıklamalarını incele."
+        penalty: 5
+
+  - prompt_md: "FBI'nin Colonial Pipeline vakasında ele geçirdiğini açıkladığı fidye gelirinin yaklaşık değeri kaç milyon dolardı?"
+    artifact: "FBI — Colonial Pipeline ransom seizure"
+    answer_type: regex
+    answer_value: '^(2[.,]3|2[.,]3 milyon|2[.,]3 million)$'
+    points: 15
+    hints:
+      - text_md: "Haziran 2021'de FBI, fidye ödemesinin bir bölümünü ele geçirdiğini duyurdu."
+        penalty: 5
+
+  - prompt_md: "Bu olay CTI açısından hangi kategoriye en uygun örnektir?"
+    artifact: |
+      IOC ve teknik bulguların; tehdit aktörü, ransomware ekosistemi,
+      kritik altyapı hedeflemesi ve resmi kurum açıklamalarıyla ilişkilendirilmesi.
+    answer_type: choice
+    answer_value: 0
+    choices:
+      - "Tehdit aktörü ve kampanya ilişkilendirme"
+      - "Yalnızca zafiyet taraması"
+      - "Web uygulaması performans testi"
+      - "Parola politikası denetimi"
+    points: 15
+    hints:
+      - text_md: "Burada yalnızca teknik bir IOC değil; aktör, kampanya ve hedef bağlamı birlikte değerlendiriliyor."
+        penalty: 5
+
+solution_md: |
+  FBI, Colonial Pipeline olayından **DarkSide** ransomware'inin sorumlu olduğunu
+  doğrulamıştır.
+
+  DarkSide bir **Ransomware-as-a-Service (RaaS)** modeli kullanıyordu.
+
+  CISA/FBI danışmanlığına göre ransomware şirketin **IT ağına** konuşlandırıldı.
+  O sırada OT ağlarının doğrudan etkilendiğine dair bir gösterge bulunmadığı
+  belirtilmiştir.
+
+  FBI ayrıca DarkSide'ı **Rusya merkezli** bir siber suç grubu olarak tanımlamış
+  ve Haziran 2021'de yaklaşık **2,3 milyon dolar** değerindeki fidye gelirinin
+  ele geçirildiğini açıklamıştır.
+
+  Bu vaka, CTI açısından teknik göstergelerin tek başına değerlendirilmesi yerine
+  saldırı grubu, kampanya, hedef sektör ve operasyonel etkiyle birlikte
+  ilişkilendirilmesine iyi bir örnektir.

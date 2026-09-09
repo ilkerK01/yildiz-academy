@@ -1,0 +1,136 @@
+slug: faturayi-kim-gonderdi
+title: Faturayı Kim Gönderdi?
+difficulty: orta
+tags:
+  - cti
+  - phishing
+  - email-analizi
+  - ioc-analizi
+  - osint-temelleri
+
+briefing_md: |
+  Finans ekibindeki bir kullanıcıya "Gecikmiş Fatura Bildirimi" başlıklı
+  şüpheli bir e-posta ulaştı. Kullanıcı bağlantıya tıklamadan mesajı SOC ekibine iletti.
+
+  CTI analisti olarak e-posta başlıklarını incele, mesajın gerçekten görünen
+  göndericiden gelip gelmediğini değerlendir ve çıkarılabilecek IOC'leri belirle.
+
+  **Güvenlik notu:** Bu laboratuvardaki alan adları ve IP adresleri eğitim amacıyla
+  ayrılmış örnek değerlerdir. Herhangi bir gerçek sisteme bağlantı kurulmaz.
+
+  İncelenecek e-posta başlıkları:
+
+  ```text
+  From: "Example Corp Muhasebe" <invoice@example-corp.com>
+  To: finance@victim.example
+  Subject: Gecikmiş Fatura Bildirimi
+  Date: Mon, 07 Sep 2026 10:14:22 +0300
+  Message-ID: <20260907101422.1842@mailer.billing-secure.example>
+  Return-Path: <bounce@mailer.billing-secure.example>
+  Reply-To: accounts@billing-secure.example
+  Received: from mailer.billing-secure.example (203.0.113.77)
+          by mx.victim.example with ESMTP id 4F2A91
+          for <finance@victim.example>;
+          Mon, 07 Sep 2026 10:14:25 +0300
+  Authentication-Results: mx.victim.example;
+          spf=fail smtp.mailfrom=mailer.billing-secure.example;
+          dkim=none;
+          dmarc=fail header.from=example-corp.com
+  Content-Type: text/html; charset="UTF-8"
+  ```
+
+steps:
+  - prompt_md: "E-postayı teslim eden kaynak IP adresi nedir?"
+    artifact: |
+      Received: from mailer.billing-secure.example (203.0.113.77)
+              by mx.victim.example with ESMTP id 4F2A91
+    answer_type: exact
+    answer_value: "203.0.113.77"
+    points: 15
+    hints:
+      - text_md: "Received satırını incele."
+        penalty: 5
+      - text_md: "Parantez içindeki IPv4 adresine odaklan."
+        penalty: 5
+
+  - prompt_md: "Return-Path alanında görünen tam alan adı nedir?"
+    artifact: "Return-Path: <bounce@mailer.billing-secure.example>"
+    answer_type: exact
+    answer_value: "mailer.billing-secure.example"
+    points: 15
+    hints:
+      - text_md: "Return-Path içindeki e-posta adresinin @ işaretinden sonraki kısmını yaz."
+        penalty: 5
+
+  - prompt_md: "Mesajın SPF doğrulama sonucu nedir?"
+    artifact: |
+      Authentication-Results: mx.victim.example;
+              spf=fail smtp.mailfrom=mailer.billing-secure.example;
+              dkim=none;
+              dmarc=fail header.from=example-corp.com
+    answer_type: exact
+    answer_value: "fail"
+    points: 10
+    hints:
+      - text_md: "Authentication-Results satırındaki spf= değerine bak."
+        penalty: 5
+
+  - prompt_md: "Kullanıcının yanıt vermesi halinde e-posta hangi adrese gidecektir?"
+    artifact: "Reply-To: accounts@billing-secure.example"
+    answer_type: exact
+    answer_value: "accounts@billing-secure.example"
+    points: 15
+    hints:
+      - text_md: "From alanına değil, Reply-To alanına bak."
+        penalty: 5
+
+  - prompt_md: "Bu olaydan çıkarılabilecek şüpheli alan adı IOC'si nedir?"
+    artifact: |
+      Message-ID: <20260907101422.1842@mailer.billing-secure.example>
+      Return-Path: <bounce@mailer.billing-secure.example>
+      Reply-To: accounts@billing-secure.example
+    answer_type: exact
+    answer_value: "billing-secure.example"
+    points: 20
+    hints:
+      - text_md: "Aynı kök alan adının Message-ID, Return-Path ve Reply-To alanlarında tekrarlandığına dikkat et."
+        penalty: 5
+      - text_md: "Alt alan adı olan mailer kısmını çıkart."
+        penalty: 5
+
+  - prompt_md: "Görünen gönderen alan adı ile e-posta kimlik doğrulamasındaki başarısızlık birlikte değerlendirildiğinde bu olay hangi saldırı türüne işaret eder?"
+    artifact: |
+      From: "Example Corp Muhasebe" <invoice@example-corp.com>
+      Authentication-Results: mx.victim.example;
+              spf=fail;
+              dkim=none;
+              dmarc=fail header.from=example-corp.com
+    answer_type: regex
+    answer_value: "^(phishing|oltalama|email phishing|e-posta oltalama)$"
+    points: 15
+    hints:
+      - text_md: "Mesaj meşru bir kurumdan geliyormuş gibi gösteriliyor."
+        penalty: 5
+      - text_md: "Türkçe veya İngilizce genel saldırı adını yazabilirsin."
+        penalty: 5
+
+solution_md: |
+  E-posta başlıklarında görünen kaynak IP **203.0.113.77**'dir.
+
+  Görünen gönderici `invoice@example-corp.com` olsa da Return-Path
+  `mailer.billing-secure.example`, Reply-To ise
+  `accounts@billing-secure.example` adresini göstermektedir.
+
+  Kimlik doğrulama sonuçlarında **SPF başarısız**, **DKIM yok** ve
+  **DMARC başarısız** durumdadır. Bu göstergeler, görünen gönderici kimliğinin
+  güvenilir olmadığını destekler.
+
+  Olaydan çıkarılabilecek temel IOC'ler:
+
+  - IP: `203.0.113.77`
+  - Alan adı: `billing-secure.example`
+  - Alt alan adı: `mailer.billing-secure.example`
+  - E-posta: `accounts@billing-secure.example`
+
+  Bu laboratuvarın amacı, bir phishing e-postasından teknik göstergeler çıkarmayı,
+  e-posta başlıklarını yorumlamayı ve IOC üretmeyi öğretmektir.

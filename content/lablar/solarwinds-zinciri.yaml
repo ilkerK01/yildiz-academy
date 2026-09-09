@@ -1,0 +1,130 @@
+slug: solarwinds-zinciri
+title: SolarWinds Zincirini Çöz
+difficulty: zor
+tags:
+  - cti
+  - apt
+  - supply-chain
+  - mitre-attack
+  - ioc-korelasyonu
+  - osint
+
+briefing_md: |
+  Bir olay müdahale ekibi, geçmiş bir vakaya ait aşağıdaki alan adı göstergesini
+  eski DNS kayıtlarında tespit etti:
+
+  `avsvmcloud[.]com`
+
+  Tek bir IOC'den başlayarak bunun hangi zararlı yazılımla, hangi tedarik zinciri
+  vakasıyla ve hangi tehdit aktörüyle ilişkili olduğunu araştır.
+
+  Bu laboratuvarda tek bir kaynağa bağlı kalma. CISA, MITRE ATT&CK ve Microsoft
+  tehdit araştırmalarındaki bilgileri çapraz doğrula.
+
+  **Güvenlik notu:** Alan adına doğrudan bağlantı kurma. Yalnızca pasif CTI/OSINT
+  kaynaklarında araştır.
+
+steps:
+  - prompt_md: "Başlangıçta verilen `avsvmcloud[.]com` alan adı hangi backdoor ile ilişkilidir?"
+    artifact: "avsvmcloud[.]com"
+    answer_type: exact
+    answer_value: "sunburst"
+    points: 15
+    hints:
+      - text_md: "CISA'nın SolarWinds olayına ilişkin yayınlarında bu alan adını ara."
+        penalty: 5
+
+  - prompt_md: "SUNBURST hangi meşru yazılım ürününün güncelleme zincirine yerleştirilmişti?"
+    artifact: "SUNBURST"
+    answer_type: regex
+    answer_value: '^(solarwinds orion|orion|solarwinds orion platform)$'
+    points: 15
+    hints:
+      - text_md: "MITRE ATT&CK üzerindeki SolarWinds Compromise kampanya kaydını incele."
+        penalty: 5
+
+  - prompt_md: "Bu ilk erişim yönteminin MITRE ATT&CK alt teknik kimliği nedir?"
+    artifact: "Compromise Software Supply Chain"
+    answer_type: exact
+    answer_value: "t1195.002"
+    points: 20
+    hints:
+      - text_md: "MITRE ATT&CK'te Supply Chain Compromise tekniğinin alt tekniklerine bak."
+        penalty: 5
+      - text_md: "Aradığın kimlik T1195 ile başlıyor."
+        penalty: 5
+
+  - prompt_md: "Microsoft bu operasyonun arkasındaki tehdit aktörünü hangi adla takip etmektedir?"
+    artifact: "SolarWinds / SUNBURST"
+    answer_type: exact
+    answer_value: "nobelium"
+    points: 20
+    hints:
+      - text_md: "Microsoft'un Nobelium Resource Center sayfasını araştır."
+        penalty: 5
+
+  - prompt_md: "MITRE ATT&CK bu aktörü hangi yaygın grup adıyla ilişkilendirir?"
+    artifact: "NOBELIUM — SolarWinds Compromise"
+    answer_type: regex
+    answer_value: '^(apt29|apt 29)$'
+    points: 20
+    hints:
+      - text_md: "MITRE'nin SolarWinds Compromise veya SUNSPOT kayıtlarındaki Groups bölümüne bak."
+        penalty: 5
+
+  - prompt_md: "ABD kurumlarının 2021'deki resmi atfına göre SolarWinds faaliyeti hangi Rus dış istihbarat servisiyle ilişkilendirildi? Kısaltmayı yaz."
+    artifact: "CISA — Russian SVR Targets U.S. and Allied Networks"
+    answer_type: exact
+    answer_value: "svr"
+    points: 15
+    hints:
+      - text_md: "CISA'nın Nisan 2021 tarihli ortak danışmanlığının başlığında kısaltma geçiyor."
+        penalty: 5
+
+  - prompt_md: "CISA'nın AR21-039B numaralı malware analiz raporunda SolarWinds vakasıyla ilişkili hangi ikinci aşama malware adı yer alır?"
+    artifact: "AR21-039B"
+    answer_type: exact
+    answer_value: "teardrop"
+    points: 15
+    hints:
+      - text_md: "CISA'nın SolarWinds ile ilgili malware analiz raporlarının adlarını incele."
+        penalty: 5
+
+  - prompt_md: "CISA'nın SolarWinds Orion kod ihlaline karşı yayımladığı Acil Direktif numarası nedir?"
+    artifact: "Mitigate SolarWinds Orion Code Compromise"
+    answer_type: regex
+    answer_value: '^(ed ?21-01|21-01)$'
+    points: 10
+    hints:
+      - text_md: "CISA Cybersecurity Directives listesindeki Aralık 2020 kaydına bak."
+        penalty: 5
+
+  - prompt_md: "MITRE ATT&CK'te SolarWinds Compromise kampanyasının kimliği nedir?"
+    artifact: "SolarWinds Compromise"
+    answer_type: exact
+    answer_value: "c0024"
+    points: 10
+    hints:
+      - text_md: "MITRE ATT&CK Campaigns bölümünde SolarWinds Compromise kaydını aç."
+        penalty: 5
+
+solution_md: |
+  Başlangıç IOC'si `avsvmcloud[.]com`, **SUNBURST** backdoor'u ile ilişkilidir.
+
+  SUNBURST, **SolarWinds Orion** yazılımının tedarik zincirine yerleştirilmişti.
+  MITRE ATT&CK bu erişim yöntemini **T1195.002 — Compromise Software Supply Chain**
+  olarak sınıflandırır.
+
+  Microsoft tehdit aktörünü **NOBELIUM** adıyla takip eder. MITRE ATT&CK tarafında
+  aynı operasyon **APT29** ile ilişkilendirilir. ABD kurumlarının 2021'deki resmi
+  atfında faaliyet Rusya'nın **SVR** dış istihbarat servisiyle ilişkilendirilmiştir.
+
+  CISA'nın **AR21-039B** raporu **TEARDROP** malware'ini ele alır. SolarWinds Orion
+  kod ihlaline karşı yayımlanan acil direktif **ED 21-01**'dir.
+
+  MITRE ATT&CK üzerindeki kampanya kaydı ise **C0024 — SolarWinds Compromise** olarak
+  geçer.
+
+  Bu laboratuvarın amacı bir IOC'den başlayıp malware, ürün, ATT&CK tekniği,
+  tehdit aktörü, devlet atfı ve kampanya kimliğine kadar çok kaynaklı CTI pivotu
+  yapabilmektir.

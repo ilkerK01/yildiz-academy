@@ -1,0 +1,84 @@
+slug: supheli-ip-izinde
+title: Şüpheli IP'nin İzinde
+difficulty: orta
+tags:
+  - cti
+  - ioc-analizi
+  - ip-analizi
+  - c2
+  - osint-temelleri
+
+briefing_md: |
+  Kurumun ağ kayıtlarında bir istemcinin `165.227.199.109:8539`
+  adresine bağlantı kurduğu tespit edildi.
+
+  CTI analisti olarak bu IOC'yi pasif açık kaynaklar üzerinden araştır,
+  altyapının ne amaçla kullanıldığını ve hangi zararlı yazılımla ilişkili
+  olduğunu belirle.
+
+  **Güvenlik notu:** IOC'ye doğrudan bağlantı kurma. Yalnızca ThreatFox,
+  MalwareBazaar ve benzeri pasif CTI/OSINT kaynaklarını kullan.
+
+steps:
+  - prompt_md: "Bu IP adresinin ait olduğu ASN numarası nedir?"
+    artifact: "165.227.199.109:8539"
+    answer_type: regex
+    answer_value: "^(?:as)?14061(?:\\s+digitalocean-asn)?$"
+    points: 15
+    hints:
+      - text_md: "IOC kaydındaki ASN alanını incele."
+        penalty: 5
+      - text_md: "ThreatFox üzerinde IP:port değerini aratabilirsin."
+        penalty: 5
+
+  - prompt_md: "Bu IOC hangi zararlı yazılımla ilişkilendirilmiştir?"
+    artifact: "165.227.199.109:8539"
+    answer_type: exact
+    answer_value: "remus"
+    points: 15
+    hints:
+      - text_md: "ThreatFox kaydındaki Malware alanına bak."
+        penalty: 5
+
+  - prompt_md: "ThreatFox bu IOC'nin tehdit türünü hangi değerle sınıflandırıyor?"
+    artifact: "165.227.199.109:8539"
+    answer_type: exact
+    answer_value: "botnet_cc"
+    points: 15
+    hints:
+      - text_md: "IOC detaylarında Threat Type alanını bul."
+        penalty: 5
+
+  - prompt_md: "Bu IOC ilk kez hangi tarihte görülmüştür? Cevabı YYYY-MM-DD biçiminde yaz."
+    artifact: "165.227.199.109:8539"
+    answer_type: exact
+    answer_value: "2026-08-22"
+    points: 15
+    hints:
+      - text_md: "ThreatFox kaydındaki First seen alanını kullan."
+        penalty: 5
+
+  - prompt_md: "Bu IOC ile ilişkilendirilen malware örneklerinden biri olan SHA-256 değerini yaz."
+    artifact: "165.227.199.109:8539"
+    answer_type: exact
+    answer_value: "3c6126417211aacd1bb0ebadcd474747890e8930a4684ccabe448d1390b3c064"
+    points: 20
+    hints:
+      - text_md: "ThreatFox sayfasındaki Malware Samples bölümünü incele."
+        penalty: 5
+      - text_md: "Listenin en üstündeki SHA-256 değerini kullan."
+        penalty: 5
+
+solution_md: |
+  `165.227.199.109:8539` IOC'si ThreatFox üzerinde **botnet_cc**
+  olarak sınıflandırılmıştır ve **Remus** zararlı yazılımıyla ilişkilidir.
+
+  IOC'nin altyapısı **AS14061 DIGITALOCEAN-ASN** üzerinde barınmaktadır.
+  ThreatFox kaydında ilk görülme tarihi **2026-08-22** olarak yer alır.
+
+  Aynı IOC ile ilişkili malware örneklerinden biri:
+
+  `3c6126417211aacd1bb0ebadcd474747890e8930a4684ccabe448d1390b3c064`
+
+  Bu laboratuvarın amacı tek bir ağ IOC'sinden başlayarak ASN, tehdit türü,
+  malware ailesi ve ilişkili örneklere pivot etmeyi öğretmektir.
