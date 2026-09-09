@@ -73,6 +73,7 @@ Yönetici hesabı açılmadan `/academy/admin` kapısı çalışmaz.
 | `static/css/app.css` | Giriş sonrası arayüz |
 | `static/css/landing.css` | Açılış sayfası, kendi token seti üzerinde |
 | `static/img/muhur/` | Yedi başarım rozeti; dosya adı rozetin `slug` alanıyla eşleşir |
+| `static/img/lablar/` | Lab kartı görselleri; dosya adı labın `slug` alanıyla eşleşir |
 | `tasarim/landing/` | Tasarım prototipleri: açılış, panel, kütüphane, laboratuvar |
 | `scrollcraft/builds/` | Kaydırma anlatısı |
 | `ekran/` | README görüntüleri |
@@ -83,11 +84,17 @@ tek zincire bağlamak açılışın yıldızlı görünümünü bozuyordu.
 
 ## Laboratuvar mekaniği
 
-Bir lab 2-6 adımdır. Her adımın kendi sorusu, cevabı, ipuçları ve puanı vardır.
-Adımlar sıralıdır, atlanamaz.
+Bir lab çok adımlıdır; şu anki lablar 2 ile 9 adım arasında değişiyor. Her
+adımın kendi sorusu, cevabı, ipuçları ve puanı vardır. Adımlar sıralıdır,
+atlanamaz.
 
 Cevap tipleri `exact`, `regex` ve `choice`. Doğrulama yalnızca sunucuda yapılır;
 doğru cevap hiçbir şablona, hiçbir JSON yanıtına girmez.
+
+Laboratuvar listesi önce `order_index`, sonra başlık sırasına göre dizilir.
+Alan lab dosyasında isteğe bağlıdır ve varsayılanı `0`; küçük değer öne geçer,
+yani bir labı listenin başına almak için ona daha küçük bir sayı vermek yeterli.
+Kartta labın görseli, zorluğu, puanı, adı ve etiketleri görünür.
 
 Adımın kazanılan puanı `max(0, puan - açılan ipuçların cezası)` ve adım ilk kez
 doğru çözüldüğünde donar.
