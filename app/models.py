@@ -44,6 +44,7 @@ class Lab(Base):
     briefing_md: Mapped[str] = mapped_column(Text, default="")
     briefing_html: Mapped[str] = mapped_column(Text, default="")
     difficulty: Mapped[str] = mapped_column(String(10), default="kolay")
+    order_index: Mapped[int] = mapped_column(Integer, default=0)
     total_points: Mapped[int] = mapped_column(Integer, default=0)
     solution_md: Mapped[str] = mapped_column(Text, default="")
     solution_html: Mapped[str] = mapped_column(Text, default="")

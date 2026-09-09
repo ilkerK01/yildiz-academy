@@ -148,7 +148,13 @@ def ders(
 def lablar(
     request: Request, db: DbSession = Depends(get_db), user: User = Depends(require_user)
 ):
-    labs = list(db.scalars(select(Lab).where(Lab.published.is_(True)).order_by(Lab.title)))
+    labs = list(
+        db.scalars(
+            select(Lab)
+            .where(Lab.published.is_(True))
+            .order_by(Lab.order_index, Lab.title)
+        )
+    )
     durumlar = {}
     for lab in labs:
         row = progress.get_lab_progress(db, user.id, lab)

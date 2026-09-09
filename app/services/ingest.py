@@ -160,6 +160,7 @@ def parse_lab(text: str, *, filename: str = "") -> dict:
         "briefing_md": str(data.get("briefing_md") or "").strip(),
         "solution_md": str(data.get("solution_md") or "").strip(),
         "difficulty": difficulty,
+        "order_index": int(data.get("order_index") or 0),
         "published": bool(data.get("published", True)),
         "total_points": total,
         "tags": [str(t) for t in (data.get("tags") or [])],
@@ -248,6 +249,7 @@ def save_lab(db: DbSession, parsed: dict) -> Lab:
     lab.solution_md = parsed["solution_md"]
     lab.solution_html = render(parsed["solution_md"])
     lab.difficulty = parsed["difficulty"]
+    lab.order_index = parsed["order_index"]
     lab.published = parsed["published"]
     lab.total_points = parsed["total_points"]
     db.flush()

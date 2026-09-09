@@ -1,0 +1,92 @@
+slug: yerli-seytan
+title: Yerli Şeytan
+difficulty: orta
+order_index: -1
+summary: Karanlık ağın arama motorlarından birini bulup listesindeki tek Türkçe forumu ve adresini çıkarma senaryosu.
+tags:
+  - darkweb
+  - cti
+  - osint-temelleri
+  - tor
+
+briefing_md: |
+  Yıllar önce bir keşiş yaşarmış. Ömrünü tek bir kitabı aramaya adamış.
+
+  Rivayete göre o kitap, yerin sekiz kat altından çıkan şeytanı bir kez alt etmiş.
+  Ama keşişin aradığı nüsha herhangi bir dilde değilmiş: kendi dilimizde yazılmış
+  olmalı, bizden bir kaynak olmalıymış.
+
+  Keşiş ömrünün sonunda şunu anlamış. Kitaba giden yol şeytanın kendisinden
+  geçiyormuş. Önce şeytanın kapısını bulacaksın, tuttuğu listeye bakacaksın;
+  kendi dilinde yazılmış tek adı orada göreceksin.
+
+  Sıra sende. Yüzeydeki arama motorları o kapıyı göstermez, karanlığın kendi
+  arama motorlarından geçmen gerekir. Adında şeytanı taşıyan motoru bul,
+  listesini aç ve bizim dilimizde yazan tek forumu çıkar.
+
+  Keşişe iki şeyle döneceksin: kitabın adı ve kapısının adresi.
+
+  **Güvenlik notu:** Araştırmayı Tor üzerinden yap. Bulduğun forumda hesap açma,
+  dosya indirme, kimseyle iletişime geçme. Bu labda senden istenen yalnızca iki
+  bilgi: bir ad ve bir adres.
+
+steps:
+  - prompt_md: "Şeytanın listesinde bizim dilimizde yazan tek forum var. Adı nedir?"
+    answer_type: regex
+    answer_value: '^shadow( ?forum)?$'
+    points: 10
+    hints:
+      - text_md: "Yüzey webdeki Google bu kapıyı göstermez. Karanlık ağın kendi arama motorlarından ve dizinlerinden başla."
+        penalty: 3
+      - text_md: "Aradığın motorun adı, İngilizcede şeytani anlamına gelen kelimeyle başlıyor."
+        penalty: 3
+
+  - prompt_md: "Bu forumun onion adresi nedir?"
+    answer_type: regex
+    answer_value: '^(https?://)?w4ljqtyjnxinknz4hszn4bsof7zhfy5z2h4srfss4vvkoikiwz36o3id\.onion/?$'
+    points: 10
+    hints:
+      - text_md: "Adresi ayrıca aramana gerek yok. Forumun adını bulduğun listede adres de yazıyor."
+        penalty: 3
+      - text_md: "v3 onion adresleri 56 karakterdir ve `.onion` ile biter. Adresi olduğu gibi yapıştırabilirsin."
+        penalty: 3
+
+solution_md: |
+  Keşişin kitabı bir forum, şeytanın kapısı ise karanlık ağın arama
+  motorlarından biriydi.
+
+  ## Yol
+
+  Yüzey webdeki arama motorları onion servislerini dizinlemez. Bu yüzden işe
+  karanlık ağın kendi arama motorlarından ve dizinlerinden başlamak gerekir.
+  Tek bir motora güvenmek yanıltıcıdır: her motorun dizini eksiktir, sonuçların
+  bir kısmı ölü, bir kısmı reklamdır. Doğru yöntem birkaç motoru yan yana
+  koymak ve aynı adı birden fazla yerde doğrulamaktır.
+
+  Aranan motor **evilsearch**, yani adında şeytanı taşıyan motordu. Motorun
+  listesi çoğunlukla İngilizce kaynaklardan oluşur; içindeki tek Türkçe forum
+  **Shadow**'dur. Keşişin aradığı "bizden kaynak" buydu.
+
+  Forumun adresi:
+
+  `w4ljqtyjnxinknz4hszn4bsof7zhfy5z2h4srfss4vvkoikiwz36o3id.onion`
+
+  ## Adresin okunması
+
+  Bu bir v3 onion adresidir. v3 adresleri her zaman 56 karakterdir ve adresin
+  kendisi bir açık anahtarın kodlanmış halidir. Bu yüzden onion adresi tahmin
+  edilemez, kısaltılamaz ve bir harfi değişirse tamamen başka bir servise
+  gider. Karanlık ağdaki sahte kopyaların en sık kullandığı yöntem tam olarak
+  budur: bir iki karakteri değiştirilmiş, orijinaline benzeyen adresler.
+  Bu yüzden bir adresi her zaman birden fazla bağımsız kaynaktan doğrula.
+
+  ## Not
+
+  Karanlık ağdaki kaynaklar kalıcı değildir. Motorlar kapanır, forumlar adres
+  değiştirir. Bir CTI analisti bu yüzden bulduğu adresi, bulduğu tarihi ve
+  hangi kaynakta gördüğünü birlikte kaydeder. Kayıt tutulmazsa bulgu birkaç
+  ay sonra doğrulanamaz hale gelir.
+
+  Bu laboratuvarın amacı, karanlık ağda hedefe körlemesine değil, motordan
+  listeye ve listeden tek bir doğrulanmış kayda giden bir yol izleyerek
+  ulaşmayı öğretmektir.
