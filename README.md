@@ -11,18 +11,30 @@ arkasında.
 ![Açılış sayfası](ekran/hero.jpg)
 
 Panel kişiseldir: sayaçlar, sıralamadaki yerin ve kazanılmış mühürler. Ders ve
-lab listeleri buraya değil, kendi sayfalarına ait. Aşağıdaki görüntüdeki isimler
-ve puanlar örnek veridir.
+lab listeleri buraya değil, kendi sayfalarına ait. Görüntülerdeki isimler ve
+puanlar örnek veridir.
 
 ![Panel](ekran/panel.jpg)
+
+Her kullanıcının bir profil sayfası vardır: toplam puan, sıra, başarımlar ve
+tamamlanan laboratuvarlar. Sıralamadaki bir isme tıklayınca o kişinin profili
+açılır. Profil adresi sıralı bir numara değil, her kullanıcıya verilen rastgele
+bir kimliktir (`/profil/voVdffHgEPy8` gibi); adresler tahmin edilip tek tek
+gezilemez. E-posta profilde de görünmez.
+
+![Profil](ekran/profil.jpg)
+
+Arayüz Türkçe ve İngilizcedir. Dil sol menünün altından seçilir ve tarayıcıda
+saklanır; hata mesajları ve parola sıfırlama e-postası da seçilen dilde gelir.
 
 ## Yığın
 
 FastAPI · Jinja2 · SQLAlchemy 2 · SQLite · Argon2id · Vanilla JS
 
-Node çalışma zamanı bağımlılığı yoktur. `static/css/tokens.css` dosyası
-`design/tokens.json` içinden üretilmiştir ama üreteç depoda değil; token
-değişirse şu an CSS'i elle güncellemek gerekiyor.
+Node çalışma zamanı bağımlılığı yoktur. Giriş sonrası arayüzün renkleri ve
+yazı tipleri `static/css/tokens.css` içindedir ve elle düzenlenir.
+`design/tokens.json` ilk tasarımın token kaynağıdır; açılış sayfası bu setin
+karşılığı olan `landing-tokens.css` üzerinde çalışır.
 
 ## Kurulum
 
@@ -55,21 +67,25 @@ uvicorn app.main:app --reload
 
 Yönetici hesabı açılmadan `/academy/admin` kapısı çalışmaz.
 
+Uygulama açılırken veritabanı şemasını kendisi günceller: eski bir `yildiz.db`
+dosyasında eksik kolon ve tablo varsa ekler, elle `ALTER TABLE` gerekmez.
+
 ## Yapı
 
 | Yol | Ne |
 |---|---|
-| `app/models.py` | 12 tablo: içerik, kimlik, ilerleme |
+| `app/models.py` | 13 tablo: içerik, kimlik, ilerleme |
 | `app/routers/` | Sayfalar, kimlik, ders, lab, yönetim |
-| `app/services/` | Cevap doğrulama, puanlama, ilerleme, sıralama, içe aktarma |
+| `app/services/` | Cevap doğrulama, puanlama, ilerleme, sıralama, içe aktarma, e-posta |
 | `app/templates/` | Jinja şablonları |
+| `app/i18n.py` | Türkçe ve İngilizce arayüz metinleri |
 | `hesap.py` | Yönetici ve kullanıcı hesabı açma aracı |
 | `seed.py` | `content/` klasörünü veritabanına basar |
 | `content/dersler/*.md` | Ders kaynakları, frontmatter + Markdown |
 | `content/lablar/*.yaml` | Lab tanımları: adımlar, ipuçları, çözüm |
-| `design/tokens.json` | Tasarım token kaynağı, tek gerçek kaynak |
-| `static/css/tokens.css` | Üretilmiş CSS değişkenleri, elle düzenlenmez |
-| `static/css/base.css` | Temel katman, yalnızca `var()` kullanır |
+| `design/tokens.json` | İlk tasarımın token kaynağı |
+| `static/css/tokens.css` | Giriş sonrası arayüzün renk ve yazı tipi değişkenleri |
+| `static/css/base.css` | Temel katman: tipografi, düğme, form, kart |
 | `static/css/app.css` | Giriş sonrası arayüz |
 | `static/css/landing.css` | Açılış sayfası, kendi token seti üzerinde |
 | `static/img/muhur/` | Yedi başarım rozeti; dosya adı rozetin `slug` alanıyla eşleşir |
@@ -89,7 +105,8 @@ adımın kendi sorusu, cevabı, ipuçları ve puanı vardır. Adımlar sıralıd
 atlanamaz.
 
 Cevap tipleri `exact`, `regex` ve `choice`. Doğrulama yalnızca sunucuda yapılır;
-doğru cevap hiçbir şablona, hiçbir JSON yanıtına girmez.
+doğru cevap hiçbir şablona, hiçbir JSON yanıtına girmez. `regex` cevabın
+tamamıyla eşleşmelidir, desenin yalnızca başı tutan cevap doğru sayılmaz.
 
 Laboratuvar listesi önce `order_index`, sonra başlık sırasına göre dizilir.
 Alan lab dosyasında isteğe bağlıdır ve varsayılanı `0`; küçük değer öne geçer,
@@ -109,6 +126,13 @@ Lab her zaman sıfırlanıp baştan çözülebilir. Ama `lab_progress.solution_s
 bayrağı sıfırlamada silinmez: çözüm metnini bir kez gören kullanıcı o labdan
 bir daha puan kazanamaz. Lab tekrar çözülebilir, sıralamaya 0 yazar.
 
+Açılan ipuçları da sıfırlamada silinmez. İpucuyla cevabı öğrenip labı
+sıfırlayan kullanıcı cezadan kurtulamaz.
+
+Sıralama, toplam puan ve başarımlar her lab için alınan en yüksek puana bakar
+(`best_points`). Sonraki bir deneme daha düşük puanla biterse en yüksek puan
+yerinde kalır.
+
 ## Kimlik
 
 Görünen ad tek kamusal kimliktir ve 30 günde bir değiştirilebilir. E-posta bir
@@ -116,6 +140,22 @@ kimlik değil, bir giriş anahtarıdır: sıralamada, panelde ve kullanıcıya d
 hiçbir yanıtta geçmez, yalnızca sahibinin ayarlar sayfasında görünür.
 
 Giriş hatası hangi alanın yanlış olduğunu söylemez.
+
+## Güvenlik
+
+- Her yanıtta `X-Frame-Options: DENY`, `nosniff`, `Referrer-Policy` ve
+  `frame-ancestors 'none'` içeren bir CSP gider; site başka bir sayfaya
+  çerçeve olarak gömülemez.
+- Başka bir siteden gelen POST istekleri (`Origin` veya `Sec-Fetch-Site`
+  uyuşmazsa) reddedilir. 2 MB'tan büyük istek gövdeleri kabul edilmez.
+- Giriş, kayıt, parola sıfırlama ve cevap denemeleri IP başına hız
+  sınırına tabidir. IP, bağlantının kendisinden alınır; `X-Forwarded-For`
+  başlığına güvenilmez. Uygulama bir ters proxy arkasında çalışacaksa
+  uvicorn `--proxy-headers --forwarded-allow-ips <proxy-ip>` ile başlatılmalı,
+  yoksa bütün kullanıcılar tek IP sayılır.
+- Giriş sonrası `next` yönlendirmesi yalnızca site içi yollara izin verir.
+- Üretimde `.env` içinde `COOKIE_SECURE=1` olmalı; çerezler yalnızca HTTPS
+  üzerinden gider.
 
 ## Yönetim
 
@@ -141,8 +181,13 @@ gönderilmez, bağlantı sunucu günlüğüne yazılır; yerel geliştirmede bu 
 
 ## Fontlar
 
-`static/fonts/` altındaki Stokeda demo sürümü ve Hemmet kişisel kullanım
-lisanslıdır. Ticari yayın kararı verilirse lisans alınacak veya font
-değiştirilecek. Stokeda'nın demo sürümünde rakamlar yoktur, her rakamın yerine
-üreticinin filigranı basılır; sayı gösteren yerlerde bu yüzden mono font
-kullanılıyor.
+Giriş sonrası arayüz sistem yazı tipi yığınını kullanır
+(`"Atlassian Sans", ui-sans-serif, -apple-system, "Segoe UI", ...`); Windows'ta
+Segoe UI olarak görünür. Sol üstteki "Yıldız Academy" yazısı Google Sans'tır.
+Hash ve kod gibi teknik veriler eş genişlikli yazı tipindedir.
+
+`static/fonts/` altındaki Stokeda demo sürümü ve Hemmet yalnızca açılış
+sayfasında kullanılır ve kişisel kullanım lisanslıdır. Ticari yayın kararı
+verilirse lisans alınacak veya font değiştirilecek. Stokeda'nın demo sürümünde
+rakamlar yoktur, her rakamın yerine üreticinin filigranı basılır; rakam
+gösterecek bir yerde bu font kullanılmamalı.
