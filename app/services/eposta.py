@@ -11,7 +11,7 @@ log = logging.getLogger("uvicorn.error")
 
 
 def gonder(alici: str, konu: str, govde: str) -> bool:
-    if not config.SMTP_HOST:
+    if not config.SMTP_HOST or (config.SMTP_USER and not config.SMTP_PASS):
         log.warning("SMTP ayarlı değil, e-posta gönderilmedi. Alıcı: %s\n%s", alici, govde)
         return False
 

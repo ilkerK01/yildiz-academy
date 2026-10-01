@@ -175,9 +175,11 @@ veritabanında yalnızca SHA-256 özeti tutulur. Yeni parola kaydedilince
 kullanıcının açık oturumları kapanır. Yanıt, adrese bağlı bir hesap olsun ya da
 olmasın aynıdır; böylece kimin kayıtlı olduğu dışarıdan anlaşılmaz.
 
-Gönderim için `.env` içinde SMTP ayarları gerekir (`SMTP_HOST`, `SMTP_PORT`,
-`SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `SITE_URL`). `SMTP_HOST` boşsa e-posta
-gönderilmez, bağlantı sunucu günlüğüne yazılır; yerel geliştirmede bu yeterlidir.
+Gönderim SMTP ile yapılır, `.env.example` Resend için hazırdır; yalnızca
+`SMTP_PASS` alanına Resend API anahtarı yazılır. Anahtar boşsa e-posta
+gönderilmez, bağlantı sunucu günlüğüne yazılır. Alan adı doğrulanmadan Resend
+yalnızca `onboarding@resend.dev` adresinden ve yalnızca Resend hesabının kendi
+e-posta adresine gönderir; kendi alan adıyla `SMTP_FROM` değiştirilir.
 
 ## Fontlar
 
