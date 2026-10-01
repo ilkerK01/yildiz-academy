@@ -9,6 +9,8 @@
 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
 {%- elif ad == "ayarlar" -%}
 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="8" cy="8" r="2.5"/><path d="M8 1.2h0a1 1 0 0 1 .95.69l.24.74a5.6 5.6 0 0 1 1.2.7l.76-.17a1 1 0 0 1 1.08.45l.5.87a1 1 0 0 1-.13 1.16l-.52.58a5.6 5.6 0 0 1 0 1.38l.52.58a1 1 0 0 1 .13 1.16l-.5.87a1 1 0 0 1-1.08.45l-.76-.17a5.6 5.6 0 0 1-1.2.7l-.24.74a1 1 0 0 1-.95.69h-1a1 1 0 0 1-.95-.69l-.24-.74a5.6 5.6 0 0 1-1.2-.7l-.76.17a1 1 0 0 1-1.08-.45l-.5-.87a1 1 0 0 1 .13-1.16l.52-.58a5.6 5.6 0 0 1 0-1.38l-.52-.58a1 1 0 0 1-.13-1.16l.5-.87a1 1 0 0 1 1.08-.45l.76.17a5.6 5.6 0 0 1 1.2-.7l.24-.74A1 1 0 0 1 7.5 1.2z"/></svg>
+{%- elif ad == "profil" -%}
+<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="5.5" r="3"/><path d="M2.5 14c.6-2.7 2.9-4.3 5.5-4.3s4.9 1.6 5.5 4.3"/></svg>
 {%- elif ad == "cikis" -%}
 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 2H3.5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3M10 5l3 3-3 3M13 8H6"/></svg>
 {%- endif -%}
@@ -17,21 +19,21 @@
 {% macro nav(href, etiket, ad) -%}
 <a class="navlink" href="{{ href }}"
    {% if request.url.path == href or (href != '/' and request.url.path.startswith(href ~ '/')) %}aria-current="page"{% endif %}>
-  {{ ikon(ad) }}<span>{{ etiket }}</span>
+  {{ ikon(ad) }}<span>{{ _(etiket) }}</span>
 </a>
 {%- endmacro %}
 
-{% macro fx() -%}
-<div class="fx" aria-hidden="true">
-  <div class="fx__grid"></div>
-  <div class="fx__glow"></div>
-  <div class="fx__scan"></div>
-  <div class="fx__packets" data-packets></div>
+{% macro dil_secici() -%}
+<div class="dil" role="group" aria-label="{{ _('Dil') }}">
+  {% for kod in ("tr", "en") %}
+    <a class="dil__sec" href="/dil/{{ kod }}?next={{ request.url.path|urlencode }}"
+       hreflang="{{ kod }}" {% if aktif_dil() == kod %}aria-current="true"{% endif %}>{{ kod|upper }}</a>
+  {% endfor %}
 </div>
 {%- endmacro %}
 
 <!doctype html>
-<html lang="tr">
+<html lang="{{ aktif_dil() }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -40,18 +42,16 @@
 <link rel="apple-touch-icon" href="/static/img/favicon-180.png">
 <script>
   try {
-    var t = localStorage.getItem("ya-tema"), e = localStorage.getItem("ya-efekt");
+    var t = localStorage.getItem("ya-tema");
     if (t) document.documentElement.setAttribute("data-tema", t);
-    if (e) document.documentElement.setAttribute("data-efekt", e);
   } catch (_) {}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/css/app.css?v={{ statik_surum('css/app.css') }}">
 </head>
 <body>
-{{ fx() }}
 
 {% if user %}
 <div class="shell">
@@ -62,7 +62,7 @@
     </a>
 
     <nav class="side__group">
-      <p class="side__label">Akademi</p>
+      <p class="side__label">{{ _("Akademi") }}</p>
       {{ nav("/panel", "Panel", "panel") }}
       {{ nav("/kutuphane", "Kütüphane", "kutuphane") }}
       {{ nav("/lab", "Laboratuvar", "lab") }}
@@ -70,20 +70,23 @@
     </nav>
 
     <nav class="side__group">
-      <p class="side__label">Hesap</p>
+      <p class="side__label">{{ _("Hesap") }}</p>
+      {{ nav("/profil", "Profil", "profil") }}
       {{ nav("/ayarlar", "Ayarlar", "ayarlar") }}
-      <a class="navlink" href="#" onclick="cikisYap(event)">{{ ikon("cikis") }}<span>Çıkış yap</span></a>
+      <a class="navlink" href="#" onclick="cikisYap(event)">{{ ikon("cikis") }}<span>{{ _("Çıkış yap") }}</span></a>
     </nav>
 
-    <div class="side__foot">
+    {{ dil_secici() }}
+
+    <a class="side__foot" href="/profil/{{ user.public_id }}">
       <span class="avatar">{{ user.display_name[:1] }}</span>
       <div>
         <b>{{ user.display_name }}</b>
-        {% if kendi_sira is defined and kendi_sira %}<span>#{{ kendi_sira }}</span>{% elif stats is defined %}<span>{{ stats.puan }} puan</span>{% endif %}
+        {% if kendi_sira is defined and kendi_sira %}<span>#{{ kendi_sira }}</span>{% elif stats is defined %}<span>{{ _("{n} puan", n=stats.puan) }}</span>{% endif %}
       </div>
-    </div>
+    </a>
     <button class="side__resize" data-side-resize type="button"
-            aria-label="Menü genişliğini ayarla" title="Sürükle, çift tıkla sıfırla"></button>
+            aria-label="{{ _('Menü genişliğini ayarla') }}" title="{{ _('Sürükle, çift tıkla sıfırla') }}"></button>
   </aside>
 
   <main class="main">
@@ -94,6 +97,7 @@
   {% block anonim %}{% endblock %}
 {% endif %}
 
+{% if js_metinleri() %}<script>window.YA_METIN = {{ js_metinleri()|tojson }};</script>{% endif %}
 <script src="/static/js/app.js?v={{ statik_surum('js/app.js') }}"></script>
 {% block script %}{% endblock %}
 </body>

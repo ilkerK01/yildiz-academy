@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% from "_rozetler.html" import rozet_izgarasi with context %}
+
+{% block govde %}
+{% set kazanilan = rozetler|selectattr("earned")|list|length %}
+<div class="main__head">
+  <div class="profil">
+    <span class="avatar avatar--lg">{{ kisi.display_name[:1] }}</span>
+    <div>
+      <div class="title-row">
+        <h1>{{ kisi.display_name }}</h1>
+        {% if kendi %}<span class="rank__tag">{{ _("Sen") }}</span>{% endif %}
+      </div>
+      <p class="lede">
+        {% if sira %}{{ _("Sıralamada {n}. sırada.", n=sira) }}{% else %}{{ _("Henüz sıralamada değil.") }}{% endif %}
+        {% if kisi.created_at %}{{ _("Katılım: {tarih}", tarih=kisi.created_at.strftime("%d.%m.%Y")) }}{% endif %}
+      </p>
+    </div>
+  </div>
+  {% if kendi %}<a class="btn btn--quiet" href="/ayarlar">{{ _("Ayarlar") }}</a>{% endif %}
+</div>
+
+<div class="grid grid--4">
+  <div class="stat stat--hero">
+    <span>{{ _("Toplam puan") }}</span>
+    <b>{{ profil_stats.puan }}</b>
+  </div>
+  <div class="stat">
+    <span>{{ _("Sıra") }}</span>
+    <b>{{ "#" ~ sira if sira else "—" }}</b>
+  </div>
+  <div class="stat">
+    <span>{{ _("Tamamlanan lab") }}</span>
+    <b>{{ profil_stats.cozulen_lab }}</b>
+  </div>
+  <div class="stat">
+    <span>{{ _("Okunan ders") }}</span>
+    <b>{{ profil_stats.okunan_ders }}</b>
+  </div>
+</div>
+
+<div class="section-head">
+  <h2>{{ _("Başarımlar") }}</h2>
+  <span class="label">{{ kazanilan }} / {{ rozetler|length }}</span>
+</div>
+{% if kazanilan == 0 %}
+  <p class="lede" style="margin-top:14px">{{ _("Henüz rozet kazanılmadı.") }}</p>
+{% endif %}
+{{ rozet_izgarasi(rozetler|sort(attribute="earned", reverse=true)) }}
+
+<div class="section-head">
+  <h2>{{ _("Tamamlanan laboratuvarlar") }}</h2>
+  <span class="label">{{ _("{n} lab", n=tamamlananlar|length) }}</span>
+</div>
+{% if tamamlananlar %}
+<div class="grid grid--2" style="margin-top:20px">
+  {% for satir in tamamlananlar %}
+    <a class="rowcard" href="/lab/{{ satir.lab.slug }}">
+      <h3>{{ satir.lab.title }}</h3>
+      <div class="rowcard__meta">
+        <span class="chip" data-difficulty="{{ zorluk_sinif(satir.lab.difficulty) }}">{{ _(satir.lab.difficulty) }}</span>
+        <span>{{ _("{n} / {toplam} puan", n=satir.puan, toplam=satir.lab.total_points) }}</span>
+        {% if satir.tarih %}<span class="sep">·</span><span>{{ satir.tarih.strftime("%d.%m.%Y") }}</span>{% endif %}
+      </div>
+    </a>
+  {% endfor %}
+</div>
+{% else %}
+  <p class="lede" style="margin-top:14px">{{ _("Henüz tamamlanan lab yok.") }}</p>
+{% endif %}
+{% endblock %}

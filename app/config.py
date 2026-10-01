@@ -43,3 +43,13 @@ DISPLAY_NAME_MIN = 3
 DISPLAY_NAME_MAX = 24
 PASSWORD_MIN = 8
 DISPLAY_NAME_COOLDOWN_DAYS = 30
+
+SITE_URL = os.getenv("SITE_URL", "http://127.0.0.1:8000").rstrip("/")
+RESET_TOKEN_MINUTES = _int("RESET_TOKEN_MINUTES", 30)
+
+SMTP_HOST = os.getenv("SMTP_HOST", "").strip()
+SMTP_PORT = _int("SMTP_PORT", 587)
+SMTP_USER = os.getenv("SMTP_USER", "").strip()
+SMTP_PASS = os.getenv("SMTP_PASS", "")
+SMTP_FROM = os.getenv("SMTP_FROM", "").strip() or SMTP_USER
+SMTP_SSL = _bool("SMTP_SSL", "0")

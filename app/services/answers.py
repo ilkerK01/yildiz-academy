@@ -34,7 +34,7 @@ def check(answer_type: str, answer_value: str, submitted: str) -> bool:
             pattern = re.compile(answer_value, re.IGNORECASE)
         except re.error:
             return False
-        return bool(pattern.fullmatch(given) or pattern.match(given))
+        return bool(pattern.fullmatch(given))
 
     if answer_type == "choice":
         return given == normalize(str(answer_value))

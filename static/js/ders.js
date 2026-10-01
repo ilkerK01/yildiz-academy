@@ -4,11 +4,11 @@ if (okudumBtn) {
   okudumBtn.addEventListener("click", async function () {
     const { veri } = await apiPost("/api/ders/" + okudumBtn.dataset.slug + "/okudum");
     if (!veri.ok) {
-      yaz("okudum-cikti", veri.hata || "İşaretlenemedi.");
+      yaz("okudum-cikti", veri.hata || t("İşaretlenemedi."));
       return;
     }
     okudumBtn.disabled = true;
-    okudumBtn.textContent = "Okundu olarak işaretlendi";
-    yaz("okudum-cikti", "Toplam okunan ders: " + veri.toplam_okunan);
+    okudumBtn.textContent = t("Okundu olarak işaretlendi");
+    yaz("okudum-cikti", t("Toplam okunan ders: {n}", { n: veri.toplam_okunan }));
   });
 }

@@ -5,33 +5,32 @@
 {% set kalan_dk = dersler|rejectattr("id", "in", okunanlar)|map(attribute="reading_minutes")|sum %}
 <div class="main__head">
   <div>
-    <h1>Kütüphane</h1>
+    <h1>{{ _("Kütüphane") }}</h1>
     <p class="lede">
-      {% if not dersler %}Henüz ders yok. Admin panelinden içerik yükleyebilirsin.
-      {% elif okunan == dersler|length %}{{ dersler|length }} dersin hepsini okudun.
-      {% else %}{{ dersler|length }} dersin {{ okunan }} tanesini okudun. Kalanı yaklaşık {{ kalan_dk }} dakika.{% endif %}
+      {% if not dersler %}{{ _("Henüz ders yok. Admin panelinden içerik yükleyebilirsin.") }}
+      {% elif okunan == dersler|length %}{{ _("{n} dersin hepsini okudun.", n=dersler|length) }}
+      {% else %}{{ _("{n} dersin {okunan} tanesini okudun. Kalanı yaklaşık {dk} dakika.", n=dersler|length, okunan=okunan, dk=kalan_dk) }}{% endif %}
     </p>
   </div>
-  <span class="label">{{ dersler|length }} ders</span>
+  <span class="label">{{ _("{n} ders", n=dersler|length) }}</span>
 </div>
 
-<div class="lessongrid rise">
+<div class="lessongrid">
 {% for ders in dersler %}
   {% set ders_etiketleri = etiketler.get(ders.id, []) %}
   <a class="lessoncard" href="/kutuphane/{{ ders.slug }}">
     <div class="lessoncard__cover">
-      <span class="tag">{{ ders_etiketleri[0].name if ders_etiketleri else "ders" }}</span>
-      <span class="idx">{{ "%02d"|format(loop.index) }}</span>
+      <span class="tag">{{ ders_etiketleri[0].name if ders_etiketleri else _("ders") }}</span>
     </div>
     <div class="lessoncard__body">
       <div class="lessoncard__title">{{ ders.title }}</div>
       <div class="lessoncard__desc">{{ ders.summary }}</div>
       <div class="lessoncard__foot">
-        <span>{{ ders.reading_minutes }} dk</span>
+        <span>{{ _("{n} dk", n=ders.reading_minutes) }}</span>
         {% if ders.id in okunanlar %}
-          <span class="status status--ok">Okundu</span>
+          <span class="status status--ok">{{ _("Okundu") }}</span>
         {% else %}
-          <span class="status">Başla →</span>
+          <span class="status">{{ _("Başla") }} →</span>
         {% endif %}
       </div>
     </div>

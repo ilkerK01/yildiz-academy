@@ -125,8 +125,19 @@ farklıdır (yönetici 8 saat, kullanıcı 30 gün). Kodda çalışan bir varsay
 parola yoktur.
 
 İçerik panelden `.md` ve `.yaml` olarak yüklenir; `seed.py` ile aynı ayrıştırma
-mantığından geçer. Parolasını unutan kullanıcıya geçici parolayı yönetici atar,
-e-posta gönderimi henüz yok.
+mantığından geçer.
+
+## Parola sıfırlama
+
+Giriş penceresindeki "Şifremi unuttum" bağlantısı e-posta adresini ister ve
+o adrese tek kullanımlık bir bağlantı gönderir. Bağlantı 30 dakika geçerlidir,
+veritabanında yalnızca SHA-256 özeti tutulur. Yeni parola kaydedilince
+kullanıcının açık oturumları kapanır. Yanıt, adrese bağlı bir hesap olsun ya da
+olmasın aynıdır; böylece kimin kayıtlı olduğu dışarıdan anlaşılmaz.
+
+Gönderim için `.env` içinde SMTP ayarları gerekir (`SMTP_HOST`, `SMTP_PORT`,
+`SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `SITE_URL`). `SMTP_HOST` boşsa e-posta
+gönderilmez, bağlantı sunucu günlüğüne yazılır; yerel geliştirmede bu yeterlidir.
 
 ## Fontlar
 

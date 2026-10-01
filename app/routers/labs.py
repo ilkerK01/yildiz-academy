@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session as DbSession
 
-from app import config
+from app import config, i18n
 from app.db import get_db
 from app.deps import require_user_api
 from app.models import Lab, LabStep, User, now
@@ -33,6 +33,10 @@ def _step_or_404(lab: Lab, index: int) -> LabStep:
     raise HTTPException(404, "Adım bulunamadı.")
 
 
+def _m(request: Request, metin: str) -> str:
+    return i18n.cevir(i18n.dil(request), metin)
+
+
 def _adim_kilitli(lab: Lab, step: LabStep, step_rows: dict) -> bool:
     return step.step_index > progress.current_step_index(lab, step_rows)
 
@@ -51,7 +55,7 @@ def cevapla(
         f"cevap:{user.id}:{slug}:{index}:{ip}", config.ANSWER_ATTEMPTS_PER_MINUTE
     ):
         return JSONResponse(
-            {"ok": False, "hata": "Çok hızlı deniyorsun. Bir dakika bekle."}, 429
+            {"ok": False, "hata": _m(request, "Çok hızlı deniyorsun. Bir dakika bekle.")}, 429
         )
 
     lab = _lab_or_404(db, slug)
@@ -74,7 +78,7 @@ def cevapla(
             "ok": True,
             "dogru": False,
             "deneme": row.attempts,
-            "mesaj": "Bu değil. Tekrar dene.",
+            "mesaj": _m(request, "Bu değil. Tekrar dene."),
         }
 
     row.solved = True
@@ -101,6 +105,7 @@ def cevapla(
 def ipucu(
     slug: str,
     index: int,
+    request: Request,
     db: DbSession = Depends(get_db),
     user: User = Depends(require_user_api),
 ):
@@ -113,7 +118,7 @@ def ipucu(
 
     row = progress.get_or_create_step_row(db, user.id, step)
     if row.hints_used >= len(step.hints):
-        return {"ok": False, "hata": "Bu adımda başka ipucu yok."}
+        return {"ok": False, "hata": _m(request, "Bu adımda başka ipucu yok.")}
 
     hint = step.hints[row.hints_used]
     row.hints_used += 1
@@ -130,6 +135,7 @@ def ipucu(
 @router.post("/{slug}/pes")
 def pes(
     slug: str,
+    request: Request,
     db: DbSession = Depends(get_db),
     user: User = Depends(require_user_api),
 ):
@@ -138,13 +144,14 @@ def pes(
     return {
         "ok": True,
         "cozum_html": lab.solution_html,
-        "mesaj": "Çözüm açıldı. Bu labdan artık puan kazanamazsın.",
+        "mesaj": _m(request, "Çözüm açıldı. Bu labdan artık puan kazanamazsın."),
     }
 
 
 @router.post("/{slug}/sifirla")
 def sifirla(
     slug: str,
+    request: Request,
     db: DbSession = Depends(get_db),
     user: User = Depends(require_user_api),
 ):
@@ -153,10 +160,11 @@ def sifirla(
     return {
         "ok": True,
         "puan_kilitli": lab_progress.solution_seen,
-        "mesaj": (
+        "mesaj": _m(
+            request,
             "Lab sıfırlandı. Çözümü daha önce gördüğün için bu tekrar alıştırma "
-            "modunda, puan yazılmayacak."
+            "modunda, puan yazılmayacak. En iyi puanın korunuyor."
             if lab_progress.solution_seen
-            else "Lab sıfırlandı."
+            else "Lab sıfırlandı.",
         ),
     }

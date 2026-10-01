@@ -7,7 +7,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import STATIC_DIR
-from app.db import Base, engine
+from app.db import sema_guncelle
 from app.deps import LoginRedirect, login_redirect_response
 from app.routers import admin, auth, labs, lessons, pages
 from app.templating import page
@@ -15,10 +15,35 @@ from app.templating import page
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    Base.metadata.create_all(bind=engine)
+    sema_guncelle()
     yield
 
 app = FastAPI(title="Yıldız Academy", docs_url=None, redoc_url=None, lifespan=lifespan)
+
+GUVENLIK_BASLIKLARI = {
+    "X-Frame-Options": "DENY",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "same-origin",
+    "Content-Security-Policy": "frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'",
+}
+GOVDE_SINIRI = 2 * 1024 * 1024
+
+
+@app.middleware("http")
+async def guvenlik_katmani(request: Request, call_next):
+    if request.method not in ("GET", "HEAD", "OPTIONS"):
+        site = request.headers.get("sec-fetch-site")
+        kaynak = request.headers.get("origin")
+        beklenen = f"{request.url.scheme}://{request.url.netloc}"
+        if site == "cross-site" or (kaynak and kaynak != "null" and kaynak != beklenen):
+            return JSONResponse({"ok": False, "hata": "İstek reddedildi."}, status_code=403)
+        uzunluk = request.headers.get("content-length")
+        if uzunluk and uzunluk.isdigit() and int(uzunluk) > GOVDE_SINIRI:
+            return JSONResponse({"ok": False, "hata": "İstek çok büyük."}, status_code=413)
+    yanit = await call_next(request)
+    for ad, deger in GUVENLIK_BASLIKLARI.items():
+        yanit.headers.setdefault(ad, deger)
+    return yanit
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
@@ -43,4 +68,6 @@ def admin_kisayolu():
 async def bulunamadi(request: Request, exc):
     if request.url.path.startswith("/api/"):
         return JSONResponse({"ok": False, "hata": "Bulunamadı."}, status_code=404)
-    return page(request, "404.html", user=None)
+    yanit = page(request, "404.html", user=None)
+    yanit.status_code = 404
+    return yanit

@@ -1,0 +1,12 @@
+{% macro rozet_izgarasi(rozetler) -%}
+<div class="rozetler" style="margin-top:20px">
+{% for rozet in rozetler %}
+  <div class="rozet {{ '' if rozet.earned else 'rozet--kilitli' }}">
+    <img class="rozet__muhur" src="/static/img/muhur/{{ rozet.slug }}.png"
+         alt="" width="96" height="96" loading="lazy">
+    <b>{{ _(rozet.name) }}</b>
+    <span>{{ _(rozet.description) }}</span>
+  </div>
+{% endfor %}
+</div>
+{%- endmacro %}

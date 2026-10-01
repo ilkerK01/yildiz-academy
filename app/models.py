@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import secrets
 from datetime import datetime, timezone
 
 from sqlalchemy import (
@@ -18,6 +19,10 @@ from app.db import Base
 
 def now() -> datetime:
     return datetime.now(timezone.utc)
+
+
+def yeni_public_id() -> str:
+    return secrets.token_urlsafe(9)
 
 
 class Lesson(Base):
@@ -121,6 +126,9 @@ class User(Base):
     __tablename__ = "user"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    public_id: Mapped[str] = mapped_column(
+        String(16), unique=True, index=True, default=yeni_public_id
+    )
 
     display_name: Mapped[str] = mapped_column(String(24), unique=True, index=True)
     display_name_changed_at: Mapped[datetime | None] = mapped_column(
@@ -135,6 +143,17 @@ class User(Base):
     last_login_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+
+
+class PasswordReset(Base):
+    __tablename__ = "password_reset"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), index=True)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class AdminUser(Base):
@@ -190,6 +209,8 @@ class LabProgress(Base):
     lab_id: Mapped[int] = mapped_column(ForeignKey("lab.id", ondelete="CASCADE"), index=True)
     status: Mapped[str] = mapped_column(String(15), default="basladi")
     earned_points: Mapped[int] = mapped_column(Integer, default=0)
+    best_points: Mapped[int] = mapped_column(Integer, default=0)
+    best_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     solution_seen: Mapped[bool] = mapped_column(Boolean, default=False)
 

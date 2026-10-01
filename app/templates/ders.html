@@ -2,39 +2,39 @@
 
 {% block govde %}
 <div class="labdetay__head" style="margin-bottom:32px">
-  <a class="back" href="/kutuphane">← Kütüphane</a>
+  <a class="back" href="/kutuphane">← {{ _("Kütüphane") }}</a>
   <div class="meta">
     {% for etiket in etiketler %}
       <a class="chip chip--dim" href="/etiket/{{ etiket.slug }}">{{ etiket.name }}</a>
     {% endfor %}
-    <span class="label">{{ ders.reading_minutes }} dk okuma</span>
-    {% if okundu %}<span class="chip chip--ok">Okundu</span>{% endif %}
+    <span class="label">{{ _("{n} dk okuma", n=ders.reading_minutes) }}</span>
+    {% if okundu %}<span class="chip chip--ok">{{ _("Okundu") }}</span>{% endif %}
   </div>
   <h1>{{ ders.title }}</h1>
   {% if ders.summary %}<p class="desc">{{ ders.summary }}</p>{% endif %}
 </div>
 
-<article class="prose rise">{{ ders.body_html|safe }}</article>
+<article class="prose">{{ ders.body_html|safe }}</article>
 
 <div class="ders-foot">
   <button class="btn" id="okudum-btn" data-slug="{{ ders.slug }}"
           {% if okundu %}disabled{% endif %}>
-    {% if okundu %}Okundu olarak işaretlendi{% else %}Okudum{% endif %}
+    {% if okundu %}{{ _("Okundu olarak işaretlendi") }}{% else %}{{ _("Okudum") }}{% endif %}
   </button>
   <p class="cikti" id="okudum-cikti"></p>
 </div>
 
 {% if ilgili_lablar %}
 <section class="panel">
-  <div class="panel__head">~/lab · bu etiketlerdeki laboratuvarlar</div>
+  <div class="panel__head">~/lab · {{ _("bu etiketlerdeki laboratuvarlar") }}</div>
   <div class="panel__body">
     <div class="grid grid--2">
     {% for lab in ilgili_lablar %}
       <a class="rowcard" href="/lab/{{ lab.slug }}">
         <h3>{{ lab.title }}</h3>
         <div class="rowcard__meta">
-          <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ lab.difficulty }}</span>
-          <span>{{ lab.total_points }} puan</span>
+          <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ _(lab.difficulty) }}</span>
+          <span>{{ _("{n} puan", n=lab.total_points) }}</span>
         </div>
       </a>
     {% endfor %}

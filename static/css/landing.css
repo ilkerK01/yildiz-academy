@@ -785,3 +785,21 @@ dialog.modal[open]::backdrop{animation:veilIn .62s ease}
   font-size:var(--primitive-fontSize-sm);
   color:var(--color-ink);
 }
+
+.modal__unuttum{
+  margin:calc(var(--primitive-spacing-2) * -1) 0 var(--primitive-spacing-4);
+  text-align:right;
+  font-size:var(--primitive-fontSize-sm);
+}
+.modal__unuttum button{
+  background:none;
+  border:0;
+  padding:0;
+  color:var(--color-ink-soft);
+  font:inherit;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  cursor:var(--cursor-default),pointer;
+}
+.modal__unuttum button:hover{color:var(--color-accent)}
+.modal__submit:disabled{opacity:.6}

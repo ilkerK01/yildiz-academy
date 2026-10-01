@@ -21,7 +21,7 @@ async function cevapGonder(event, index) {
   }
 
   if (!veri.dogru) {
-    yaz(cikti, veri.mesaj + " (" + veri.deneme + ". deneme)");
+    yaz(cikti, veri.mesaj + " " + t("({n}. deneme)", { n: veri.deneme }));
     return false;
   }
 
@@ -40,7 +40,7 @@ async function ipucuAc(index) {
     "/api/lab/" + LAB_SLUG + "/adim/" + index + "/ipucu"
   );
   if (!veri.ok) {
-    yaz(adimEl(index).querySelector("[data-cikti]"), veri.hata || "İpucu açılamadı.");
+    yaz(adimEl(index).querySelector("[data-cikti]"), veri.hata || t("İpucu açılamadı."));
     return;
   }
   const kutu = adimEl(index).querySelector("[data-ipuclari]");
@@ -50,7 +50,7 @@ async function ipucuAc(index) {
   kutu.appendChild(satir);
 
   const puan = adimEl(index).querySelector("[data-puan]");
-  if (puan) puan.textContent = veri.yeni_puan + " puan (ipucu düştü)";
+  if (puan) puan.textContent = t("{n} puan (ipucu düştü)", { n: veri.yeni_puan });
 
   const sayac = document.querySelector("[data-ipucu-sayac]");
   if (sayac) sayac.textContent = String(Number(sayac.textContent) + 1);
@@ -62,7 +62,7 @@ async function ipucuAc(index) {
 }
 
 async function pesEt() {
-  if (!confirm("Çözümü açarsan bu labdan bir daha puan kazanamazsın. Emin misin?")) {
+  if (!confirm(t("Çözümü açarsan bu labdan bir daha puan kazanamazsın. Emin misin?"))) {
     return;
   }
   const { veri } = await apiPost("/api/lab/" + LAB_SLUG + "/pes");
@@ -73,7 +73,7 @@ async function pesEt() {
 }
 
 async function labSifirla() {
-  if (!confirm("Bu labın ilerlemesi silinecek. Devam edilsin mi?")) return;
+  if (!confirm(t("Bu labın ilerlemesi silinecek. En iyi puanın korunur. Devam edilsin mi?"))) return;
   const { veri } = await apiPost("/api/lab/" + LAB_SLUG + "/sifirla");
   if (veri.mesaj) alert(veri.mesaj);
   window.location.reload();

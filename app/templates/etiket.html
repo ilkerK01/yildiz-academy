@@ -3,23 +3,23 @@
 {% block govde %}
 <div class="main__head">
   <div>
-    <span class="label">Etiket</span>
+    <span class="label">{{ _("Etiket") }}</span>
     <h1>{{ etiket.name }}</h1>
-    <p class="lede">{{ dersler|length }} ders, {{ lablar|length }} lab bu etiketle işaretli.</p>
+    <p class="lede">{{ _("{ders} ders, {lab} lab bu etiketle işaretli.", ders=dersler|length, lab=lablar|length) }}</p>
   </div>
 </div>
 
-<div class="grid grid--2 rise">
+<div class="grid grid--2">
   <section class="panel">
     <div class="panel__head">~/kutuphane/{{ etiket.slug }}</div>
     <div class="panel__body">
       {% for ders in dersler %}
         <a class="rowcard" href="/kutuphane/{{ ders.slug }}">
           <h3>{{ ders.title }}</h3>
-          <div class="rowcard__meta"><span>{{ ders.reading_minutes }} dk</span></div>
+          <div class="rowcard__meta"><span>{{ _("{n} dk", n=ders.reading_minutes) }}</span></div>
         </a>
       {% else %}
-        <p class="lede">Bu etikette ders yok.</p>
+        <p class="lede">{{ _("Bu etikette ders yok.") }}</p>
       {% endfor %}
     </div>
   </section>
@@ -30,12 +30,12 @@
         <a class="rowcard" href="/lab/{{ lab.slug }}">
           <h3>{{ lab.title }}</h3>
           <div class="rowcard__meta">
-            <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ lab.difficulty }}</span>
-            <span>{{ lab.total_points }} puan</span>
+            <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ _(lab.difficulty) }}</span>
+            <span>{{ _("{n} puan", n=lab.total_points) }}</span>
           </div>
         </a>
       {% else %}
-        <p class="lede">Bu etikette lab yok.</p>
+        <p class="lede">{{ _("Bu etikette lab yok.") }}</p>
       {% endfor %}
     </div>
   </section>

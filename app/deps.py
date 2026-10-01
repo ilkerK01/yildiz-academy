@@ -58,8 +58,17 @@ def require_admin(admin: bool = Depends(is_admin)):
     return True
 
 
+def guvenli_yol(deger: str | None, varsayilan: str) -> str:
+    if not deger or not deger.startswith("/") or deger.startswith("//"):
+        return varsayilan
+    if "\\" in deger or any(ord(c) < 32 or ord(c) == 127 for c in deger):
+        return varsayilan
+    return deger
+
+
 def login_redirect_response(next_url: str) -> RedirectResponse:
     target = "/"
-    if next_url and next_url != "/":
+    next_url = guvenli_yol(next_url, "/")
+    if next_url != "/":
         target = f"/?next={quote(next_url, safe='')}"
     return RedirectResponse(target, status_code=status.HTTP_303_SEE_OTHER)

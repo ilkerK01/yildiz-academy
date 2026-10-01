@@ -5,12 +5,16 @@ import sys
 
 from sqlalchemy import select
 
-from app.db import Base, SessionLocal, engine
+from app.db import SessionLocal, sema_guncelle
 from app.models import AdminUser, User
 from app.services import security
 
 
 def _admin_ac(db, kullanici: str, parola: str) -> int:
+    hata = security.check_password(parola)
+    if hata:
+        print(f"Hata: {hata}", file=sys.stderr)
+        return 1
     mevcut = db.scalar(select(AdminUser).where(AdminUser.username == kullanici))
     if mevcut is not None:
         mevcut.password_hash = security.hash_password(parola)
@@ -82,7 +86,7 @@ def main() -> int:
 
     args = komut.parse_args()
 
-    Base.metadata.create_all(bind=engine)
+    sema_guncelle()
     with SessionLocal() as db:
         if args.komut == "admin":
             return _admin_ac(db, args.kullanici, args.parola)

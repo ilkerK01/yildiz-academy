@@ -3,8 +3,8 @@
 {% block govde %}
 <div class="main__head">
   <div>
-    <h1>Arama</h1>
-    <p class="lede">Ders ve lab başlıklarında, özetlerinde ara.</p>
+    <h1>{{ _("Arama") }}</h1>
+    <p class="lede">{{ _("Ders ve lab başlıklarında, özetlerinde ara.") }}</p>
   </div>
 </div>
 
@@ -15,35 +15,35 @@
       <div class="giris__cmd"><span class="p">$</span><span>grep -ri</span></div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <input id="q" name="q" value="{{ q }}" placeholder="hash, apt, onion..." autofocus style="flex:1;min-width:200px">
-        <button class="btn" type="submit">Ara</button>
+        <button class="btn" type="submit">{{ _("Ara") }}</button>
       </div>
     </form>
   </div>
 </section>
 
 {% if q and q|length < 2 %}
-  <p class="bilgi">En az iki karakter yaz.</p>
+  <p class="bilgi">{{ _("En az iki karakter yaz.") }}</p>
 {% elif q %}
   <div class="section-head" style="margin-top:0">
-    <h2>Sonuçlar</h2>
-    <span class="label">{{ dersler|length + lablar|length }} sonuç</span>
+    <h2>{{ _("Sonuçlar") }}</h2>
+    <span class="label">{{ _("{n} sonuç", n=dersler|length + lablar|length) }}</span>
   </div>
-  <div class="grid grid--2 rise" style="margin-top:20px">
+  <div class="grid grid--2" style="margin-top:20px">
   {% for ders in dersler %}
     <a class="rowcard" href="/kutuphane/{{ ders.slug }}">
       <h3>{{ ders.title }}</h3><p>{{ ders.summary }}</p>
-      <div class="rowcard__meta"><span class="chip">ders</span><span>{{ ders.reading_minutes }} dk</span></div>
+      <div class="rowcard__meta"><span class="chip">{{ _("ders") }}</span><span>{{ _("{n} dk", n=ders.reading_minutes) }}</span></div>
     </a>
   {% endfor %}
   {% for lab in lablar %}
     <a class="rowcard" href="/lab/{{ lab.slug }}">
       <h3>{{ lab.title }}</h3><p>{{ lab.summary }}</p>
-      <div class="rowcard__meta"><span class="chip chip--acc">lab</span><span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ lab.difficulty }}</span><span>{{ lab.total_points }} puan</span></div>
+      <div class="rowcard__meta"><span class="chip chip--acc">lab</span><span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ _(lab.difficulty) }}</span><span>{{ _("{n} puan", n=lab.total_points) }}</span></div>
     </a>
   {% endfor %}
   </div>
   {% if not dersler and not lablar %}
-    <p class="lede" style="margin-top:20px">Hiçbir şey eşleşmedi.</p>
+    <p class="lede" style="margin-top:20px">{{ _("Hiçbir şey eşleşmedi.") }}</p>
   {% endif %}
 {% endif %}
 {% endblock %}

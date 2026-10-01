@@ -7,12 +7,12 @@
 <div class="labdetay">
   <div>
     <div class="labdetay__head">
-      <a class="back" href="/lab">← Laboratuvarlar</a>
+      <a class="back" href="/lab">← {{ _("Laboratuvarlar") }}</a>
       <div class="meta">
-        <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ lab.difficulty }}</span>
+        <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ _(lab.difficulty) }}</span>
         <span class="label">
           {% for etiket in etiketler %}<a class="chip chip--dim" href="/etiket/{{ etiket.slug }}">{{ etiket.name }}</a> {% endfor %}
-          {{ lab.total_points }} puan
+          {{ _("{n} puan", n=lab.total_points) }}
         </span>
       </div>
       <h1>{{ lab.title }}</h1>
@@ -23,20 +23,21 @@
       {% for adim in adimlar %}
         <a class="step" href="#adim-{{ adim.index }}"
            data-s="{% if adim.cozuldu %}done{% elif adim.index == aktif_adim %}now{% endif %}">
-          <i>{{ adim.index }}</i><span>Adım {{ adim.index }}</span>
+          <i>{{ adim.index }}</i><span>{{ _("Adım {n}", n=adim.index) }}</span>
         </a>
       {% endfor %}
     </div>
 
     {% if durum.solution_seen %}
     <p class="bilgi" style="margin-top:20px">
-      Bu labın çözümünü daha önce gördün. Tekrar çözebilirsin ama puan yazılmaz (alıştırma modu).
+      {{ _("Bu labın çözümünü daha önce gördün. Tekrar çözebilirsin ama puan yazılmaz (alıştırma modu).") }}
+      {% if durum.best_points %}{{ _("En iyi puanın ({n}) korunuyor.", n=durum.best_points) }}{% endif %}
     </p>
     {% endif %}
 
     {% if lab.briefing_html %}
     <section class="panel brief">
-      <div class="panel__head">~/lab/{{ lab.slug }}/senaryo</div>
+      <div class="panel__head">~/lab/{{ lab.slug }}/{{ _("senaryo") }}</div>
       <div class="panel__body prose">{{ lab.briefing_html|safe }}</div>
     </section>
     {% endif %}
@@ -46,12 +47,12 @@
       <section class="adim {% if adim.cozuldu %}adim--cozuldu{% elif adim.kilitli %}adim--kilitli{% endif %}"
                id="adim-{{ adim.index }}" data-index="{{ adim.index }}">
         <div class="adim__head">
-          <span class="adim__no">Adım {{ adim.index }}{% if adim.cozuldu %} · Çözüldü{% endif %}</span>
-          <span class="adim__puan" data-puan>{{ adim.guncel_puan }} / {{ adim.puan }} puan</span>
+          <span class="adim__no">{{ _("Adım {n}", n=adim.index) }}{% if adim.cozuldu %} · {{ _("Çözüldü") }}{% endif %}</span>
+          <span class="adim__puan" data-puan>{{ _("{n} / {toplam} puan", n=adim.guncel_puan, toplam=adim.puan) }}</span>
         </div>
 
         {% if adim.kilitli %}
-          <p class="lede" style="margin-top:10px">Önceki adımı çözünce açılır.</p>
+          <p class="lede" style="margin-top:10px">{{ _("Önceki adımı çözünce açılır.") }}</p>
         {% else %}
           <div class="prose">{{ adim.soru_html|safe }}</div>
 
@@ -66,25 +67,25 @@
           </div>
 
           {% if adim.cozuldu %}
-            <p class="answer-msg" data-state="correct">Doğru cevap verildi.</p>
+            <p class="answer-msg" data-state="correct">{{ _("Doğru cevap verildi.") }}</p>
           {% else %}
             <form onsubmit="return cevapGonder(event, {{ adim.index }})">
               {% if adim.tip == 'choice' %}
                 <select name="cevap" class="answer" required>
-                  <option value="">Bir şık seç</option>
+                  <option value="">{{ _("Bir şık seç") }}</option>
                   {% for sik in adim.siklar %}
                     <option value="{{ loop.index0 }}">{{ sik }}</option>
                   {% endfor %}
                 </select>
               {% else %}
                 <input type="text" name="cevap" maxlength="200" autocomplete="off"
-                       placeholder="Cevabını yaz" required>
+                       placeholder="{{ _('Cevabını yaz') }}" required>
               {% endif %}
-              <button class="btn" type="submit">Gönder</button>
+              <button class="btn" type="submit">{{ _("Gönder") }}</button>
               {% if adim.kalan_ipucu > 0 %}
                 <button class="btn btn--quiet" type="button"
                         onclick="ipucuAc({{ adim.index }})">
-                  İpucu aç ({{ adim.kalan_ipucu }})
+                  {{ _("İpucu aç ({n})", n=adim.kalan_ipucu) }}
                 </button>
               {% endif %}
             </form>
@@ -97,13 +98,13 @@
 
     <div class="actions">
       {% if durum.status != 'tamamlandi' and not durum.solution_seen %}
-        <button class="btn btn--quiet" onclick="pesEt()">Pes ediyorum, çözümü göster</button>
+        <button class="btn btn--quiet" onclick="pesEt()">{{ _("Pes ediyorum, çözümü göster") }}</button>
       {% endif %}
-      <button class="btn btn--quiet" onclick="labSifirla()">Labı sıfırla</button>
+      <button class="btn btn--quiet" onclick="labSifirla()">{{ _("Labı sıfırla") }}</button>
     </div>
 
     <section class="solution" id="cozum" {% if not cozum_acik %}hidden{% endif %}>
-      <span class="label">~/lab/{{ lab.slug }}/cozum</span>
+      <span class="label">~/lab/{{ lab.slug }}/{{ _("cozum") }}</span>
       <div class="prose" id="cozum-govde">
         {% if cozum_acik %}{{ lab.solution_html|safe }}{% endif %}
       </div>
@@ -112,27 +113,28 @@
 
   <aside class="labaside">
     <div class="card card--pad">
-      <div class="card__title">İlerleme</div>
+      <div class="card__title">{{ _("İlerleme") }}</div>
       <div class="ring-row">
         <div class="ring" style="--pct:{{ yuzde }}%" data-label="{{ yuzde }}%"></div>
         <div class="facts">
-          {{ durum.earned_points }} / {{ lab.total_points }} puan<br>
-          {{ cozulen }} / {{ adimlar|length }} adım<br>
-          <b data-ipucu-sayac>{{ acik_ipucu }}</b> ipucu kullanıldı
+          {{ _("{n} / {toplam} puan", n=durum.earned_points, toplam=lab.total_points) }}<br>
+          {% if durum.best_points > durum.earned_points %}{{ _("En iyi: {n} puan", n=durum.best_points) }}<br>{% endif %}
+          {{ _("{n} / {toplam} adım", n=cozulen, toplam=adimlar|length) }}<br>
+          <b data-ipucu-sayac>{{ acik_ipucu }}</b> {{ _("ipucu kullanıldı") }}
         </div>
       </div>
     </div>
     <div class="card card--pad">
-      <div class="card__title">Durum</div>
+      <div class="card__title">{{ _("Durum") }}</div>
       <div class="aside-list">
         <a href="#adimlar">Lab
-          {% if durum.status == 'tamamlandi' %}<span class="ok">Tamamlandı</span>
-          {% elif durum.status == 'pes_etti' %}<span>Pes edildi</span>
-          {% else %}<span>Adım {{ aktif_adim if aktif_adim <= adimlar|length else adimlar|length }}</span>{% endif %}
+          {% if durum.status == 'tamamlandi' %}<span class="ok">{{ _("Tamamlandı") }}</span>
+          {% elif durum.status == 'pes_etti' %}<span>{{ _("Pes edildi") }}</span>
+          {% else %}<span>{{ _("Adım {n}", n=(aktif_adim if aktif_adim <= adimlar|length else adimlar|length)) }}</span>{% endif %}
         </a>
-        <a href="#cozum">Çözüm {% if cozum_acik %}<span class="ok">Açık</span>{% else %}<span>Kilitli</span>{% endif %}</a>
+        <a href="#cozum">{{ _("Çözüm") }} {% if cozum_acik %}<span class="ok">{{ _("Açık") }}</span>{% else %}<span>{{ _("Kilitli") }}</span>{% endif %}</a>
         {% for etiket in etiketler %}
-          <a href="/etiket/{{ etiket.slug }}">{{ etiket.name }}<span>etiket →</span></a>
+          <a href="/etiket/{{ etiket.slug }}">{{ etiket.name }}<span>{{ _("etiket") }} →</span></a>
         {% endfor %}
       </div>
     </div>

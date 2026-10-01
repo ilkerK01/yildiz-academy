@@ -4,21 +4,21 @@
 {% set biten = durumlar.values()|selectattr("status", "equalto", "tamamlandi")|list|length %}
 <div class="main__head">
   <div>
-    <h1>Laboratuvarlar</h1>
+    <h1>{{ _("Laboratuvarlar") }}</h1>
     <p class="lede">
-      {% if not lablar %}Henüz lab yok. Admin panelinden bir .yaml yükleyebilirsin.
-      {% else %}{{ lablar|length }} laboratuvar. {{ biten }} tanesi tamamlandı.{% endif %}
+      {% if not lablar %}{{ _("Henüz lab yok. Admin panelinden bir .yaml yükleyebilirsin.") }}
+      {% else %}{{ _("{n} laboratuvar. {biten} tanesi tamamlandı.", n=lablar|length, biten=biten) }}{% endif %}
     </p>
   </div>
   <div class="pills" data-filtre>
-    <a class="pill" href="#" data-zorluk="" aria-current="true">Hepsi</a>
-    <a class="pill" href="#" data-zorluk="kolay">Kolay</a>
-    <a class="pill" href="#" data-zorluk="orta">Orta</a>
-    <a class="pill" href="#" data-zorluk="zor">Zor</a>
+    <a class="pill" href="#" data-zorluk="" aria-current="true">{{ _("Hepsi") }}</a>
+    <a class="pill" href="#" data-zorluk="kolay">{{ _("Kolay") }}</a>
+    <a class="pill" href="#" data-zorluk="orta">{{ _("Orta") }}</a>
+    <a class="pill" href="#" data-zorluk="zor">{{ _("Zor") }}</a>
   </div>
 </div>
 
-<div class="labgrid rise">
+<div class="labgrid">
 {% for lab in lablar %}
   <a class="labcard" href="/lab/{{ lab.slug }}"
      data-difficulty="{{ zorluk_sinif(lab.difficulty) }}" data-zorluk="{{ lab.difficulty }}">
@@ -29,8 +29,8 @@
     </div>
     <div class="labcard__body">
       <div class="labcard__meta">
-        <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ lab.difficulty }}</span>
-        <span>{{ lab.total_points }} puan</span>
+        <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ _(lab.difficulty) }}</span>
+        <span>{{ _("{n} puan", n=lab.total_points) }}</span>
       </div>
       <h2 class="labcard__title">{{ lab.title }}</h2>
       <div class="tags">

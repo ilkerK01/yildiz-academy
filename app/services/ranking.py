@@ -11,30 +11,32 @@ from app.models import Lab, LabProgress, LessonProgress, StepProgress, User
 @dataclass
 class RankRow:
     user_id: int
+    public_id: str
     display_name: str
     points: int
     rank: int
 
 
 def leaderboard(db: DbSession, limit: int = 20) -> list[RankRow]:
+    toplam = func.coalesce(func.sum(LabProgress.best_points), 0)
     stmt = (
         select(
             User.id,
+            User.public_id,
             User.display_name,
-            func.coalesce(func.sum(LabProgress.earned_points), 0).label("puan"),
-            func.max(LabProgress.completed_at).label("son_bitis"),
+            toplam.label("puan"),
+            func.max(LabProgress.best_at).label("son_bitis"),
         )
         .join(LabProgress, LabProgress.user_id == User.id)
-        .where(LabProgress.status == "tamamlandi", User.is_active.is_(True))
+        .where(LabProgress.best_points > 0, User.is_active.is_(True))
         .group_by(User.id)
-        .having(func.coalesce(func.sum(LabProgress.earned_points), 0) > 0)
-        .order_by(func.coalesce(func.sum(LabProgress.earned_points), 0).desc(),
-                  func.max(LabProgress.completed_at).asc())
+        .having(toplam > 0)
+        .order_by(toplam.desc(), func.max(LabProgress.best_at).asc())
         .limit(limit)
     )
     rows = db.execute(stmt).all()
     return [
-        RankRow(user_id=r[0], display_name=r[1], points=int(r[2]), rank=i + 1)
+        RankRow(user_id=r[0], public_id=r[1], display_name=r[2], points=int(r[3]), rank=i + 1)
         for i, r in enumerate(rows)
     ]
 
@@ -57,10 +59,9 @@ class Badge:
 
 def badges(db: DbSession, user_id: int) -> list[Badge]:
     scored_labs = db.execute(
-        select(LabProgress.lab_id, LabProgress.earned_points).where(
+        select(LabProgress.lab_id, LabProgress.best_points, LabProgress.status).where(
             LabProgress.user_id == user_id,
-            LabProgress.status == "tamamlandi",
-            LabProgress.earned_points > 0,
+            LabProgress.best_points > 0,
         )
     ).all()
     lab_count = len(scored_labs)
@@ -71,12 +72,19 @@ def badges(db: DbSession, user_id: int) -> list[Badge]:
 
     hintless = False
     perfect = False
-    for lab_id, earned in scored_labs:
+    for lab_id, best, status in scored_labs:
         lab = db.get(Lab, lab_id)
         if lab is None:
             continue
         step_ids = [s.id for s in lab.steps]
         if not step_ids:
+            continue
+        tam = lab.total_points > 0 and best >= lab.total_points
+        if tam:
+            perfect = True
+            hintless = True
+            continue
+        if status != "tamamlandi":
             continue
         used = db.scalar(
             select(func.coalesce(func.sum(StepProgress.hints_used), 0)).where(
@@ -85,8 +93,6 @@ def badges(db: DbSession, user_id: int) -> list[Badge]:
         ) or 0
         if used == 0:
             hintless = True
-        if earned >= lab.total_points and lab.total_points > 0:
-            perfect = True
 
     return [
         Badge("ilk-adim", "İlk adım", "İlk labını tamamladın", lab_count >= 1),

@@ -1,3 +1,12 @@
+function t(metin, degerler) {
+  const sozluk = window.YA_METIN || {};
+  let sonuc = sozluk[metin] || metin;
+  Object.keys(degerler || {}).forEach(function (anahtar) {
+    sonuc = sonuc.split("{" + anahtar + "}").join(String(degerler[anahtar]));
+  });
+  return sonuc;
+}
+
 async function apiPost(url, govde) {
   const yanit = await fetch(url, {
     method: "POST",
@@ -8,7 +17,7 @@ async function apiPost(url, govde) {
   try {
     veri = await yanit.json();
   } catch (_) {
-    veri = { ok: false, hata: "Sunucu yanıtı okunamadı." };
+    veri = { ok: false, hata: t("Sunucu yanıtı okunamadı.") };
   }
   return { durum: yanit.status, veri: veri };
 }
@@ -30,28 +39,6 @@ function temaUygula(tema) {
   document.documentElement.setAttribute("data-tema", tema);
   try { localStorage.setItem("ya-tema", tema); } catch (_) {}
 }
-
-function efektUygula(acik) {
-  const deger = acik ? "acik" : "kapali";
-  document.documentElement.setAttribute("data-efekt", deger);
-  try { localStorage.setItem("ya-efekt", deger); } catch (_) {}
-}
-
-(function paketleriKur() {
-  const kutu = document.querySelector("[data-packets]");
-  if (!kutu) return;
-  const renkler = ["var(--acc)", "#3ddc84", "#60a5fa", "#f472b6"];
-  for (let i = 0; i < 22; i++) {
-    const nokta = document.createElement("span");
-    const renk = renkler[i % 4];
-    nokta.style.left = ((i * 37) % 100) + "%";
-    nokta.style.background = renk;
-    nokta.style.boxShadow = "0 0 8px " + renk;
-    nokta.style.setProperty("--dur", (14 + ((i * 7) % 12)) + "s");
-    nokta.style.setProperty("--delay", -(i * 1.3) + "s");
-    kutu.appendChild(nokta);
-  }
-})();
 
 (function menuGenisligi() {
   const EN_AZ = 180, EN_COK = 420, VARSAYILAN = 220;

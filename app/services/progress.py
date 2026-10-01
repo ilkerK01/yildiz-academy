@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, or_, select, update
 from sqlalchemy.orm import Session as DbSession
 
 from app.models import (
@@ -94,6 +94,9 @@ def recalculate_lab(db: DbSession, user_id: int, lab: Lab) -> LabProgress:
         if progress.status != "tamamlandi":
             progress.status = "tamamlandi"
             progress.completed_at = now()
+        if progress.earned_points > (progress.best_points or 0):
+            progress.best_points = progress.earned_points
+            progress.best_at = progress.completed_at
         progress.solution_seen = True
     elif progress.status == "tamamlandi":
         progress.status = "basladi"
@@ -116,9 +119,9 @@ def reset_lab(db: DbSession, user_id: int, lab: Lab) -> LabProgress:
     step_ids = [s.id for s in lab.steps]
     if step_ids:
         db.execute(
-            delete(StepProgress).where(
-                StepProgress.user_id == user_id, StepProgress.step_id.in_(step_ids)
-            )
+            update(StepProgress)
+            .where(StepProgress.user_id == user_id, StepProgress.step_id.in_(step_ids))
+            .values(solved=False, attempts=0, earned_points=0, solved_at=None)
         )
     progress = get_lab_progress(db, user_id, lab)
     progress.status = "basladi"
@@ -138,13 +141,14 @@ def reset_all_progress(db: DbSession, user_id: int) -> None:
 
 def user_stats(db: DbSession, user_id: int) -> dict:
     total_points = db.scalar(
-        select(func.coalesce(func.sum(LabProgress.earned_points), 0)).where(
+        select(func.coalesce(func.sum(LabProgress.best_points), 0)).where(
             LabProgress.user_id == user_id
         )
     )
     solved_labs = db.scalar(
         select(func.count(LabProgress.id)).where(
-            LabProgress.user_id == user_id, LabProgress.status == "tamamlandi"
+            LabProgress.user_id == user_id,
+            or_(LabProgress.status == "tamamlandi", LabProgress.best_points > 0),
         )
     )
     read_lessons = db.scalar(
@@ -187,3 +191,24 @@ def active_lab(db: DbSession, user_id: int) -> dict | None:
             "ipucu": hints,
         }
     return None
+
+
+def completed_labs(db: DbSession, user_id: int) -> list[dict]:
+    rows = db.execute(
+        select(LabProgress, Lab)
+        .join(Lab, Lab.id == LabProgress.lab_id)
+        .where(
+            LabProgress.user_id == user_id,
+            Lab.published.is_(True),
+            or_(LabProgress.status == "tamamlandi", LabProgress.best_points > 0),
+        )
+        .order_by(LabProgress.best_points.desc(), Lab.title)
+    ).all()
+    return [
+        {
+            "lab": lab,
+            "puan": row.best_points,
+            "tarih": row.best_at or row.completed_at,
+        }
+        for row, lab in rows
+    ]

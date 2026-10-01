@@ -20,7 +20,12 @@ function hataGoster(id, mesaj) {
 
 function nereye(varsayilan) {
   const istenen = window.SONRAKI;
-  if (istenen && istenen.startsWith("/") && !istenen.startsWith("//")) return istenen;
+  if (istenen && istenen.startsWith("/") && !istenen.startsWith("//") && !/[\\\x00-\x1f\x7f]/.test(istenen)) {
+    try {
+      const hedef = new URL(istenen, window.location.origin);
+      if (hedef.origin === window.location.origin) return hedef.pathname + hedef.search + hedef.hash;
+    } catch (_) {}
+  }
   return varsayilan || "/panel";
 }
 
@@ -33,7 +38,7 @@ async function kayitGonder(event) {
     parola: document.getElementById("k-parola").value,
   });
   if (!veri.ok) {
-    hataGoster("k-hata", veri.hata || "Kayıt tamamlanamadı.");
+    hataGoster("k-hata", veri.hata || t("Kayıt tamamlanamadı."));
     return false;
   }
   window.location.href = nereye(veri.next);
@@ -48,10 +53,52 @@ async function girisGonder(event) {
     parola: document.getElementById("g-parola").value,
   });
   if (!veri.ok) {
-    hataGoster("g-hata", veri.hata || "Giriş yapılamadı.");
+    hataGoster("g-hata", veri.hata || t("Giriş yapılamadı."));
     return false;
   }
   window.location.href = nereye(veri.next);
+  return false;
+}
+
+async function unuttumGonder(event) {
+  event.preventDefault();
+  hataGoster("u-hata", "");
+  const tamam = document.getElementById("u-tamam");
+  tamam.hidden = true;
+  const dugme = document.getElementById("u-gonder");
+  dugme.disabled = true;
+  const { veri } = await apiPost("/api/sifremi-unuttum", {
+    eposta: document.getElementById("u-eposta").value,
+  });
+  dugme.disabled = false;
+  if (!veri.ok) {
+    hataGoster("u-hata", veri.hata || t("Bağlantı gönderilemedi."));
+    return false;
+  }
+  tamam.textContent = veri.mesaj;
+  tamam.hidden = false;
+  return false;
+}
+
+async function sifirlaGonder(event) {
+  event.preventDefault();
+  hataGoster("s-hata", "");
+  const parola = document.getElementById("s-parola").value;
+  if (parola !== document.getElementById("s-tekrar").value) {
+    hataGoster("s-hata", t("Parolalar eşleşmiyor."));
+    return false;
+  }
+  const { veri } = await apiPost("/api/sifre-sifirla", { token: window.SIFIRLA, yeni: parola });
+  if (!veri.ok) {
+    hataGoster("s-hata", veri.hata || t("Parola kaydedilemedi."));
+    return false;
+  }
+  window.SIFIRLA = "";
+  history.replaceState(null, "", "/");
+  girisAc();
+  const not = document.getElementById("g-tamam");
+  not.textContent = t("Parolan değişti. Yeni parolanla giriş yapabilirsin.");
+  not.hidden = false;
   return false;
 }
 
@@ -96,5 +143,6 @@ document.querySelectorAll("dialog.modal").forEach(function (kutu) {
   ogeler.forEach(function (el) { io.observe(el); });
 })();
 
-if (window.SONRAKI) girisAc();
+if (window.SIFIRLA) ac("modal-sifirla");
+else if (window.SONRAKI) girisAc();
 if (window.location.hash === "#kayit") kayitAc();

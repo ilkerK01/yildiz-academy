@@ -3,12 +3,12 @@ from __future__ import annotations
 import sys
 
 from app.config import CONTENT_DIR
-from app.db import Base, SessionLocal, engine
+from app.db import SessionLocal, sema_guncelle
 from app.services.ingest import IngestError, ingest_directory
 
 
 def main() -> int:
-    Base.metadata.create_all(bind=engine)
+    sema_guncelle()
 
     if not CONTENT_DIR.exists():
         print(f"content/ klasörü yok: {CONTENT_DIR}")

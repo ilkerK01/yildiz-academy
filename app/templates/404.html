@@ -3,8 +3,8 @@
 <section class="acilis">
   <div class="giris__cmd"><span class="p">$</span><span class="typed">cat {{ request.url.path }}</span></div>
   <h1>404</h1>
-  <p class="lede">Aradığın sayfa burada değil.</p>
-  <a class="btn" href="/">Başa dön</a>
+  <p class="lede">{{ _("Aradığın sayfa burada değil.") }}</p>
+  <a class="btn" href="/">{{ _("Başa dön") }}</a>
 </section>
 {% endmacro %}
 {% block govde %}{{ icerik() }}{% endblock %}

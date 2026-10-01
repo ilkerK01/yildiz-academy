@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from markupsafe import escape
 from fastapi.responses import FileResponse, RedirectResponse
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session as DbSession
 
+from app import i18n
 from app.config import STATIC_DIR
 from app.db import get_db
-from app.deps import current_user, require_user
+from app.deps import current_user, guvenli_yol, require_user
 from app.models import ContentTag, Lab, Lesson, Tag, User
 from app.services import answers, progress, ranking, scoring
 from app.templating import page
@@ -66,7 +68,12 @@ def _related_labs(db: DbSession, lesson: Lesson) -> list[Lab]:
 def acilis(request: Request, user: User | None = Depends(current_user)):
     if user is not None:
         return RedirectResponse("/panel", status_code=303)
-    return page(request, "index.html", next=request.query_params.get("next", ""))
+    return page(request, "index.html", next=guvenli_yol(request.query_params.get("next", ""), ""))
+
+
+@router.get("/sifre-sifirla")
+def sifre_sifirla_sayfasi(request: Request, token: str = ""):
+    return page(request, "index.html", next="", sifirla_token=token)
 
 
 @router.get("/hakkinda")
@@ -94,6 +101,45 @@ def panel(request: Request, db: DbSession = Depends(get_db), user: User = Depend
         kendi_sira=ranking.own_rank(db, user.id),
         rozetler=ranking.badges(db, user.id),
         devam=progress.active_lab(db, user.id),
+    )
+
+
+@router.get("/dil/{kod}")
+def dil_degistir(kod: str, next: str = "/"):
+    hedef = guvenli_yol(next, "/")
+    response = RedirectResponse(hedef, status_code=303)
+    if kod in i18n.DILLER:
+        response.set_cookie(
+            i18n.CEREZ, kod, max_age=60 * 60 * 24 * 365, httponly=True, samesite="lax"
+        )
+    return response
+
+
+@router.get("/profil")
+def profilim(user: User = Depends(require_user)):
+    return RedirectResponse(f"/profil/{user.public_id}", status_code=303)
+
+
+@router.get("/profil/{public_id}")
+def profil(
+    public_id: str,
+    request: Request,
+    db: DbSession = Depends(get_db),
+    user: User = Depends(require_user),
+):
+    kisi = db.scalar(select(User).where(User.public_id == public_id))
+    if kisi is None or not kisi.is_active:
+        raise HTTPException(404, "Kullanıcı bulunamadı.")
+    return page(
+        request,
+        "profil.html",
+        user=user,
+        kisi=kisi,
+        kendi=kisi.id == user.id,
+        profil_stats=progress.user_stats(db, kisi.id),
+        sira=ranking.own_rank(db, kisi.id),
+        rozetler=ranking.badges(db, kisi.id),
+        tamamlananlar=progress.completed_labs(db, kisi.id),
     )
 
 
@@ -188,12 +234,12 @@ def lab_detay(
     for step in lab.steps:
         row = step_rows.get(step.id)
         acilan_ipuclari = [
-            h.text_html or h.text_md for h in step.hints[: (row.hints_used if row else 0)]
+            h.text_html or escape(h.text_md) for h in step.hints[: (row.hints_used if row else 0)]
         ]
         adimlar.append(
             {
                 "index": step.step_index,
-                "soru_html": step.prompt_html or step.prompt_md,
+                "soru_html": step.prompt_html or escape(step.prompt_md),
                 "iz": step.artifact,
                 "tip": step.answer_type,
                 "siklar": answers.public_choices(step.choices_json),

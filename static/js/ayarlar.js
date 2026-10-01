@@ -4,10 +4,10 @@ async function adDegistir(event) {
     gorunen_ad: document.getElementById("ad").value,
   });
   if (!veri.ok) {
-    yaz("ad-cikti", veri.hata || "Değiştirilemedi.");
+    yaz("ad-cikti", veri.hata || t("Değiştirilemedi."));
     return false;
   }
-  yaz("ad-cikti", "Kaydedildi. Yeni adın: " + veri.gorunen_ad);
+  yaz("ad-cikti", t("Kaydedildi. Yeni adın: {ad}", { ad: veri.gorunen_ad }));
   return false;
 }
 
@@ -18,12 +18,12 @@ async function parolaDegistir(event) {
     yeni: document.getElementById("yeni").value,
   });
   if (!veri.ok) {
-    yaz("parola-cikti", veri.hata || "Değiştirilemedi.");
+    yaz("parola-cikti", veri.hata || t("Değiştirilemedi."));
     return false;
   }
   document.getElementById("mevcut").value = "";
   document.getElementById("yeni").value = "";
-  yaz("parola-cikti", "Parola değişti. Diğer oturumların kapatıldı.");
+  yaz("parola-cikti", t("Parola değişti. Diğer oturumların kapatıldı."));
   return false;
 }
 
@@ -36,15 +36,5 @@ async function parolaDegistir(event) {
       temaUygula(dugme.dataset.tema);
       dugmeler.forEach(function (d) { d.setAttribute("aria-pressed", d === dugme ? "true" : "false"); });
     });
-  });
-
-  const anahtar = document.querySelector("[data-efekt-anahtar]");
-  if (!anahtar) return;
-  const acik = document.documentElement.getAttribute("data-efekt") !== "kapali";
-  anahtar.setAttribute("aria-checked", acik ? "true" : "false");
-  anahtar.addEventListener("click", function () {
-    const yeni = anahtar.getAttribute("aria-checked") !== "true";
-    anahtar.setAttribute("aria-checked", yeni ? "true" : "false");
-    efektUygula(yeni);
   });
 })();

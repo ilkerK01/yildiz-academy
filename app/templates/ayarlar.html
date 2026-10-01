@@ -3,8 +3,8 @@
 {% block govde %}
 <div class="main__head">
   <div>
-    <h1>Ayarlar</h1>
-    <p class="lede">Hesabın, güvenliğin ve akademinin görünümü.</p>
+    <h1>{{ _("Ayarlar") }}</h1>
+    <p class="lede">{{ _("Hesabın, güvenliğin ve akademinin görünümü.") }}</p>
   </div>
 </div>
 
@@ -12,18 +12,18 @@
 
   <section class="ayar">
     <header class="ayar__head">
-      <h2>Görünen ad</h2>
-      <p>Sıralamada ve laboratuvarlarda bu ad görünür.</p>
+      <h2>{{ _("Görünen ad") }}</h2>
+      <p>{{ _("Sıralamada ve laboratuvarlarda bu ad görünür.") }}</p>
     </header>
     <div class="ayar__govde">
       <form class="form" onsubmit="return adDegistir(event)">
         <div class="alan">
-          <label for="ad">Akademideki adın</label>
+          <label for="ad">{{ _("Akademideki adın") }}</label>
           <input id="ad" name="gorunen_ad" value="{{ user.display_name }}" required>
-          <p class="yardim">3-24 karakter. 30 günde bir değiştirilebilir.</p>
+          <p class="yardim">{{ _("3-24 karakter. 30 günde bir değiştirilebilir.") }}</p>
         </div>
         <div class="ayar__eylem">
-          <button class="btn" type="submit">Kaydet</button>
+          <button class="btn" type="submit">{{ _("Kaydet") }}</button>
           <p class="cikti" id="ad-cikti"></p>
         </div>
       </form>
@@ -32,22 +32,22 @@
 
   <section class="ayar">
     <header class="ayar__head">
-      <h2>Parola</h2>
-      <p>Değiştirdiğinde diğer cihazlardaki oturumların kapanır.</p>
+      <h2>{{ _("Parola") }}</h2>
+      <p>{{ _("Değiştirdiğinde diğer cihazlardaki oturumların kapanır.") }}</p>
     </header>
     <div class="ayar__govde">
       <form class="form" onsubmit="return parolaDegistir(event)">
         <div class="alan">
-          <label for="mevcut">Mevcut parola</label>
+          <label for="mevcut">{{ _("Mevcut parola") }}</label>
           <input id="mevcut" name="mevcut" type="password" autocomplete="current-password" required>
         </div>
         <div class="alan">
-          <label for="yeni">Yeni parola</label>
+          <label for="yeni">{{ _("Yeni parola") }}</label>
           <input id="yeni" name="yeni" type="password" autocomplete="new-password" required>
-          <p class="yardim">En az 8 karakter.</p>
+          <p class="yardim">{{ _("En az 8 karakter.") }}</p>
         </div>
         <div class="ayar__eylem">
-          <button class="btn" type="submit">Parolayı değiştir</button>
+          <button class="btn" type="submit">{{ _("Parolayı değiştir") }}</button>
           <p class="cikti" id="parola-cikti"></p>
         </div>
       </form>
@@ -56,22 +56,22 @@
 
   <section class="ayar">
     <header class="ayar__head">
-      <h2>Tema</h2>
-      <p>Seçimin yalnızca bu tarayıcıda saklanır.</p>
+      <h2>{{ _("Tema") }}</h2>
+      <p>{{ _("Seçimin yalnızca bu tarayıcıda saklanır.") }}</p>
     </header>
     <div class="ayar__govde">
       <div class="tema-secim" data-tema-secim>
         <button type="button" class="tema" data-tema="gece" aria-pressed="false">
           <span class="tema__swatch"><i style="background:#070a12"></i><i style="background:#0c1220"></i><i style="background:#e8b85a"></i></span>
-          <span class="tema__ad">Gece</span>
+          <span class="tema__ad">{{ _("Gece") }}</span>
         </button>
         <button type="button" class="tema" data-tema="fosfor" aria-pressed="false">
           <span class="tema__swatch"><i style="background:#05080a"></i><i style="background:#0a1012"></i><i style="background:#9fef00"></i></span>
-          <span class="tema__ad">Fosfor</span>
+          <span class="tema__ad">{{ _("Fosfor") }}</span>
         </button>
         <button type="button" class="tema" data-tema="murekkep" aria-pressed="false">
           <span class="tema__swatch"><i style="background:#080716"></i><i style="background:#0e0d22"></i><i style="background:#7dd3fc"></i></span>
-          <span class="tema__ad">Mürekkep</span>
+          <span class="tema__ad">{{ _("Mürekkep") }}</span>
         </button>
       </div>
     </div>
@@ -79,44 +79,27 @@
 
   <section class="ayar">
     <header class="ayar__head">
-      <h2>Hesap bilgileri</h2>
-      <p>Bu alanlar yalnızca sana görünür.</p>
+      <h2>{{ _("Hesap bilgileri") }}</h2>
+      <p>{{ _("Bu alanlar yalnızca sana görünür.") }}</p>
     </header>
     <div class="ayar__govde">
       <dl class="bilgi-listesi">
         <div class="bilgi-satir">
-          <dt>E-posta</dt>
+          <dt>{{ _("E-posta") }}</dt>
           <dd>{{ user.email }}</dd>
         </div>
         <div class="bilgi-satir">
-          <dt>Durum</dt>
-          <dd>{{ "Aktif" if user.is_active else "Askıda" }}</dd>
+          <dt>{{ _("Durum") }}</dt>
+          <dd>{{ _("Aktif") if user.is_active else _("Askıda") }}</dd>
         </div>
         <div class="bilgi-satir">
-          <dt>Katılım</dt>
+          <dt>{{ _("Katılım") }}</dt>
           <dd>{{ user.created_at.strftime("%d.%m.%Y") if user.created_at else "—" }}</dd>
         </div>
       </dl>
       <p class="yardim">
-        E-posta yalnızca giriş içindir. Hiçbir kullanıcının göreceği yerde
-        yayımlanmaz ve bu sürümde değiştirilemez.
+        {{ _("E-posta yalnızca giriş içindir. Hiçbir kullanıcının göreceği yerde yayımlanmaz ve bu sürümde değiştirilemez.") }}
       </p>
-    </div>
-  </section>
-
-  <section class="ayar ayar--genis">
-    <header class="ayar__head">
-      <h2>Arka plan efekti</h2>
-      <p>Sayfa arkasındaki tarama çizgisi ve süzülen noktalar.</p>
-    </header>
-    <div class="ayar__govde">
-      <div class="toggle">
-        <div>
-          <b>Efektleri göster</b>
-          <small>Kapatınca sayfa daha sakin görünür, performans artar.</small>
-        </div>
-        <button type="button" class="switch" role="switch" aria-checked="true" data-efekt-anahtar></button>
-      </div>
     </div>
   </section>
 

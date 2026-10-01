@@ -1,43 +1,44 @@
 {% extends "base.html" %}
+{% from "_rozetler.html" import rozet_izgarasi with context %}
 
 {% block govde %}
 <div class="main__head">
   <div>
     <div class="title-row">
-      <h1>Merhaba {{ user.display_name }}</h1>
-      <span class="online"><span class="dot-live"></span>ÇEVRİMİÇİ</span>
+      <h1>{{ _("Merhaba {ad}", ad=user.display_name) }}</h1>
+      <span class="online">{{ _("Çevrimiçi") }}</span>
     </div>
     <p class="lede">
       {% if devam %}
-        Güncel durum: bir lab açık, adım {{ devam.aktif }}'desin.
+        {{ _("Güncel durum: bir lab açık, {n}. adımdasın.", n=devam.aktif) }}
       {% elif stats.cozulen_lab == 0 %}
-        Henüz lab çözmedin. Laboratuvardan başla.
+        {{ _("Henüz lab çözmedin. Laboratuvardan başla.") }}
       {% else %}
-        {{ stats.cozulen_lab }} lab, {{ stats.okunan_ders }} ders bitti.
+        {{ _("{lab} lab, {ders} ders bitti.", lab=stats.cozulen_lab, ders=stats.okunan_ders) }}
       {% endif %}
-      {% if kendi_sira %}Sıralamada {{ kendi_sira }}. sıradasın.{% else %}Henüz sıralamada değilsin.{% endif %}
+      {% if kendi_sira %}{{ _("Sıralamada {n}. sıradasın.", n=kendi_sira) }}{% else %}{{ _("Henüz sıralamada değilsin.") }}{% endif %}
     </p>
   </div>
 </div>
 
-<div class="grid grid--4 rise">
+<div class="grid grid--4">
   <div class="stat stat--hero">
-    <span>Toplam puan</span>
+    <span>{{ _("Toplam puan") }}</span>
     <b>{{ stats.puan }}</b>
     <div class="bar bar--hero"><i style="width:{{ [stats.puan, 100]|min }}%"></i></div>
   </div>
   <div class="stat">
-    <span>Tamamlanan lab</span>
+    <span>{{ _("Tamamlanan lab") }}</span>
     <b>{{ stats.cozulen_lab }}</b>
     <div class="bar"><i style="width:{{ [stats.cozulen_lab * 20, 100]|min }}%"></i></div>
   </div>
   <div class="stat">
-    <span>Okunan ders</span>
+    <span>{{ _("Okunan ders") }}</span>
     <b>{{ stats.okunan_ders }}</b>
     <div class="bar"><i style="width:{{ [stats.okunan_ders * 10, 100]|min }}%"></i></div>
   </div>
   <div class="stat">
-    <span>Kullanılan ipucu</span>
+    <span>{{ _("Kullanılan ipucu") }}</span>
     <b>{{ stats.kullanilan_ipucu }}</b>
     <div class="bar"><i style="width:{{ [stats.kullanilan_ipucu * 10, 100]|min }}%"></i></div>
   </div>
@@ -45,18 +46,18 @@
 
 {% if devam %}
 <div class="section-head">
-  <h2>Yarım kalan</h2>
-  <a href="/lab">Laboratuvarlar →</a>
+  <h2>{{ _("Yarım kalan") }}</h2>
+  <a href="/lab">{{ _("Laboratuvarlar") }} →</a>
 </div>
 <a class="devam" href="/lab/{{ devam.lab.slug }}">
   <div class="devam__body">
     <div class="devam__title">{{ devam.lab.title }}</div>
     <div class="devam__desc">{{ devam.lab.summary }}</div>
     <div class="devam__meta">
-      <span class="chip" data-difficulty="{{ zorluk_sinif(devam.lab.difficulty) }}">{{ devam.lab.difficulty }}</span>
-      <span>Adım {{ devam.aktif }} / {{ devam.toplam }}</span><span class="sep">·</span>
-      <span>{{ devam.puan }} / {{ devam.lab.total_points }} puan</span><span class="sep">·</span>
-      <span>{{ devam.ipucu }} ipucu açık</span>
+      <span class="chip" data-difficulty="{{ zorluk_sinif(devam.lab.difficulty) }}">{{ _(devam.lab.difficulty) }}</span>
+      <span>{{ _("Adım {n} / {toplam}", n=devam.aktif, toplam=devam.toplam) }}</span><span class="sep">·</span>
+      <span>{{ _("{n} / {toplam} puan", n=devam.puan, toplam=devam.lab.total_points) }}</span><span class="sep">·</span>
+      <span>{{ _("{n} ipucu açık", n=devam.ipucu) }}</span>
     </div>
     <div class="devam__steps">
       {% for i in range(1, devam.toplam + 1) %}
@@ -64,13 +65,13 @@
       {% endfor %}
     </div>
   </div>
-  <span class="btn">Devam et</span>
+  <span class="btn">{{ _("Devam et") }}</span>
 </a>
 {% endif %}
 
 <div class="section-head">
-  <h2>Sıralama</h2>
-  <span class="label">{{ siralama|length }} analist</span>
+  <h2>{{ _("Sıralama") }}</h2>
+  <span class="label">{{ _("{n} analist", n=siralama|length) }}</span>
 </div>
 
 {% if siralama %}
@@ -81,11 +82,11 @@
       <div class="pod__card">
         <div class="panel__head">~/rank/{{ satir.rank }}</div>
         <div class="pod__body">
-          <div class="pod__cmd"><span class="p">$</span> whoami<span class="cursor-blink"></span></div>
+          <div class="pod__cmd"><span class="p">$</span> whoami</div>
           <div class="pod__rank">#{{ satir.rank }}</div>
-          <div class="pod__name">{{ satir.display_name }}</div>
+          <a class="pod__name" href="/profil/{{ satir.public_id }}">{{ satir.display_name }}</a>
           <div class="pod__rule"></div>
-          <div class="pod__pts"><b>{{ satir.points }}</b><span>puan</span></div>
+          <div class="pod__pts"><b>{{ satir.points }}</b><span>{{ _("puan") }}</span></div>
         </div>
       </div>
     </div>
@@ -94,15 +95,15 @@
 
   {% if siralama|length > 3 or kendi_sira %}
   <div class="rank">
-    <div class="rank__head"><span>#</span><span>Analist</span><span class="rank__right">Puan</span></div>
+    <div class="rank__head"><span>#</span><span>{{ _("Analist") }}</span><span class="rank__right">{{ _("Puan") }}</span></div>
     {% for satir in siralama %}
       {% if loop.index > 3 or satir.user_id == user.id %}
       <div class="rank__row" data-ben="{{ 1 if satir.user_id == user.id else 0 }}">
         <span class="rank__n">{{ satir.rank }}</span>
         <span class="rank__who">
           <span class="avatar avatar--sm {% if satir.user_id == user.id %}avatar--me{% endif %}">{{ satir.display_name[:1] }}</span>
-          <span class="name">{{ satir.display_name }}</span>
-          {% if satir.user_id == user.id %}<span class="rank__tag">SEN</span>{% endif %}
+          <a class="name" href="/profil/{{ satir.public_id }}">{{ satir.display_name }}</a>
+          {% if satir.user_id == user.id %}<span class="rank__tag">{{ _("Sen") }}</span>{% endif %}
         </span>
         <span class="rank__pts">{{ satir.points }}</span>
       </div>
@@ -111,21 +112,12 @@
   </div>
   {% endif %}
 {% else %}
-  <p class="lede" style="margin-top:24px">Henüz kimse lab bitirmedi. İlk sen ol.</p>
+  <p class="lede" style="margin-top:24px">{{ _("Henüz kimse lab bitirmedi. İlk sen ol.") }}</p>
 {% endif %}
 
 <div class="section-head">
-  <h2>Başarımlar</h2>
+  <h2>{{ _("Başarımlar") }}</h2>
   <span class="label">{{ rozetler|selectattr("earned")|list|length }} / {{ rozetler|length }}</span>
 </div>
-<div class="rozetler rise" style="margin-top:20px">
-{% for rozet in rozetler %}
-  <div class="rozet {{ '' if rozet.earned else 'rozet--kilitli' }}">
-    <img class="rozet__muhur" src="/static/img/muhur/{{ rozet.slug }}.png"
-         alt="" width="96" height="96" loading="lazy">
-    <b>{{ rozet.name }}</b>
-    <span>{{ rozet.description }}</span>
-  </div>
-{% endfor %}
-</div>
+{{ rozet_izgarasi(rozetler) }}
 {% endblock %}

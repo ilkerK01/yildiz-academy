@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="tr">
+<html lang="{{ aktif_dil() }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Yıldız Academy</title>
-<meta name="description" content="Siber tehdit istihbaratı, OSINT ve APT temelleri. Kısa dersler ve gerçek verilerle kurulmuş araştırma laboratuvarları.">
+<meta name="description" content="{{ _('Siber tehdit istihbaratı, OSINT ve APT temelleri. Kısa dersler ve gerçek verilerle kurulmuş araştırma laboratuvarları.') }}">
 <link rel="icon" type="image/png" sizes="64x64" href="/static/img/favicon.png">
 <link rel="apple-touch-icon" href="/static/img/favicon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,9 +22,11 @@
   </video>
   <div class="hero__veil" aria-hidden="true"></div>
 
-  <nav class="hero__topbar" aria-label="Hesap">
-    <a class="hero__btn hero__btn--ghost" href="#giris">Giriş yap</a>
-    <a class="hero__btn hero__btn--solid" href="#kayit">Kayıt ol</a>
+  <nav class="hero__topbar" aria-label="{{ _('Hesap') }}">
+    {% set diger = "en" if aktif_dil() == "tr" else "tr" %}
+    <a class="hero__btn hero__btn--ghost" href="/dil/{{ diger }}?next=/" hreflang="{{ diger }}">{{ diger|upper }}</a>
+    <a class="hero__btn hero__btn--ghost" href="#giris">{{ _("Giriş yap") }}</a>
+    <a class="hero__btn hero__btn--solid" href="#kayit">{{ _("Kayıt ol") }}</a>
   </nav>
 
   <div class="hero__in">
@@ -33,12 +35,10 @@
     <img class="hero__logo" src="/static/img/logo.png" width="200" height="200"
          alt="Yıldız CTI">
 
-    <p class="hero__lede">
-      Ülkesini en çok seven işini en iyi yapandır.
-    </p>
+    <p class="hero__lede">{{ _("Ülkesini en çok seven işini en iyi yapandır.") }}</p>
   </div>
 
-  <a class="hero__cue" href="#devam">Aşağı<span aria-hidden="true"></span></a>
+  <a class="hero__cue" href="#devam">{{ _("Aşağı") }}<span aria-hidden="true"></span></a>
 </header>
 
 <main id="devam">
@@ -46,11 +46,9 @@
 <section class="sec on-night" id="iki-yari">
   <div class="wrap">
     <div class="sec__head reveal">
-      <span class="badge">İki yarı</span>
-      <h2>Okumak ve aramak ayrı işlerdir</h2>
-      <p>
-        Bir tarafta okuyacağın şey var, diğer tarafta arayacağın şey.
-      </p>
+      <span class="badge">{{ _("İki yarı") }}</span>
+      <h2>{{ _("Okumak ve aramak ayrı işlerdir") }}</h2>
+      <p>{{ _("Bir tarafta okuyacağın şey var, diğer tarafta arayacağın şey.") }}</p>
     </div>
 
     <div class="duo">
@@ -58,17 +56,14 @@
         <figure class="half__fig">
           <img src="/static/img/02-cti.webp" alt="" loading="lazy" decoding="async">
         </figure>
-        <span class="badge half__kicker">Kütüphane</span>
-        <h3>Kısa dersler, giriş seviyesi</h3>
-        <p>
-          CTI temelleri, OSINT&#8217;in çalışma mantığı ve APT gruplarının kısa
-          dosyaları. Her ders tek oturumda okunacak uzunlukta.
-        </p>
+        <span class="badge half__kicker">{{ _("Kütüphane") }}</span>
+        <h3>{{ _("Kısa dersler, giriş seviyesi") }}</h3>
+        <p>{{ _("CTI temelleri, OSINT’in çalışma mantığı ve APT gruplarının kısa dosyaları. Her ders tek oturumda okunacak uzunlukta.") }}</p>
         <div class="half__foot">
           <div class="tagrow">
-            <span class="chip">CTI temelleri</span>
-            <span class="chip">OSINT</span>
-            <span class="chip">APT dosyaları</span>
+            <span class="chip">{{ _("CTI temelleri") }}</span>
+            <span class="chip">{{ _("OSINT") }}</span>
+            <span class="chip">{{ _("APT dosyaları") }}</span>
           </div>
         </div>
       </article>
@@ -77,24 +72,21 @@
         <figure class="half__fig">
           <img src="/static/img/05-method.webp" alt="" loading="lazy" decoding="async">
         </figure>
-        <span class="badge half__kicker">Laboratuvar</span>
-        <h3>Gerçek iz, gerçek araştırma</h3>
-        <p>
-          Eline gerçek bir iz veriliyor. Araştırmayı kendi makinende
-          yapıyorsun, doğrulama sunucuda oluyor. Giriş yaptıktan sonra açılıyor.
-        </p>
+        <span class="badge half__kicker">{{ _("Laboratuvar") }}</span>
+        <h3>{{ _("Gerçek iz, gerçek araştırma") }}</h3>
+        <p>{{ _("Eline gerçek bir iz veriliyor. Araştırmayı kendi makinende yapıyorsun, doğrulama sunucuda oluyor. Giriş yaptıktan sonra açılıyor.") }}</p>
         <div class="half__foot">
           <div class="tagrow">
-            <span class="chip" data-difficulty="easy">kolay</span>
-            <span class="chip" data-difficulty="medium">orta</span>
-            <span class="chip" data-difficulty="hard">zor</span>
+            <span class="chip" data-difficulty="easy">{{ _("kolay") }}</span>
+            <span class="chip" data-difficulty="medium">{{ _("orta") }}</span>
+            <span class="chip" data-difficulty="hard">{{ _("zor") }}</span>
           </div>
         </div>
       </article>
     </div>
 
     <p class="bridge reveal">
-      İkisi ayrı duruyor ama kopuk değil: aynı <b>etiketleri</b> taşıyorlar.
+      {{ _("İkisi ayrı duruyor ama kopuk değil: aynı <b>etiketleri</b> taşıyorlar.")|safe }}
     </p>
   </div>
 </section>
@@ -102,29 +94,19 @@
 <section class="sec on-paper" id="yildiz-cti">
   <div class="wrap">
     <div class="sec__head reveal">
-      <span class="badge">Yıldız CTI</span>
-      <h2>Akademinin arkasında kim var?</h2>
-      <p>
-        Yıldız Academy, Yıldız CTI&#8217;nin öğrenme kolu.
-      </p>
+      <span class="badge">{{ _("Yıldız CTI") }}</span>
+      <h2>{{ _("Akademinin arkasında kim var?") }}</h2>
+      <p>{{ _("Yıldız Academy, Yıldız CTI’nin öğrenme kolu.") }}</p>
     </div>
 
     <div class="ctigrid">
       <div class="ctitext reveal">
-        <p>
-          Yıldız CTI siber tehdit istihbaratı alanında çalışıyor: dark web ve
-          Tor ağı üzerinde araştırma, açık kaynak istihbarat ve tehdit
-          aktörlerinin takibi.
-        </p>
-        <p>
-          Buradaki dersler ve laboratuvarlar o işin içinden çıkıyor. Bir
-          laboratuvarda eline verilen iz, uydurulmuş bir alıştırma değil,
-          gerçek bir araştırmanın sadeleştirilmiş hali.
-        </p>
+        <p>{{ _("Yıldız CTI siber tehdit istihbaratı alanında çalışıyor: dark web ve Tor ağı üzerinde araştırma, açık kaynak istihbarat ve tehdit aktörlerinin takibi.") }}</p>
+        <p>{{ _("Buradaki dersler ve laboratuvarlar o işin içinden çıkıyor. Bir laboratuvarda eline verilen iz, uydurulmuş bir alıştırma değil, gerçek bir araştırmanın sadeleştirilmiş hali.") }}</p>
         <ul class="ctilist">
-          <li>Dark web ve Tor ağı araştırması</li>
-          <li>Açık kaynak istihbarat</li>
-          <li>Tehdit aktörü ve APT takibi</li>
+          <li>{{ _("Dark web ve Tor ağı araştırması") }}</li>
+          <li>{{ _("Açık kaynak istihbarat") }}</li>
+          <li>{{ _("Tehdit aktörü ve APT takibi") }}</li>
         </ul>
       </div>
     </div>
@@ -141,89 +123,137 @@
   <div class="wrap foot__in">
     <div class="foot__brand">
       <img src="/static/img/logo.png" width="200" height="200" alt="">
-      <span>Yıldız CTI &middot; Tüm hakları saklıdır &middot; 2026</span>
+      <span>Yıldız CTI &middot; {{ _("Tüm hakları saklıdır") }} &middot; 2026</span>
     </div>
-    <nav class="foot__links" aria-label="Alt bağlantılar">
-      <a href="#iki-yari">Akademi</a>
-      <a href="/hakkinda">Hakkında</a>
-      <a href="#giris">Giriş yap</a>
+    <nav class="foot__links" aria-label="{{ _('Alt bağlantılar') }}">
+      <a href="#iki-yari">{{ _("Akademi") }}</a>
+      <a href="/hakkinda">{{ _("Hakkında") }}</a>
+      <a href="#giris">{{ _("Giriş yap") }}</a>
     </nav>
   </div>
 </footer>
 
 <dialog class="modal on-night" id="modal-kayit" aria-labelledby="kayit-baslik">
   <form class="modal__panel" onsubmit="return kayitGonder(event)">
-    <button class="modal__close" type="button" data-kapat aria-label="Kapat">&times;</button>
+    <button class="modal__close" type="button" data-kapat aria-label="{{ _('Kapat') }}">&times;</button>
     <img class="modal__mark" src="/static/img/logo.png" width="200" height="200" alt="">
-    <h2 class="modal__title" id="kayit-baslik">Kayıt ol</h2>
-    <p class="modal__sub">
-      Akademinin tamamı üyelere açıktır. Kayıt olduğun anda kütüphane ve
-      laboratuvarlar açılır.
-    </p>
+    <h2 class="modal__title" id="kayit-baslik">{{ _("Kayıt ol") }}</h2>
+    <p class="modal__sub">{{ _("Akademinin tamamı üyelere açıktır. Kayıt olduğun anda kütüphane ve laboratuvarlar açılır.") }}</p>
 
     <label class="field">
-      <span>Takma ad</span>
+      <span>{{ _("Takma ad") }}</span>
       <input id="k-ad" type="text" name="gorunen_ad" autocomplete="nickname"
-             placeholder="Laboratuvarlarda görünecek ad" required>
+             placeholder="{{ _('Laboratuvarlarda görünecek ad') }}" required>
     </label>
     <label class="field">
-      <span>E-posta</span>
+      <span>{{ _("E-posta") }}</span>
       <input id="k-eposta" type="email" name="eposta" autocomplete="email"
-             placeholder="ornek@alan.com" required>
+             placeholder="{{ _('ornek@alan.com') }}" required>
     </label>
     <label class="field">
-      <span>Parola</span>
+      <span>{{ _("Parola") }}</span>
       <input id="k-parola" type="password" name="parola" autocomplete="new-password"
-             placeholder="En az 8 karakter" minlength="8" required>
+             placeholder="{{ _('En az 8 karakter') }}" minlength="8" required>
     </label>
 
     <p class="modal__hata" id="k-hata" hidden></p>
 
-    <p class="modal__gizli">
-      E-postan yalnızca giriş için kullanılır. Sıralamada ve laboratuvarlarda
-      takma adın görünür, e-postan kimseye gösterilmez.
-    </p>
+    <p class="modal__gizli">{{ _("E-postan yalnızca giriş için kullanılır. Sıralamada ve laboratuvarlarda takma adın görünür, e-postan kimseye gösterilmez.") }}</p>
 
-    <button class="modal__submit" type="submit">Hesap oluştur</button>
+    <button class="modal__submit" type="submit">{{ _("Hesap oluştur") }}</button>
 
     <p class="modal__foot">
-      Zaten hesabın var mı? <button type="button" data-gec="modal-giris">Giriş yap</button>
+      {{ _("Zaten hesabın var mı?") }} <button type="button" data-gec="modal-giris">{{ _("Giriş yap") }}</button>
     </p>
   </form>
 </dialog>
 
 <dialog class="modal on-night" id="modal-giris" aria-labelledby="giris-baslik">
   <form class="modal__panel" onsubmit="return girisGonder(event)">
-    <button class="modal__close" type="button" data-kapat aria-label="Kapat">&times;</button>
+    <button class="modal__close" type="button" data-kapat aria-label="{{ _('Kapat') }}">&times;</button>
     <img class="modal__mark" src="/static/img/logo.png" width="200" height="200" alt="">
-    <h2 class="modal__title" id="giris-baslik">Giriş yap</h2>
-    <p class="modal__sub">
-      Kaldığın laboratuvardan devam et.
-    </p>
+    <h2 class="modal__title" id="giris-baslik">{{ _("Giriş yap") }}</h2>
+    <p class="modal__sub">{{ _("Kaldığın laboratuvardan devam et.") }}</p>
 
     <label class="field">
-      <span>E-posta</span>
+      <span>{{ _("E-posta") }}</span>
       <input id="g-eposta" type="email" name="eposta" autocomplete="email"
-             placeholder="ornek@alan.com" required>
+             placeholder="{{ _('ornek@alan.com') }}" required>
     </label>
     <label class="field">
-      <span>Parola</span>
+      <span>{{ _("Parola") }}</span>
       <input id="g-parola" type="password" name="parola" autocomplete="current-password"
-             placeholder="Parolan" required>
+             placeholder="{{ _('Parolan') }}" required>
     </label>
 
+    <p class="modal__unuttum"><button type="button" data-gec="modal-unuttum">{{ _("Şifremi unuttum") }}</button></p>
+
+    <p class="modal__gizli" id="g-tamam" hidden></p>
     <p class="modal__hata" id="g-hata" hidden></p>
 
-    <button class="modal__submit" type="submit">Giriş yap</button>
+    <button class="modal__submit" type="submit">{{ _("Giriş yap") }}</button>
 
     <p class="modal__foot">
-      Hesabın yok mu? <button type="button" data-gec="modal-kayit">Kayıt ol</button>
+      {{ _("Hesabın yok mu?") }} <button type="button" data-gec="modal-kayit">{{ _("Kayıt ol") }}</button>
     </p>
   </form>
 </dialog>
 
+<dialog class="modal on-night" id="modal-unuttum" aria-labelledby="unuttum-baslik">
+  <form class="modal__panel" onsubmit="return unuttumGonder(event)">
+    <button class="modal__close" type="button" data-kapat aria-label="{{ _('Kapat') }}">&times;</button>
+    <img class="modal__mark" src="/static/img/logo.png" width="200" height="200" alt="">
+    <h2 class="modal__title" id="unuttum-baslik">{{ _("Şifremi unuttum") }}</h2>
+    <p class="modal__sub">{{ _("Hesabının e-posta adresini yaz, parolanı yenilemen için bir bağlantı gönderelim.") }}</p>
+
+    <label class="field">
+      <span>{{ _("E-posta") }}</span>
+      <input id="u-eposta" type="email" name="eposta" autocomplete="email"
+             placeholder="{{ _('ornek@alan.com') }}" required>
+    </label>
+
+    <p class="modal__hata" id="u-hata" hidden></p>
+    <p class="modal__gizli" id="u-tamam" hidden></p>
+
+    <button class="modal__submit" id="u-gonder" type="submit">{{ _("Bağlantı gönder") }}</button>
+
+    <p class="modal__foot">
+      {{ _("Parolanı hatırladın mı?") }} <button type="button" data-gec="modal-giris">{{ _("Giriş yap") }}</button>
+    </p>
+  </form>
+</dialog>
+
+<dialog class="modal on-night" id="modal-sifirla" aria-labelledby="sifirla-baslik">
+  <form class="modal__panel" onsubmit="return sifirlaGonder(event)">
+    <button class="modal__close" type="button" data-kapat aria-label="{{ _('Kapat') }}">&times;</button>
+    <img class="modal__mark" src="/static/img/logo.png" width="200" height="200" alt="">
+    <h2 class="modal__title" id="sifirla-baslik">{{ _("Yeni parola belirle") }}</h2>
+    <p class="modal__sub">{{ _("Yeni parolanı iki kez yaz. Kaydettiğinde açık olan tüm oturumların kapanır.") }}</p>
+
+    <label class="field">
+      <span>{{ _("Yeni parola") }}</span>
+      <input id="s-parola" type="password" autocomplete="new-password"
+             placeholder="{{ _('En az 8 karakter') }}" minlength="8" required>
+    </label>
+    <label class="field">
+      <span>{{ _("Yeni parola (tekrar)") }}</span>
+      <input id="s-tekrar" type="password" autocomplete="new-password" minlength="8" required>
+    </label>
+
+    <p class="modal__hata" id="s-hata" hidden></p>
+
+    <button class="modal__submit" type="submit">{{ _("Parolayı kaydet") }}</button>
+
+    <p class="modal__foot">
+      {{ _("Bağlantının süresi mi doldu?") }} <button type="button" data-gec="modal-unuttum">{{ _("Yeni bağlantı iste") }}</button>
+    </p>
+  </form>
+</dialog>
+
+{% if js_metinleri() %}<script>window.YA_METIN = {{ js_metinleri()|tojson }};</script>{% endif %}
 <script>
   window.SONRAKI = {{ (next or "")|tojson }};
+  window.SIFIRLA = {{ (sifirla_token or "")|tojson }};
 </script>
 <script src="/static/js/app.js?v={{ statik_surum('js/app.js') }}"></script>
 <script src="/static/js/auth.js?v={{ statik_surum('js/auth.js') }}"></script>
