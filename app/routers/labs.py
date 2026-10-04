@@ -73,6 +73,7 @@ def cevapla(
 
     if not dogru:
         row.attempts += 1
+        progress.get_lab_progress(db, user.id, lab)
         db.commit()
         return {
             "ok": True,
@@ -122,6 +123,7 @@ def ipucu(
 
     hint = step.hints[row.hints_used]
     row.hints_used += 1
+    progress.get_lab_progress(db, user.id, lab)
     db.commit()
 
     return {

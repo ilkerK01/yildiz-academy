@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Yıldız Academy</title>
 <meta name="description" content="{{ _('Siber tehdit istihbaratı, OSINT ve APT temelleri. Kısa dersler ve gerçek verilerle kurulmuş araştırma laboratuvarları.') }}">
+<link rel="preload" as="image" href="/static/img/imlec/varsayilan.svg">
+<link rel="preload" as="image" href="/static/img/imlec/basili.svg">
 <link rel="icon" type="image/png" sizes="64x64" href="/static/img/favicon.png">
 <link rel="apple-touch-icon" href="/static/img/favicon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,7 +48,6 @@
 <section class="sec on-night" id="iki-yari">
   <div class="wrap">
     <div class="sec__head reveal">
-      <span class="badge">{{ _("İki yarı") }}</span>
       <h2>{{ _("Okumak ve aramak ayrı işlerdir") }}</h2>
       <p>{{ _("Bir tarafta okuyacağın şey var, diğer tarafta arayacağın şey.") }}</p>
     </div>
@@ -94,7 +95,7 @@
 <section class="sec on-paper" id="yildiz-cti">
   <div class="wrap">
     <div class="sec__head reveal">
-      <span class="badge">{{ _("Yıldız CTI") }}</span>
+      <img class="ctilogo" src="/static/img/yildiz-cti.webp" width="720" height="184" alt="Yıldız CTI">
       <h2>{{ _("Akademinin arkasında kim var?") }}</h2>
       <p>{{ _("Yıldız Academy, Yıldız CTI’nin öğrenme kolu.") }}</p>
     </div>
@@ -103,11 +104,6 @@
       <div class="ctitext reveal">
         <p>{{ _("Yıldız CTI siber tehdit istihbaratı alanında çalışıyor: dark web ve Tor ağı üzerinde araştırma, açık kaynak istihbarat ve tehdit aktörlerinin takibi.") }}</p>
         <p>{{ _("Buradaki dersler ve laboratuvarlar o işin içinden çıkıyor. Bir laboratuvarda eline verilen iz, uydurulmuş bir alıştırma değil, gerçek bir araştırmanın sadeleştirilmiş hali.") }}</p>
-        <ul class="ctilist">
-          <li>{{ _("Dark web ve Tor ağı araştırması") }}</li>
-          <li>{{ _("Açık kaynak istihbarat") }}</li>
-          <li>{{ _("Tehdit aktörü ve APT takibi") }}</li>
-        </ul>
       </div>
     </div>
   </div>

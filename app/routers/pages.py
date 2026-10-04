@@ -203,7 +203,7 @@ def lablar(
     )
     durumlar = {}
     for lab in labs:
-        row = progress.get_lab_progress(db, user.id, lab)
+        row = progress.view_lab_progress(db, user.id, lab)
         durumlar[lab.id] = row
     return page(
         request,
@@ -226,7 +226,7 @@ def lab_detay(
     if lab is None:
         raise HTTPException(404, "Laboratuvar bulunamadı.")
 
-    lab_progress = progress.get_lab_progress(db, user.id, lab)
+    lab_progress = progress.view_lab_progress(db, user.id, lab)
     step_rows = progress.get_step_rows(db, user.id, lab)
     aktif = progress.current_step_index(lab, step_rows)
 
@@ -313,20 +313,40 @@ def ara(
     labs: list[Lab] = []
     if len(q) >= 2:
         kalip = f"%{q}%"
+
+        def etiketli(tur: str):
+            return (
+                select(ContentTag.content_id)
+                .join(Tag, Tag.id == ContentTag.tag_id)
+                .where(
+                    ContentTag.content_type == tur,
+                    or_(Tag.name.ilike(kalip), Tag.slug.ilike(kalip)),
+                )
+            )
+
         dersler = list(
             db.scalars(
                 select(Lesson).where(
                     Lesson.published.is_(True),
-                    or_(Lesson.title.ilike(kalip), Lesson.summary.ilike(kalip)),
-                )
+                    or_(
+                        Lesson.title.ilike(kalip),
+                        Lesson.summary.ilike(kalip),
+                        Lesson.id.in_(etiketli("lesson")),
+                    ),
+                ).order_by(Lesson.order_index, Lesson.title)
             )
         )
         labs = list(
             db.scalars(
                 select(Lab).where(
                     Lab.published.is_(True),
-                    or_(Lab.title.ilike(kalip), Lab.summary.ilike(kalip)),
-                )
+                    or_(
+                        Lab.title.ilike(kalip),
+                        Lab.summary.ilike(kalip),
+                        Lab.briefing_md.ilike(kalip),
+                        Lab.id.in_(etiketli("lab")),
+                    ),
+                ).order_by(Lab.order_index, Lab.title)
             )
         )
     return page(request, "ara.html", user=user, q=q, dersler=dersler, lablar=labs)

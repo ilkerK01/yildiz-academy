@@ -1,4 +1,6 @@
-const LAB_SLUG = document.getElementById("adimlar").dataset.slug;
+function labSlug() {
+  return document.getElementById("adimlar").dataset.slug;
+}
 
 function adimEl(index) {
   return document.getElementById("adim-" + index);
@@ -11,7 +13,7 @@ async function cevapGonder(event, index) {
   const cikti = adimEl(index).querySelector("[data-cikti]");
 
   const { veri } = await apiPost(
-    "/api/lab/" + LAB_SLUG + "/adim/" + index + "/cevap",
+    "/api/lab/" + labSlug() + "/adim/" + index + "/cevap",
     { cevap: alan.value }
   );
 
@@ -31,13 +33,13 @@ async function cevapGonder(event, index) {
     cozum.hidden = false;
     cozum.scrollIntoView({ behavior: "smooth" });
   }
-  window.location.reload();
+  yenile();
   return false;
 }
 
 async function ipucuAc(index) {
   const { veri } = await apiPost(
-    "/api/lab/" + LAB_SLUG + "/adim/" + index + "/ipucu"
+    "/api/lab/" + labSlug() + "/adim/" + index + "/ipucu"
   );
   if (!veri.ok) {
     yaz(adimEl(index).querySelector("[data-cikti]"), veri.hata || t("İpucu açılamadı."));
@@ -65,16 +67,21 @@ async function pesEt() {
   if (!confirm(t("Çözümü açarsan bu labdan bir daha puan kazanamazsın. Emin misin?"))) {
     return;
   }
-  const { veri } = await apiPost("/api/lab/" + LAB_SLUG + "/pes");
+  const { veri } = await apiPost("/api/lab/" + labSlug() + "/pes");
   if (!veri.ok) return;
   document.getElementById("cozum-govde").innerHTML = veri.cozum_html || "";
   document.getElementById("cozum").hidden = false;
-  window.location.reload();
+  yenile();
 }
 
 async function labSifirla() {
   if (!confirm(t("Bu labın ilerlemesi silinecek. En iyi puanın korunur. Devam edilsin mi?"))) return;
-  const { veri } = await apiPost("/api/lab/" + LAB_SLUG + "/sifirla");
+  const { veri } = await apiPost("/api/lab/" + labSlug() + "/sifirla");
   if (veri.mesaj) alert(veri.mesaj);
-  window.location.reload();
+  yenile();
+}
+
+function yenile() {
+  if (window.sayfaYenile) window.sayfaYenile();
+  else window.location.reload();
 }

@@ -81,7 +81,7 @@ def kayit(payload: KayitIstek, request: Request, db: DbSession = Depends(get_db)
     if db.scalar(select(User).where(func.lower(User.display_name) == ad.lower())):
         return _hata(request, "Bu görünen ad alınmış.")
     if db.scalar(select(User).where(User.email == eposta)):
-        return _hata(request, "Bu e-posta ile bir hesap zaten var.")
+        return _hata(request, "Kayıt tamamlanamadı. Hesabın varsa giriş yap ya da şifreni sıfırla.")
 
     user = User(
         display_name=ad,

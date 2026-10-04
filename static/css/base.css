@@ -1,8 +1,8 @@
 @import "tokens.css";
 
 :root{
-  --cursor-default:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 26 26'%3E%3Cpath d='M3 1 L20.6 17.3 L10.7 17.9 L3.1 24.4 Z' fill='%23000000' stroke='%23ffffff' stroke-width='1.7' stroke-linejoin='round'/%3E%3C/svg%3E") 2 1;
-  --cursor-press:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 26 26'%3E%3Cpath d='M3 1 L20.6 17.3 L10.7 17.9 L3.1 24.4 Z' fill='%23ffffff' stroke='%23000000' stroke-width='1.7' stroke-linejoin='round'/%3E%3C/svg%3E") 2 1;
+  --cursor-default:url("/static/img/imlec/varsayilan.svg") 2 1;
+  --cursor-press:url("/static/img/imlec/basili.svg") 2 1;
 }
 
 *,*::before,*::after{box-sizing:border-box}
@@ -400,7 +400,7 @@ dialog .form{max-width:none}
   height:50px;
   object-fit:contain;
 }
-.logo__text{font-family:var(--font-logo);font-size:23px;line-height:1.06}
+.logo__text{font-family:var(--font-logo);font-weight:700;font-size:23px;line-height:1.06}
 .logo:hover{color:var(--ink)}
 
 .avatar{

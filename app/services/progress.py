@@ -35,12 +35,30 @@ def read_lesson_ids(db: DbSession, user_id: int) -> set[int]:
     return set(rows)
 
 
-def get_lab_progress(db: DbSession, user_id: int, lab: Lab) -> LabProgress:
-    row = db.scalar(
+def find_lab_progress(db: DbSession, user_id: int, lab: Lab) -> LabProgress | None:
+    return db.scalar(
         select(LabProgress).where(
             LabProgress.user_id == user_id, LabProgress.lab_id == lab.id
         )
     )
+
+
+def view_lab_progress(db: DbSession, user_id: int, lab: Lab) -> LabProgress:
+    row = find_lab_progress(db, user_id, lab)
+    if row is None:
+        return LabProgress(
+            user_id=user_id,
+            lab_id=lab.id,
+            status="baslamadi",
+            earned_points=0,
+            best_points=0,
+            solution_seen=False,
+        )
+    return row
+
+
+def get_lab_progress(db: DbSession, user_id: int, lab: Lab) -> LabProgress:
+    row = find_lab_progress(db, user_id, lab)
     if row is None:
         row = LabProgress(user_id=user_id, lab_id=lab.id, status="basladi")
         db.add(row)

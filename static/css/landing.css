@@ -298,8 +298,8 @@ dialog.modal[open]::backdrop{animation:veilIn .62s ease}
 
 .hero__title{
   margin:0;
-  font-family:'Stokeda',var(--primitive-fontFamily-text);
-  font-weight:400;
+  font-family:'Trebuchet MS',var(--primitive-fontFamily-display);
+  font-weight:700;
   font-size:clamp(2.6rem,7.4vw,5.4rem);
   line-height:1.02;
   letter-spacing:var(--primitive-letterSpacing-normal);
@@ -368,8 +368,9 @@ dialog.modal[open]::backdrop{animation:veilIn .62s ease}
 .hero__lede{
   margin:clamp(30px,4.6vh,50px) 0 0;
   max-width:24ch;
-  font-family:'Hemmet',var(--primitive-fontFamily-text);
-  font-size:clamp(1.75rem,3.6vw,2.9rem);
+  font-family:'Trebuchet MS',var(--primitive-fontFamily-display);
+  font-weight:400;
+  font-size:clamp(1.5rem,3vw,2.4rem);
   line-height:1.34;
   color:var(--hero-fg);
   text-wrap:balance;
@@ -440,6 +441,7 @@ dialog.modal[open]::backdrop{animation:veilIn .62s ease}
   text-transform:uppercase;
 }
 .sec__head .badge{margin-bottom:var(--primitive-spacing-5)}
+.ctilogo{display:block;width:min(260px,70%);height:auto;margin:0 auto var(--primitive-spacing-8)}
 .sec__head h2{
   margin:0 0 var(--primitive-spacing-5);
   font-size:clamp(1.75rem,3.6vw,2.75rem);
@@ -803,3 +805,6 @@ dialog.modal[open]::backdrop{animation:veilIn .62s ease}
 }
 .modal__unuttum button:hover{color:var(--color-accent)}
 .modal__submit:disabled{opacity:.6}
+
+#yildiz-cti h2,#yildiz-cti p,#iki-yari,#iki-yari *,.foot,.foot *{font-family:'Trebuchet MS',var(--primitive-fontFamily-display)}
+#yildiz-cti h2,#iki-yari h2,#iki-yari h3{font-weight:700}
