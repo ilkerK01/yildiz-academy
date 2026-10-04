@@ -254,35 +254,42 @@ def save_lab(db: DbSession, parsed: dict) -> Lab:
     lab.total_points = parsed["total_points"]
     db.flush()
 
-    db.execute(delete(LabStep).where(LabStep.lab_id == lab.id))
+    mevcut = {
+        step.step_index: step
+        for step in db.scalars(select(LabStep).where(LabStep.lab_id == lab.id))
+    }
+    yeni_siralar = {raw["step_index"] for raw in parsed["steps"]}
+    for sira, step in mevcut.items():
+        if sira not in yeni_siralar:
+            db.delete(step)
     db.flush()
 
     for raw in parsed["steps"]:
-        step = LabStep(
-            lab_id=lab.id,
-            step_index=raw["step_index"],
-            prompt_md=raw["prompt_md"],
-            prompt_html=render(raw["prompt_md"]),
-            artifact=raw["artifact"],
-            answer_type=raw["answer_type"],
-            answer_value=raw["answer_value"],
-            choices_json=json.dumps(raw["choices"], ensure_ascii=False)
-            if raw["choices"]
-            else None,
-            points=raw["points"],
+        step = mevcut.get(raw["step_index"])
+        if step is None:
+            step = LabStep(lab_id=lab.id, step_index=raw["step_index"])
+            db.add(step)
+        step.prompt_md = raw["prompt_md"]
+        step.prompt_html = render(raw["prompt_md"])
+        step.artifact = raw["artifact"]
+        step.answer_type = raw["answer_type"]
+        step.answer_value = raw["answer_value"]
+        step.choices_json = (
+            json.dumps(raw["choices"], ensure_ascii=False) if raw["choices"] else None
         )
-        db.add(step)
+        step.points = raw["points"]
+        step.hints.clear()
         db.flush()
         for hint in raw["hints"]:
-            db.add(
+            step.hints.append(
                 LabHint(
-                    step_id=step.id,
                     hint_index=hint["hint_index"],
                     text_md=hint["text_md"],
                     text_html=render(hint["text_md"]),
                     penalty=hint["penalty"],
                 )
             )
+        db.flush()
 
     _sync_tags(db, "lab", lab.id, parsed["tags"])
     db.commit()
