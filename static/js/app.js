@@ -41,7 +41,7 @@ function temaUygula(tema) {
 }
 
 (function menuGenisligi() {
-  const EN_AZ = 180, EN_COK = 420, VARSAYILAN = 220;
+  const EN_AZ = 200, EN_COK = 420, VARSAYILAN = 240;
 
   function uygula(px, kaydet) {
     const deger = Math.min(EN_COK, Math.max(EN_AZ, Math.round(px)));

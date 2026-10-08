@@ -1,0 +1,84 @@
+# English translation. Answers, points and step order come from the Turkish file.
+lang: en
+slug: yerli-seytan
+title: The Homegrown Devil
+summary: Find one of the dark web's search engines and pull out the only Turkish forum on its list, along with its address.
+
+briefing_md: |
+  Long ago there lived a monk. He devoted his life to searching for a single
+  book.
+
+  Legend has it that this book had once defeated the devil that rose from eight
+  levels beneath the earth. But the copy the monk was looking for was not in
+  just any language: it had to be written in our own language, Turkish. It had
+  to be a source from among us.
+
+  At the end of his life the monk realized something. The road to the book
+  passed through the devil himself. First you find the devil's gate, then you
+  look at the list he keeps; there you will see the only name written in your
+  own language.
+
+  Now it's your turn. Surface search engines won't show you that gate; you have
+  to go through darkness's own search engines. Find the engine that carries the
+  devil in its name, open its list and pull out the only forum written in
+  Turkish.
+
+  You will return to the monk with two things: the name of the book and the
+  address of its gate.
+
+  **Safety note:** Do your research over Tor. Do not create an account on the
+  forum you find, do not download files and do not contact anyone. All this lab
+  asks of you is two pieces of information: a name and an address.
+
+steps:
+  - prompt_md: "There is only one forum on the devil's list written in Turkish. What is its name?"
+    hints:
+      - "Google on the surface web won't show you this gate. Start with the dark web's own search engines and directories."
+      - "The name of the engine you are looking for starts with the English word for something devilish."
+
+  - prompt_md: "What is this forum's onion address?"
+    hints:
+      - "You don't need to search for the address separately. The list where you found the forum's name also shows its address."
+      - "v3 onion addresses are 56 characters long and end in `.onion`. You can paste the address as is."
+
+solution_md: |
+  The monk's book was a forum, and the devil's gate was one of the dark web's
+  search engines.
+
+  ## The path
+
+  Surface web search engines don't index onion services. So you have to start
+  with the dark web's own search engines and directories. Relying on a single
+  engine is misleading: every engine's index is incomplete, and some of the
+  results are dead and some are ads. The right method is to put several engines
+  side by side and confirm the same name in more than one place.
+
+  The engine you were looking for was **evilsearch**, the engine that carries
+  the devil in its name. Its list is made up mostly of English-language
+  sources; the only Turkish forum on it is **Shadow**. That was the "source
+  from among us" the monk was looking for.
+
+  The forum's address:
+
+  `w4ljqtyjnxinknz4hszn4bsof7zhfy5z2h4srfss4vvkoikiwz36o3id.onion`
+
+  ## Reading the address
+
+  This is a v3 onion address. v3 addresses are always 56 characters long, and
+  the address itself is an encoded public key. That is why an onion address
+  can't be guessed or shortened, and changing a single letter takes you to an
+  entirely different service. This is exactly the most common trick used by
+  fake copies on the dark web: look-alike addresses with one or two characters
+  changed. So always verify an address against more than one independent
+  source.
+
+  ## Note
+
+  Dark web resources are not permanent. Engines shut down and forums change
+  addresses. That is why a CTI analyst records the address they found together
+  with the date they found it and the source they saw it in. Without a record,
+  the finding becomes impossible to verify a few months later.
+
+  The goal of this lab is to teach you to reach a target on the dark web not
+  blindly, but by following a path from an engine to a list, and from the list
+  to a single verified record.

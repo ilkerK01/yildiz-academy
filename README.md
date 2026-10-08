@@ -81,8 +81,10 @@ dosyasında eksik kolon ve tablo varsa ekler, elle `ALTER TABLE` gerekmez.
 | `app/i18n.py` | Türkçe ve İngilizce arayüz metinleri |
 | `hesap.py` | Yönetici ve kullanıcı hesabı açma aracı |
 | `seed.py` | `content/` klasörünü veritabanına basar |
-| `content/dersler/*.md` | Ders kaynakları, frontmatter + Markdown |
+| `content/dersler/*.md`, `*.docx` | Ders kaynakları: frontmatter + Markdown ya da Word belgesi |
+| `medya/` | Yüklenen ders videoları ve Word görselleri (git'e girmez, yedeklenmeli) |
 | `content/lablar/*.yaml` | Lab tanımları: adımlar, ipuçları, çözüm |
+| `content/dersler/en/`, `content/lablar/en/` | Ders ve labların İngilizce çevirileri |
 | `design/tokens.json` | İlk tasarımın token kaynağı |
 | `static/css/tokens.css` | Giriş sonrası arayüzün renk ve yazı tipi değişkenleri |
 | `static/css/base.css` | Temel katman: tipografi, düğme, form, kart |
@@ -97,6 +99,22 @@ dosyasında eksik kolon ve tablo varsa ekler, elle `ALTER TABLE` gerekmez.
 Açılış sayfası ile uygulama iki ayrı CSS zinciri kullanır ve bu bilerek böyledir.
 Açılış eski tasarımda kaldı, giriş sonrası sayfalar sonradan yenilendi; ikisini
 tek zincire bağlamak açılışın yıldızlı görünümünü bozuyordu.
+
+## İçerik çevirisi
+
+Arayüz metinleri `app/i18n.py` içinde, ders ve lab içerikleri ise ayrı çeviri
+dosyalarındadır. Çeviri dosyası Türkçe dosyayla aynı adı taşır ve `en/` alt
+klasörüne konur. Başında `lang: en` ve Türkçe içeriğin `slug` değeri bulunur.
+
+- Ders: frontmatter'da `title`, `summary`; altında Markdown gövde.
+- Lab: `title`, `summary`, `briefing_md`, `solution_md` ve `steps`. Her adımda
+  `prompt_md`, isteğe bağlı `artifact`, `choices` ve düz metin `hints` listesi.
+
+Cevaplar, puanlar, ipucu cezaları ve adım sırası Türkçe dosyadan gelir; çeviride
+yazılmaz. Adım ve şık sayısı Türkçeyle aynı olmalı, aksi halde yükleme reddedilir.
+Önce Türkçe sürüm yüklenmelidir. Çevirisi olmayan alan Türkçe gösterilir.
+`seed.py` `en/` klasörlerini de basar; yönetim panelinden tek dosya olarak da
+yüklenebilir.
 
 ## Laboratuvar mekaniği
 
@@ -164,8 +182,38 @@ kullanıcılarla aynı tabloyu paylaşmazlar; çerezleri de oturum süreleri de
 farklıdır (yönetici 8 saat, kullanıcı 30 gün). Kodda çalışan bir varsayılan
 parola yoktur.
 
-İçerik panelden `.md` ve `.yaml` olarak yüklenir; `seed.py` ile aynı ayrıştırma
-mantığından geçer.
+İçerik panelden `.md`, `.docx` ve `.yaml` olarak yüklenir; `seed.py` ile aynı
+ayrıştırma mantığından geçer.
+
+### Word ile ders
+
+`.docx` belge ders kaynağına çevrilir: başlıklar, kalın/italik, listeler,
+tablolar, bağlantılar ve PNG/JPG görseller korunur. Görseller `medya/gorsel/`
+altına kaydedilir. Bilgiler belgenin özelliklerinden okunur
+(Word: Dosya > Bilgi > Özellikler):
+
+- Başlık: `title`. Boşsa belgedeki ilk "Başlık 1" kullanılır ve gövdeden çıkarılır.
+- Konu (yoksa Açıklama): `summary`.
+- Etiketler: virgülle ayrılmış `tags`.
+- Dosya adı: `slug`. Aynı adla yeniden yüklemek dersi günceller, sırası korunur.
+- `ders-adi.en.docx` ya da `content/dersler/en/ders-adi.docx` mevcut dersin İngilizcesidir.
+
+### Ders videoları
+
+İçerik sayfasında her dersin altından TR ve isteğe bağlı EN video yüklenir.
+EN videosu yoksa İngilizce arayüzde TR videosu gösterilir. Yeni yükleme aynı
+dildeki eskisinin yerini alır.
+
+- Biçim: `.mp4` (H.264 video + AAC ses) ya da `.webm`. `.mov`/`.mkv` reddedilir;
+  HEVC gibi her tarayıcıda oynamayan kodekler için uyarı verilir.
+- Sunucuda `ffmpeg` varsa oynatma bilgisi dosyanın başına taşınır (faststart),
+  video tamamı inmeden oynamaya başlar. `ffmpeg` yoksa panel uyarır; dışa
+  aktarırken "web için optimize et / fast start" seçeneği açılmalıdır.
+- Videolar yalnızca giriş yapmış kullanıcılara, parça parça (HTTP Range) verilir;
+  ileri sarma tüm dosyayı indirmeden çalışır.
+- Sınır `VIDEO_MAX_MB` (varsayılan 2048). Önde nginx varsa
+  `client_max_body_size` en az bu kadar olmalı; aksi halde büyük yüklemeler
+  413 ile kesilir.
 
 ## Parola sıfırlama
 

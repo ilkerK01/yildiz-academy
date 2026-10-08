@@ -1,24 +1,27 @@
-:root{
-  --bg:#070a12;
-  --panel:#0c1220;
-  --panel-2:#0f1626;
-  --line:#1c2640;
-  --line-soft:rgba(255,255,255,.06);
-  --acc:#e8b85a;
-  --acc-glow:rgba(232,184,90,.22);
-  --acc-soft:rgba(232,184,90,.08);
-  --acc-ink:#0b0e17;
-  --ink:#f0f3fa;
-  --ink-bright:#ffffff;
-  --ink-soft:#c8cfdd;
-  --ink-muted:#b0b8ca;
-  --ink-dim:#9aa3b8;
-  --ink-faint:#808a9f;
-  --ink-ghost:#5f6a80;
-  --ok:#3ddc84;
-  --bad:#ff5a5f;
-  --warn:#febc2e;
-  --info:#60a5fa;
+:root,[data-tema="gece"]{
+  /* Göz yormaması için: zemin saf siyah değil, metin saf beyaz değil,
+     durum renkleri daha az doygun. */
+  --fg-rgb:255,255,255;
+  --bg:#0f131a;
+  --panel:#151a23;
+  --panel-2:#1a2029;
+  --line:#252c38;
+  --line-soft:rgba(255,255,255,.05);
+  --acc:#d9b064;
+  --acc-glow:rgba(217,176,100,.16);
+  --acc-soft:rgba(217,176,100,.08);
+  --acc-ink:#14110b;
+  --ink:#e2e6ec;
+  --ink-bright:#eef1f5;
+  --ink-soft:#bcc3cf;
+  --ink-muted:#a4acba;
+  --ink-dim:#8f98a8;
+  --ink-faint:#7a8394;
+  --ink-ghost:#5b6474;
+  --ok:#62c48e;
+  --bad:#e0686c;
+  --warn:#e2b34a;
+  --info:#7aa7dc;
   --violet:#a78bfa;
   --pink:#f472b6;
   --orange:#fb923c;
@@ -39,7 +42,7 @@
   --r-card:18px;
   --r-pill:999px;
 
-  --shadow-card:0 8px 24px rgba(0,0,0,.45);
+  --shadow-card:0 8px 24px rgba(0,0,0,.35);
   --shadow-float:none;
   --shadow-btn:none;
 
@@ -50,7 +53,7 @@
 
   --color-surface:var(--bg);
   --color-surface-raised:var(--panel);
-  --color-surface-sunk:#05070f;
+  --color-surface-sunk:#0b0e14;
   --color-ink:var(--ink);
   --color-ink-soft:var(--ink-soft);
   --color-ink-muted:var(--ink-muted);
@@ -59,16 +62,59 @@
   --color-accent-ink:var(--acc-ink);
   --color-focus:var(--acc);
   --color-correct:var(--ok);
-  --color-correct-surface:rgba(61,220,132,.1);
+  --color-correct-surface:rgba(98,196,142,.08);
   --color-incorrect:var(--bad);
-  --color-incorrect-surface:rgba(255,90,95,.1);
+  --color-incorrect-surface:rgba(224,104,108,.08);
   --color-hint:var(--warn);
   --type-display:var(--font-serif);
   --type-body:var(--font-sans);
   --type-data:var(--font-mono);
 }
 
+/* Açık tema: kırık beyaz zemin, koyu gri metin. Uzun okumada en az yoran seçenek. */
+[data-tema="acik"]{
+  color-scheme:light;
+  --fg-rgb:20,24,32;
+  --bg:#f5f4f0;
+  --panel:#ffffff;
+  --panel-2:#f8f7f4;
+  --line:#e2dfd7;
+  --line-soft:rgba(20,24,32,.06);
+  --acc:#9a6b14;
+  --acc-glow:rgba(154,107,20,.14);
+  --acc-soft:rgba(154,107,20,.08);
+  --acc-ink:#ffffff;
+  --ink:#22262e;
+  --ink-bright:#111419;
+  --ink-soft:#3f4551;
+  --ink-muted:#555c69;
+  --ink-dim:#666d7a;
+  --ink-faint:#7c8390;
+  --ink-ghost:#a2a8b2;
+  --ok:#23804c;
+  --bad:#b8423d;
+  --warn:#9a6b14;
+  --info:#2f69a8;
+  --shadow-card:0 6px 20px rgba(20,24,32,.08);
+  --color-surface-sunk:#efede8;
+  --color-correct-surface:rgba(35,128,76,.07);
+  --color-incorrect-surface:rgba(184,66,61,.07);
+}
+[data-tema="acik"] .labcard__art::after{display:none}
+[data-tema="acik"] .logo__mark{filter:invert(1) brightness(.25)}
+[data-tema="acik"] .rozet--kilitli .rozet__muhur{filter:grayscale(1) brightness(.9) opacity(.6)}
+
 [data-tema="fosfor"]{
+  color-scheme:dark;
+  --fg-rgb:255,255,255;
+  --ink:#e2e6ec;
+  --ink-bright:#eef1f5;
+  --ink-soft:#bcc3cf;
+  --ink-muted:#a4acba;
+  --ink-dim:#8f98a8;
+  --ink-faint:#7a8394;
+  --ink-ghost:#5b6474;
+  --acc-ink:#14110b;
   --bg:#05080a;
   --panel:#0a1012;
   --panel-2:#0d1417;
@@ -79,6 +125,16 @@
 }
 
 [data-tema="murekkep"]{
+  color-scheme:dark;
+  --fg-rgb:255,255,255;
+  --ink:#e2e6ec;
+  --ink-bright:#eef1f5;
+  --ink-soft:#bcc3cf;
+  --ink-muted:#a4acba;
+  --ink-dim:#8f98a8;
+  --ink-faint:#7a8394;
+  --ink-ghost:#5b6474;
+  --acc-ink:#14110b;
   --bg:#080716;
   --panel:#0e0d22;
   --panel-2:#12112a;

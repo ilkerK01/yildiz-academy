@@ -1,0 +1,52 @@
+# English translation. Answers, points and step order come from the Turkish file.
+lang: en
+slug: hash-avi
+title: Tracing a hash
+summary: All you have is a single hash. Find out what it is and which family it belongs to.
+
+briefing_md: |
+  An incident response team left you a one-line piece of evidence: an MD5
+  digest. There is no other context.
+
+  Do the research on your own machine. You don't need to download the file, and
+  you shouldn't. Type your answers below; verification happens on the server.
+
+steps:
+  - prompt_md: "Which file does this digest belong to? Write the file's common name."
+    hints:
+      - "You don't need to download the file; searching for the digest is enough."
+      - "This is not real malware, but a file created for antivirus testing."
+
+  - prompt_md: "Is this file real malware?"
+    choices:
+      - "Yes, a known ransomware"
+      - "No, a harmless file created for antivirus testing"
+      - "Yes, a banking trojan"
+
+  - prompt_md: "What is the abbreviation of the organization that publishes the standard defining this test file?"
+    hints:
+      - "The abbreviation is the same as the file's own name."
+
+solution_md: |
+  ## Solution
+
+  **Step 1.** When you paste the digest `44d88612fea8a8f36de82e1278abb02f` into
+  any search engine or VirusTotal, the EICAR test file comes up. This is the
+  most common form of "evidence" in threat intelligence: a digest with no
+  context. The first thing to do is always the same: look the digest up in
+  known sources.
+
+  **Step 2.** EICAR is not real malware. It is a 68-character string made of
+  printable ASCII characters, created to test whether antivirus software is
+  working. It has no malicious behavior, yet every antivirus deliberately
+  "detects" it.
+
+  **Step 3.** The organization that publishes the standard is EICAR itself: the
+  European Institute for Computer Antivirus Research.
+
+  ## The lesson
+
+  A digest being flagged by antivirus does not make it malicious. You are at
+  the bottom level of the Pyramid of Pain: a hash is the cheapest and most
+  fragile indicator. The next step is always the question "what does this file
+  do?", not "how many engines flagged it?".

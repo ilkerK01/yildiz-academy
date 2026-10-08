@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from markupsafe import escape
 from fastapi.responses import FileResponse, RedirectResponse
-from sqlalchemy import or_, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session as DbSession
 
 from app import i18n
@@ -11,7 +10,7 @@ from app.config import STATIC_DIR
 from app.db import get_db
 from app.deps import current_user, guvenli_yol, require_user
 from app.models import ContentTag, Lab, Lesson, Tag, User
-from app.services import answers, progress, ranking, scoring
+from app.services import progress, ranking, scoring, video, yerel
 from app.templating import page
 
 router = APIRouter(tags=["sayfa"])
@@ -64,16 +63,35 @@ def _related_labs(db: DbSession, lesson: Lesson) -> list[Lab]:
     )
 
 
+def _vitrin_sayilari(db: DbSession) -> dict[str, int]:
+    # Açılış sayfasındaki sayaçlar: yalnızca yayımlanmış içerik sayılır.
+    return {
+        "ders": db.scalar(select(func.count()).select_from(Lesson).where(Lesson.published.is_(True))) or 0,
+        "lab": db.scalar(select(func.count()).select_from(Lab).where(Lab.published.is_(True))) or 0,
+        "puan": db.scalar(select(func.coalesce(func.sum(Lab.total_points), 0)).where(Lab.published.is_(True))) or 0,
+        "etiket": db.scalar(select(func.count()).select_from(Tag)) or 0,
+    }
+
+
 @router.get("/")
-def acilis(request: Request, user: User | None = Depends(current_user)):
+def acilis(
+    request: Request,
+    user: User | None = Depends(current_user),
+    db: DbSession = Depends(get_db),
+):
     if user is not None:
         return RedirectResponse("/panel", status_code=303)
-    return page(request, "index.html", next=guvenli_yol(request.query_params.get("next", ""), ""))
+    return page(
+        request,
+        "index.html",
+        next=guvenli_yol(request.query_params.get("next", ""), ""),
+        sayilar=_vitrin_sayilari(db),
+    )
 
 
 @router.get("/sifre-sifirla")
-def sifre_sifirla_sayfasi(request: Request, token: str = ""):
-    return page(request, "index.html", next="", sifirla_token=token)
+def sifre_sifirla_sayfasi(request: Request, token: str = "", db: DbSession = Depends(get_db)):
+    return page(request, "index.html", next="", sifirla_token=token, sayilar=_vitrin_sayilari(db))
 
 
 @router.get("/hakkinda")
@@ -184,6 +202,7 @@ def ders(
         "ders.html",
         user=user,
         ders=lesson,
+        video=video.ders_videosu(db, lesson, i18n.dil(request)),
         etiketler=_tags_for(db, "lesson", lesson.id),
         ilgili_lablar=_related_labs(db, lesson),
         okundu=lesson.id in progress.read_lesson_ids(db, user.id),
@@ -230,19 +249,19 @@ def lab_detay(
     step_rows = progress.get_step_rows(db, user.id, lab)
     aktif = progress.current_step_index(lab, step_rows)
 
+    kod = i18n.dil(request)
     adimlar = []
     for step in lab.steps:
         row = step_rows.get(step.id)
-        acilan_ipuclari = [
-            h.text_html or escape(h.text_md) for h in step.hints[: (row.hints_used if row else 0)]
-        ]
+        metin = yerel.adim(step, kod)
+        acilan_ipuclari = metin["hints"][: (row.hints_used if row else 0)]
         adimlar.append(
             {
                 "index": step.step_index,
-                "soru_html": step.prompt_html or escape(step.prompt_md),
-                "iz": step.artifact,
+                "soru_html": metin["prompt_html"],
+                "iz": metin["artifact"],
                 "tip": step.answer_type,
-                "siklar": answers.public_choices(step.choices_json),
+                "siklar": metin["choices"],
                 "puan": step.points,
                 "guncel_puan": scoring.step_award(step, row.hints_used if row else 0),
                 "cozuldu": bool(row and row.solved),
@@ -331,6 +350,7 @@ def ara(
                     or_(
                         Lesson.title.ilike(kalip),
                         Lesson.summary.ilike(kalip),
+                        Lesson.en_json.ilike(kalip),
                         Lesson.id.in_(etiketli("lesson")),
                     ),
                 ).order_by(Lesson.order_index, Lesson.title)
@@ -344,6 +364,7 @@ def ara(
                         Lab.title.ilike(kalip),
                         Lab.summary.ilike(kalip),
                         Lab.briefing_md.ilike(kalip),
+                        Lab.en_json.ilike(kalip),
                         Lab.id.in_(etiketli("lab")),
                     ),
                 ).order_by(Lab.order_index, Lab.title)

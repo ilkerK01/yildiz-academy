@@ -1,3 +1,4 @@
+{% from "_avatar.html" import avatar %}
 {% macro ikon(ad) -%}
 {%- if ad == "panel" -%}
 <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5" height="5" rx="1.2"/><rect x="9.5" y="1.5" width="5" height="5" rx="1.2"/><rect x="1.5" y="9.5" width="5" height="5" rx="1.2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1.2"/></svg>
@@ -50,6 +51,8 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/static/css/tokens.css?v={{ statik_surum('css/tokens.css') }}">
+<link rel="stylesheet" href="/static/css/base.css?v={{ statik_surum('css/base.css') }}">
 <link rel="stylesheet" href="/static/css/app.css?v={{ statik_surum('css/app.css') }}">
 <script src="/static/js/gecis.js?v={{ statik_surum('js/gecis.js') }}" data-gecis defer></script>
 </head>
@@ -81,10 +84,10 @@
     {{ dil_secici() }}
 
     <a class="side__foot" href="/profil/{{ user.public_id }}">
-      <span class="avatar">{{ user.display_name[:1] }}</span>
+      {{ avatar(user) }}
       <div>
         <b>{{ user.display_name }}</b>
-        {% if kendi_sira is defined and kendi_sira %}<span>#{{ kendi_sira }}</span>{% elif stats is defined %}<span>{{ _("{n} puan", n=stats.puan) }}</span>{% endif %}
+        {% if kendi_sira is defined and kendi_sira %}<span>#{{ kendi_sira }}</span>{% elif stats is defined %}<span>{{ _("{n} puan", n=stats.puan) }}</span>{% else %}<span>{{ _("Profili gör") }}</span>{% endif %}
       </div>
     </a>
     <button class="side__resize" data-side-resize type="button"

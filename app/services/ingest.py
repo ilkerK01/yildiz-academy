@@ -54,8 +54,21 @@ def parse_lesson(text: str, *, filename: str = "") -> dict:
     if not title:
         raise IngestError(f"{filename}: `title` zorunlu.")
 
-    slug = str(meta.get("slug") or slugify(title)).strip()
     body = match.group(2).strip()
+
+    if _ceviri_mi(meta):
+        slug = str(meta.get("slug") or "").strip()
+        if not slug:
+            raise IngestError(f"{filename}: çeviri dosyasında `slug` zorunlu.")
+        return {
+            "lang": "en",
+            "slug": slug,
+            "title": title,
+            "summary": str(meta.get("summary") or "").strip(),
+            "body_md": body,
+        }
+
+    slug = str(meta.get("slug") or slugify(title)).strip()
 
     return {
         "slug": slug,
@@ -69,8 +82,16 @@ def parse_lesson(text: str, *, filename: str = "") -> dict:
     }
 
 
+def _ceviri_mi(meta: dict) -> bool:
+    return str(meta.get("lang") or "tr").strip().lower() == "en"
+
+
+def _metin(deger) -> str:
+    return str(deger or "").strip()
+
+
 def _estimate_minutes(body: str) -> int:
-    words = len(body.split())
+    words = len(re.sub(r"<[^>]+>", " ", body).split())
     return max(1, round(words / 180))
 
 
@@ -88,6 +109,9 @@ def parse_lab(text: str, *, filename: str = "") -> dict:
     title = str(data.get("title") or "").strip()
     if not title:
         raise IngestError(f"{filename}: `title` zorunlu.")
+
+    if _ceviri_mi(data):
+        return parse_lab_en(data, title, filename=filename)
 
     slug = str(data.get("slug") or slugify(title)).strip()
     difficulty = str(data.get("difficulty") or "kolay").strip()
@@ -166,6 +190,125 @@ def parse_lab(text: str, *, filename: str = "") -> dict:
         "tags": [str(t) for t in (data.get("tags") or [])],
         "steps": steps,
     }
+
+
+def parse_lab_en(data: dict, title: str, *, filename: str = "") -> dict:
+    slug = _metin(data.get("slug"))
+    if not slug:
+        raise IngestError(f"{filename}: çeviri dosyasında `slug` zorunlu.")
+
+    steps = []
+    for i, raw in enumerate(data.get("steps") or [], start=1):
+        if not isinstance(raw, dict):
+            raise IngestError(f"{filename}: {i}. adım bir sözlük değil.")
+        hints = []
+        for j, hint in enumerate(raw.get("hints") or [], start=1):
+            hint_text = _metin(hint.get("text_md") if isinstance(hint, dict) else hint)
+            if not hint_text:
+                raise IngestError(f"{filename}: {i}. adımın {j}. ipucusu boş.")
+            hints.append(hint_text)
+        choices = raw.get("choices")
+        steps.append(
+            {
+                "step_index": i,
+                "prompt_md": _metin(raw.get("prompt_md")),
+                "artifact": _metin(raw.get("artifact")) or None,
+                "choices": [str(c) for c in choices] if choices else None,
+                "hints": hints,
+            }
+        )
+
+    return {
+        "lang": "en",
+        "slug": slug,
+        "title": title,
+        "summary": _metin(data.get("summary")),
+        "briefing_md": _metin(data.get("briefing_md")),
+        "solution_md": _metin(data.get("solution_md")),
+        "steps": steps,
+    }
+
+
+def check_lab_en(db: DbSession, parsed: dict, *, filename: str = "") -> Lab:
+    lab = db.scalar(select(Lab).where(Lab.slug == parsed["slug"]))
+    if lab is None:
+        raise IngestError(
+            f"{filename}: `{parsed['slug']}` adlı lab yok. Önce Türkçe sürümü yükle."
+        )
+    asil = {step.step_index: step for step in lab.steps}
+    if parsed["steps"] and len(parsed["steps"]) != len(asil):
+        raise IngestError(
+            f"{filename}: çeviride {len(parsed['steps'])} adım var, "
+            f"Türkçe labda {len(asil)}. Adım sayıları aynı olmalı."
+        )
+    for raw in parsed["steps"]:
+        step = asil[raw["step_index"]]
+        tr_siklar = json.loads(step.choices_json) if step.choices_json else []
+        if raw["choices"] and len(raw["choices"]) != len(tr_siklar):
+            raise IngestError(
+                f"{filename}: {raw['step_index']}. adımda {len(raw['choices'])} şık var, "
+                f"Türkçede {len(tr_siklar)}. Şıklar aynı sırada ve sayıda olmalı."
+            )
+        if len(raw["hints"]) > len(step.hints):
+            raise IngestError(
+                f"{filename}: {raw['step_index']}. adımda Türkçeden fazla ipucu var."
+            )
+    return lab
+
+
+def check_lesson_en(db: DbSession, parsed: dict, *, filename: str = "") -> Lesson:
+    lesson = db.scalar(select(Lesson).where(Lesson.slug == parsed["slug"]))
+    if lesson is None:
+        raise IngestError(
+            f"{filename}: `{parsed['slug']}` adlı ders yok. Önce Türkçe sürümü yükle."
+        )
+    return lesson
+
+
+def save_lesson_en(db: DbSession, parsed: dict, *, filename: str = "") -> Lesson:
+    lesson = check_lesson_en(db, parsed, filename=filename)
+    lesson.en_json = json.dumps(
+        {
+            "title": parsed["title"],
+            "summary": parsed["summary"],
+            "body_html": render(parsed["body_md"]),
+        },
+        ensure_ascii=False,
+    )
+    db.commit()
+    return lesson
+
+
+def save_lab_en(db: DbSession, parsed: dict, *, filename: str = "") -> Lab:
+    lab = check_lab_en(db, parsed, filename=filename)
+    lab.en_json = json.dumps(
+        {
+            "title": parsed["title"],
+            "summary": parsed["summary"],
+            "briefing_html": render(parsed["briefing_md"]),
+            "solution_html": render(parsed["solution_md"]),
+            "steps": {
+                str(raw["step_index"]): {
+                    "prompt_html": render(raw["prompt_md"]),
+                    "artifact": raw["artifact"],
+                    "choices": raw["choices"],
+                    "hints": [render(h) for h in raw["hints"]],
+                }
+                for raw in parsed["steps"]
+            },
+        },
+        ensure_ascii=False,
+    )
+    db.commit()
+    return lab
+
+
+def preview_translation(parsed: dict, kind: str) -> Preview:
+    lines = ["Dil: İngilizce (mevcut içeriğin çevirisi)"]
+    if kind == "lab":
+        lines.append(f"Adım sayısı: {len(parsed['steps'])}")
+        lines.append(f"Çözüm metni: {'var' if parsed['solution_md'] else 'YOK'}")
+    return Preview(kind=f"{kind} çevirisi", slug=parsed["slug"], title=parsed["title"], lines=lines)
 
 
 def preview_lesson(parsed: dict) -> Preview:
@@ -300,9 +443,19 @@ def ingest_text(db: DbSession, filename: str, text: str, *, commit: bool = True)
     lower = filename.lower()
     if lower.endswith(".md"):
         parsed = parse_lesson(text, filename=filename)
+        if parsed.get("lang") == "en":
+            check_lesson_en(db, parsed, filename=filename)
+            if commit:
+                save_lesson_en(db, parsed, filename=filename)
+            return parsed, preview_translation(parsed, "ders")
         preview = preview_lesson(parsed)
     elif lower.endswith((".yaml", ".yml")):
         parsed = parse_lab(text, filename=filename)
+        if parsed.get("lang") == "en":
+            check_lab_en(db, parsed, filename=filename)
+            if commit:
+                save_lab_en(db, parsed, filename=filename)
+            return parsed, preview_translation(parsed, "lab")
         preview = preview_lab(parsed)
     else:
         raise IngestError(f"{filename}: yalnızca .md ve .yaml kabul edilir.")
@@ -315,6 +468,13 @@ def ingest_text(db: DbSession, filename: str, text: str, *, commit: bool = True)
     return parsed, preview
 
 
+def ingest_docx(db: DbSession, filename: str, data: bytes, *, ingilizce: bool = False):
+    from app.services import docx_ders
+
+    ad, metin, _ = docx_ders.donustur(db, filename, data, ingilizce=ingilizce)
+    return ingest_text(db, ad, metin)
+
+
 def ingest_directory(db: DbSession, root: Path) -> list[str]:
     log: list[str] = []
     for path in sorted((root / "dersler").glob("*.md")):
@@ -323,4 +483,16 @@ def ingest_directory(db: DbSession, root: Path) -> list[str]:
     for path in sorted((root / "lablar").glob("*.y*ml")):
         _, preview = ingest_text(db, path.name, path.read_text(encoding="utf-8"))
         log.append(f"lab   {preview.slug}  {preview.title}")
+    for path in sorted((root / "dersler").glob("*.docx")):
+        _, preview = ingest_docx(db, path.name, path.read_bytes())
+        log.append(f"ders  {preview.slug}  {preview.title}  (docx)")
+    for path in sorted((root / "dersler" / "en").glob("*.md")):
+        _, preview = ingest_text(db, path.name, path.read_text(encoding="utf-8"))
+        log.append(f"en    {preview.slug}  {preview.title}")
+    for path in sorted((root / "dersler" / "en").glob("*.docx")):
+        _, preview = ingest_docx(db, path.name, path.read_bytes(), ingilizce=True)
+        log.append(f"en    {preview.slug}  {preview.title}  (docx)")
+    for path in sorted((root / "lablar" / "en").glob("*.y*ml")):
+        _, preview = ingest_text(db, path.name, path.read_text(encoding="utf-8"))
+        log.append(f"en    {preview.slug}  {preview.title}")
     return log

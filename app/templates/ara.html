@@ -31,13 +31,13 @@
   <div class="grid grid--2" style="margin-top:20px">
   {% for ders in dersler %}
     <a class="rowcard" href="/kutuphane/{{ ders.slug }}">
-      <h3>{{ ders.title }}</h3><p>{{ ders.summary }}</p>
+      <h3>{{ y(ders, 'title') }}</h3><p>{{ y(ders, 'summary') }}</p>
       <div class="rowcard__meta"><span class="chip">{{ _("ders") }}</span><span>{{ _("{n} dk", n=ders.reading_minutes) }}</span></div>
     </a>
   {% endfor %}
   {% for lab in lablar %}
     <a class="rowcard" href="/lab/{{ lab.slug }}">
-      <h3>{{ lab.title }}</h3><p>{{ lab.summary }}</p>
+      <h3>{{ y(lab, 'title') }}</h3><p>{{ y(lab, 'summary') }}</p>
       <div class="rowcard__meta"><span class="chip chip--acc">lab</span><span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ _(lab.difficulty) }}</span><span>{{ _("{n} puan", n=lab.total_points) }}</span></div>
     </a>
   {% endfor %}

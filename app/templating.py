@@ -3,8 +3,9 @@ from __future__ import annotations
 from fastapi.templating import Jinja2Templates
 from jinja2 import pass_context
 
-from app import i18n
+from app import config, i18n
 from app.config import STATIC_DIR, TEMPLATES_DIR
+from app.services import yerel
 
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
@@ -21,6 +22,13 @@ def _statik_surum(yol: str) -> str:
 
 
 templates.env.globals["statik_surum"] = _statik_surum
+# Ayarlar sayfası avatar sınırlarını kullanıcıya bu değerlerle gösterir.
+templates.env.globals["avatar_ayar"] = {
+    "mb": config.AVATAR_MAX_MB,
+    "boyut": config.AVATAR_BOYUT,
+    "min_px": config.AVATAR_MIN_PX,
+    "kabul": "image/png,image/jpeg,image/webp,image/gif",
+}
 
 
 def _baglam_dili(ctx) -> str:
@@ -43,7 +51,13 @@ def _js_metinleri(ctx) -> dict[str, str]:
     return i18n.js_metinleri(_baglam_dili(ctx))
 
 
+@pass_context
+def _yerel(ctx, obj, ad: str):
+    return yerel.alan(obj, ad, _baglam_dili(ctx))
+
+
 templates.env.globals["_"] = _cevir
+templates.env.globals["y"] = _yerel
 templates.env.globals["aktif_dil"] = _aktif_dil
 templates.env.globals["js_metinleri"] = _js_metinleri
 

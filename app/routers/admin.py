@@ -3,7 +3,7 @@ from __future__ import annotations
 import secrets
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
-from fastapi.responses import RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session as DbSession
 
@@ -16,11 +16,12 @@ from app.models import (
     LabProgress,
     Lesson,
     LessonProgress,
+    LessonVideo,
     Session,
     StepProgress,
     User,
 )
-from app.services import ingest, progress, security
+from app.services import docx_ders, ingest, progress, security, video
 from app.services.ingest import IngestError
 from app.templating import page
 
@@ -83,26 +84,22 @@ def cikis(request: Request, db: DbSession = Depends(get_db)):
 def icerik(
     request: Request, db: DbSession = Depends(get_db), _: bool = Depends(require_admin)
 ):
+    return _icerik_sayfasi(request, db)
+
+
+def _icerik_sayfasi(
+    request, db, *, onizleme=None, hata=None, dosya_adi="", metin="", bilgi=None
+):
     return page(
         request,
         "admin/icerik.html",
         dersler=list(db.scalars(select(Lesson).order_by(Lesson.order_index, Lesson.title))),
         lablar=list(db.scalars(select(Lab).order_by(Lab.title))),
-        onizleme=None,
-        hata=None,
-        dosya_adi="",
-        icerik_metni="",
-    )
-
-
-def _icerik_sayfasi(request, db, *, onizleme=None, hata=None, dosya_adi="", metin=""):
-    return page(
-        request,
-        "admin/icerik.html",
-        dersler=list(db.scalars(select(Lesson).order_by(Lesson.order_index, Lesson.title))),
-        lablar=list(db.scalars(select(Lab).order_by(Lab.title))),
+        videolar=video.ders_videolari(db),
+        video_sinir_mb=config.VIDEO_MAX_MB,
         onizleme=onizleme,
         hata=hata,
+        bilgi=bilgi,
         dosya_adi=dosya_adi,
         icerik_metni=metin,
     )
@@ -116,9 +113,11 @@ async def icerik_yukle(
     _: bool = Depends(require_admin),
 ):
     ad = (dosya.filename or "").strip()
+    if ad.lower().endswith(".docx"):
+        return await _docx_onizle(request, db, ad, dosya)
     if not ad.lower().endswith((".md", ".yaml", ".yml")):
         return _icerik_sayfasi(
-            request, db, hata="Yalnızca .md ve .yaml dosyaları kabul edilir."
+            request, db, hata="Yalnızca .md, .docx ve .yaml dosyaları kabul edilir."
         )
 
     ham = await dosya.read()
@@ -136,6 +135,59 @@ async def icerik_yukle(
         return _icerik_sayfasi(request, db, hata=str(exc), dosya_adi=ad, metin=metin)
 
     return _icerik_sayfasi(request, db, onizleme=onizleme, dosya_adi=ad, metin=metin)
+
+
+async def _docx_onizle(request, db, ad: str, dosya: UploadFile):
+    ham = await dosya.read(config.DOCX_MAX_BYTES + 1)
+    if len(ham) > config.DOCX_MAX_BYTES:
+        return _icerik_sayfasi(request, db, hata="Word belgesi 25 MB sınırını aşıyor.")
+    try:
+        md_adi, metin, bilgi = docx_ders.donustur(db, ad, ham)
+        _, onizleme = ingest.ingest_text(db, md_adi, metin, commit=False)
+    except IngestError as exc:
+        return _icerik_sayfasi(request, db, hata=str(exc))
+    onizleme.lines.extend(bilgi)
+    # Onay adımında dönüştürülmüş metin (.md) gönderilir.
+    return _icerik_sayfasi(request, db, onizleme=onizleme, dosya_adi=md_adi, metin=metin)
+
+
+def _xhr(request: Request) -> bool:
+    return request.headers.get("x-istek") == "xhr"
+
+
+@router.post("/icerik/ders/{slug}/video")
+async def video_yukle(
+    slug: str,
+    request: Request,
+    dosya: UploadFile = File(...),
+    dil: str = Form("tr"),
+    db: DbSession = Depends(get_db),
+    _: bool = Depends(require_admin),
+):
+    lesson = db.scalar(select(Lesson).where(Lesson.slug == slug))
+    if lesson is None:
+        raise HTTPException(404, "Ders bulunamadı.")
+    try:
+        sonuc = await video.kaydet(db, lesson, dil, dosya)
+    except video.VideoHatasi as exc:
+        if _xhr(request):
+            return JSONResponse({"ok": False, "hata": str(exc)}, status_code=400)
+        return _icerik_sayfasi(request, db, hata=f"{lesson.title}: {exc}")
+    mesaj = f"{lesson.title}: {dil.upper()} videosu yüklendi."
+    if _xhr(request):
+        return {"ok": True, "mesaj": mesaj, "uyarilar": sonuc.uyarilar}
+    return _icerik_sayfasi(request, db, bilgi=[mesaj, *sonuc.uyarilar])
+
+
+@router.post("/icerik/video/{video_id}/sil")
+def video_sil(
+    video_id: int, db: DbSession = Depends(get_db), _: bool = Depends(require_admin)
+):
+    kayit = db.get(LessonVideo, video_id)
+    if kayit is None:
+        raise HTTPException(404, "Video bulunamadı.")
+    video.sil(db, kayit)
+    return _geri("/icerik")
 
 
 @router.post("/icerik/onayla")
@@ -182,6 +234,9 @@ def icerik_sil(
     row = db.scalar(select(model).where(model.slug == slug))
     if row is None:
         raise HTTPException(404, "İçerik bulunamadı.")
+    if tip == "ders":
+        for kayit in db.scalars(select(LessonVideo).where(LessonVideo.lesson_id == row.id)):
+            video.sil(db, kayit, commit=False)
     db.execute(
         delete(ContentTag).where(
             ContentTag.content_type == ("lesson" if tip == "ders" else "lab"),

@@ -10,7 +10,7 @@ _md = MarkdownIt("commonmark", {"linkify": True, "typographer": False}).enable(
 ALLOWED_TAGS = {
     "p", "br", "hr",
     "h1", "h2", "h3", "h4", "h5", "h6",
-    "strong", "em", "del", "code", "pre", "blockquote",
+    "strong", "em", "del", "code", "pre", "blockquote", "sup", "sub", "u",
     "ul", "ol", "li",
     "a", "img",
     "table", "thead", "tbody", "tr", "th", "td",

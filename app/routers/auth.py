@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import timedelta
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Request, UploadFile
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from sqlalchemy import func, select
@@ -12,7 +12,7 @@ from app import config, i18n
 from app.db import get_db
 from app.deps import require_user_api
 from app.models import User, now
-from app.services import eposta, security
+from app.services import avatar, eposta, security
 
 router = APIRouter(prefix="/api", tags=["kimlik"])
 
@@ -174,6 +174,34 @@ def ad_degistir(
     user.display_name_changed_at = now()
     db.commit()
     return {"ok": True, "gorunen_ad": user.display_name}
+
+
+@router.post("/ayarlar/avatar")
+async def avatar_yukle(
+    request: Request,
+    dosya: UploadFile = File(...),
+    db: DbSession = Depends(get_db),
+    user: User = Depends(require_user_api),
+):
+    if _limit_asildi(request, "avatar"):
+        return _hata(request, "Çok fazla deneme. Bir dakika sonra tekrar dene.", 429)
+    try:
+        await avatar.kaydet(db, user, dosya)
+    except avatar.AvatarHatasi as hata:
+        return JSONResponse(
+            {"ok": False, "hata": i18n.cevir(i18n.dil(request), hata.mesaj, **hata.degerler)},
+            status_code=400,
+        )
+    return {"ok": True, "url": avatar.url(user)}
+
+
+@router.post("/ayarlar/avatar/sil")
+def avatar_kaldir(
+    db: DbSession = Depends(get_db),
+    user: User = Depends(require_user_api),
+):
+    avatar.sil(db, user)
+    return {"ok": True}
 
 
 @router.post("/ayarlar/parola")

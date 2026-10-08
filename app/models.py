@@ -37,6 +37,25 @@ class Lesson(Base):
     reading_minutes: Mapped[int] = mapped_column(Integer, default=5)
     order_index: Mapped[int] = mapped_column(Integer, default=0)
     published: Mapped[bool] = mapped_column(Boolean, default=True)
+    en_json: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+
+class LessonVideo(Base):
+    """Bir derse bağlı video. Her dil için en fazla bir video."""
+
+    __tablename__ = "lesson_video"
+    __table_args__ = (UniqueConstraint("lesson_id", "lang", name="uq_ders_video_dil"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    lesson_id: Mapped[int] = mapped_column(
+        ForeignKey("lesson.id", ondelete="CASCADE"), index=True
+    )
+    lang: Mapped[str] = mapped_column(String(2), default="tr")
+    file_name: Mapped[str] = mapped_column(String(160))
+    original_name: Mapped[str] = mapped_column(String(255), default="")
+    size_bytes: Mapped[int] = mapped_column(Integer, default=0)
+    mime: Mapped[str] = mapped_column(String(40), default="video/mp4")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
 
 
 class Lab(Base):
@@ -54,6 +73,7 @@ class Lab(Base):
     solution_md: Mapped[str] = mapped_column(Text, default="")
     solution_html: Mapped[str] = mapped_column(Text, default="")
     published: Mapped[bool] = mapped_column(Boolean, default=True)
+    en_json: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     steps: Mapped[list["LabStep"]] = relationship(
         back_populates="lab",
@@ -136,6 +156,8 @@ class User(Base):
     )
 
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    # MEDIA_DIR/avatarlar altındaki dosyanın adı; yoksa baş harf gösterilir.
+    avatar_file: Mapped[str | None] = mapped_column(String(40), nullable=True)
 
     password_hash: Mapped[str] = mapped_column(String(255))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)

@@ -25,6 +25,8 @@ APP_DIR = BASE_DIR / "app"
 TEMPLATES_DIR = APP_DIR / "templates"
 STATIC_DIR = BASE_DIR / "static"
 CONTENT_DIR = BASE_DIR / "content"
+# Yüklenen videolar ve Word belgelerinden çıkan görseller. Git'e girmez.
+MEDIA_DIR = Path(os.getenv("MEDIA_DIR", "").strip() or str(BASE_DIR / "medya"))
 
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'yildiz.db'}")
 
@@ -38,6 +40,18 @@ LOGIN_ATTEMPTS_PER_MINUTE = 5
 ANSWER_ATTEMPTS_PER_MINUTE = 10
 ANSWER_MAX_LENGTH = 200
 UPLOAD_MAX_BYTES = 1 * 1024 * 1024
+DOCX_MAX_BYTES = 25 * 1024 * 1024
+VIDEO_MAX_MB = _int("VIDEO_MAX_MB", 2048)
+
+# Profil fotoğrafları. Yüklenen görsel ortadan kare kırpılır, AVATAR_BOYUT
+# piksele küçültülür ve WebP olarak saklanır; orijinal dosya tutulmaz.
+AVATAR_DIR = Path(os.getenv("AVATAR_DIR", "").strip() or str(MEDIA_DIR / "avatarlar"))
+AVATAR_MAX_MB = _int("AVATAR_MAX_MB", 5)
+AVATAR_BOYUT = _int("AVATAR_BOYUT", 256)
+AVATAR_MIN_PX = _int("AVATAR_MIN_PX", 64)
+# Kenar sınırı: dev boyutlu (sıkıştırma bombası) görselleri açmadan reddeder.
+AVATAR_MAX_PX = _int("AVATAR_MAX_PX", 6000)
+AVATAR_KALITE = _int("AVATAR_KALITE", 85)
 
 DISPLAY_NAME_MIN = 3
 DISPLAY_NAME_MAX = 24

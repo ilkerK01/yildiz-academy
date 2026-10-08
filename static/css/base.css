@@ -1,4 +1,3 @@
-@import "tokens.css";
 
 :root{
   --cursor-default:url("/static/img/imlec/varsayilan.svg") 2 1;
@@ -6,6 +5,8 @@
 }
 
 *,*::before,*::after{box-sizing:border-box}
+/* display tanımlı bileşenlerde (.btn, .bilgi...) hidden niteliği her zaman geçerli olsun. */
+[hidden]{display:none !important}
 
 html{
   cursor:var(--cursor-default),auto;
@@ -18,7 +19,7 @@ body{
   background:var(--bg);
   color:var(--ink);
   font-family:var(--font-sans);
-  font-size:14px;
+  font-size:15px;
   line-height:1.6;
   -webkit-font-smoothing:antialiased;
 }
@@ -32,24 +33,24 @@ h1,h2,h3,.display{
   margin:0;
   text-wrap:balance;
 }
-h1{font-size:28px}
-h2{font-size:20px}
-h3{font-size:16px}
+h1{font-size:30px}
+h2{font-size:22px}
+h3{font-size:18px}
 
 p{margin:0 0 14px;text-wrap:pretty}
 .lede{
-  font-size:15px;
+  font-size:16px;
   color:var(--ink-muted);
-  max-width:56ch;
+  max-width:70ch;
 }
-.prose{max-width:66ch;line-height:1.75;color:var(--ink-soft);font-size:15px}
+.prose{max-width:72ch;line-height:1.75;color:var(--ink-soft);font-size:16px}
 .prose h1,.prose h2,.prose h3{color:var(--ink);margin:1.4em 0 .5em}
-.prose h2{font-size:20px}
-.prose h3{font-size:16px}
+.prose h2{font-size:22px}
+.prose h3{font-size:18px}
 .prose code{
   font-family:var(--font-code);
   font-size:.9em;
-  background:rgba(255,255,255,.08);
+  background:rgba(var(--fg-rgb),.08);
   padding:0 5px;
   border-radius:4px;
   color:var(--ink);
@@ -60,7 +61,7 @@ p{margin:0 0 14px;text-wrap:pretty}
   border-radius:var(--r-lg);
   padding:16px 18px;
   overflow-x:auto;
-  font:13px/1.8 var(--font-code);
+  font:14px/1.8 var(--font-code);
   color:var(--ink-soft);
 }
 .prose pre code{background:none;padding:0}
@@ -73,13 +74,13 @@ p{margin:0 0 14px;text-wrap:pretty}
   border-radius:0 var(--r-md) var(--r-md) 0;
 }
 .prose img{max-width:100%;border-radius:var(--r-lg);border:1px solid var(--line)}
-.prose table{border-collapse:collapse;width:100%;font-size:14px}
+.prose table{border-collapse:collapse;width:100%;font-size:15px}
 .prose th,.prose td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
 
 .label{
   font-family:var(--font-mono);
   font-weight:500;
-  font-size:12.5px;
+  font-size:13.5px;
   letter-spacing:.01em;
   color:var(--ink-soft);
 }
@@ -112,13 +113,13 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
   align-items:center;
   justify-content:center;
   gap:8px;
-  height:40px;
-  padding:0 18px;
+  height:42px;
+  padding:0 20px;
   border-radius:var(--r-md);
   border:1px solid var(--acc);
   background:var(--acc);
   color:var(--acc-ink);
-  font:500 14px var(--font-sans);
+  font:600 15px var(--font-sans);
   box-shadow:var(--shadow-btn);
   transition:background var(--t-fast),border-color var(--t-fast),color var(--t-fast);
   text-decoration:none;
@@ -140,8 +141,8 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
   box-shadow:none;
   padding:0 12px;
 }
-.btn--ghost:hover{background:rgba(255,255,255,.05);color:var(--ink-bright)}
-.btn--sm{height:36px;padding:0 14px;font-size:13px;border-radius:var(--r-md)}
+.btn--ghost:hover{background:rgba(var(--fg-rgb),.05);color:var(--ink-bright)}
+.btn--sm{height:36px;padding:0 14px;font-size:14px;border-radius:var(--r-md)}
 .btn--lg{height:48px}
 .btn--block{width:100%}
 
@@ -149,9 +150,9 @@ hr{border:0;border-top:1px solid var(--line);margin:0}
   display:inline-flex;
   align-items:center;
   font-family:var(--font-mono);
-  font-size:11px;
+  font-size:12.5px;
   letter-spacing:.01em;
-  padding:3px 8px;
+  padding:3px 9px;
   border:1px solid var(--line);
   border-radius:var(--r-sm);
   color:var(--ink-muted);
@@ -173,7 +174,7 @@ a.chip:hover{border-color:var(--acc);color:var(--acc)}
   border-radius:var(--r-pill);
   border:1px solid var(--line);
   color:var(--ink-muted);
-  font:12px var(--font-mono);
+  font:500 13.5px var(--font-mono);
   text-decoration:none;
   transition:border-color var(--t-fast),color var(--t-fast);
 }
@@ -191,10 +192,10 @@ a.chip:hover{border-color:var(--acc);color:var(--acc)}
 }
 .card--pad{padding:22px 24px}
 .card--hover{transition:border-color var(--t-norm)}
-.card--hover:hover{border-color:rgba(255,255,255,.14)}
+.card--hover:hover{border-color:rgba(var(--fg-rgb),.14)}
 .card--acc{border-color:var(--acc)}
 .card__title{
-  font:500 12.5px var(--font-mono);
+  font:600 13.5px var(--font-mono);
   letter-spacing:.01em;
   color:var(--ink-dim);
 }
@@ -211,11 +212,11 @@ a.chip:hover{border-color:var(--acc);color:var(--acc)}
   gap:6px;
   padding:11px 16px;
   border-bottom:1px solid var(--line);
-  background:rgba(255,255,255,.02);
-  font:500 13px var(--font-sans);
+  background:rgba(var(--fg-rgb),.02);
+  font:500 14px var(--font-sans);
   color:var(--ink-dim);
 }
-.panel__head .points,.panel__head .right{margin-left:auto;color:var(--acc);letter-spacing:.01em;font-size:10px}
+.panel__head .points,.panel__head .right{margin-left:auto;color:var(--acc);letter-spacing:.01em;font-size:12.5px}
 .panel__body{padding:22px 24px}
 
 .term{
@@ -226,13 +227,13 @@ a.chip:hover{border-color:var(--acc);color:var(--acc)}
 }
 .term__body{
   padding:22px 24px;
-  font:13px/1.85 var(--font-code);
+  font:14px/1.85 var(--font-code);
   color:var(--ink-soft);
   overflow-x:auto;
 }
 .term__body .p{color:var(--acc)}
 .term__body .dim{color:var(--ink-dim)}
-.term__body .hl{color:var(--ink);background:rgba(255,255,255,.08);padding:0 4px;border-radius:4px}
+.term__body .hl{color:var(--ink);background:rgba(var(--fg-rgb),.08);padding:0 4px;border-radius:4px}
 .term__body .ok{color:var(--ok)}
 
 .input,
@@ -240,13 +241,13 @@ a.chip:hover{border-color:var(--acc);color:var(--acc)}
 .answer,.adim input[type=text],.adim select{
   width:100%;
   min-width:0;
-  height:40px;
-  padding:0 12px;
+  height:44px;
+  padding:0 14px;
   border-radius:var(--r-md);
   border:1px solid var(--line);
   background:var(--bg);
   color:var(--ink);
-  font:14px var(--font-mono);
+  font:15px var(--font-mono);
   outline:none;
   transition:border-color var(--t-fast),box-shadow var(--t-fast);
 }
@@ -257,7 +258,7 @@ a.chip:hover{border-color:var(--acc);color:var(--acc)}
   border:1px dashed var(--line);
   border-radius:var(--r-lg);
   color:var(--ink-muted);
-  font:13px var(--font-mono);
+  font:14px var(--font-mono);
   background:var(--bg);
 }
 .form input:focus,.form select:focus,.form textarea:focus,
@@ -272,7 +273,7 @@ select option{background:var(--panel);color:var(--ink)}
 .answer-msg{
   display:block;
   margin-top:8px;
-  font:12px var(--font-mono);
+  font:500 14px var(--font-mono);
 }
 .answer-msg[data-state="correct"]{color:var(--ok)}
 .answer-msg[data-state="incorrect"]{color:var(--bad)}
@@ -280,12 +281,12 @@ select option{background:var(--panel);color:var(--ink)}
 .form{display:flex;flex-direction:column;gap:18px;max-width:440px}
 .form label{
   display:block;
-  font:500 12.5px var(--font-mono);
+  font:500 14px var(--font-mono);
   letter-spacing:.01em;
-  color:var(--ink-dim);
-  margin-bottom:6px;
+  color:var(--ink-soft);
+  margin-bottom:8px;
 }
-.form .yardim{font:12px var(--font-mono);color:var(--ink-faint);margin:6px 0 0}
+.form .yardim{font:13px/1.5 var(--font-mono);color:var(--ink-dim);margin:6px 0 0}
 
 .artifact{
   display:flex;
@@ -298,7 +299,7 @@ select option{background:var(--panel);color:var(--ink)}
   border:1px solid var(--line);
   border-left:3px solid var(--acc);
   background:var(--bg);
-  font:13px/1.6 var(--font-code);
+  font:14px/1.6 var(--font-code);
   color:var(--ink);
   word-break:break-all;
 }
@@ -306,18 +307,19 @@ select option{background:var(--panel);color:var(--ink)}
 
 .hintrow{
   border-radius:var(--r-lg);
-  border:1px dashed rgba(255,255,255,.16);
+  border:1px dashed rgba(var(--fg-rgb),.16);
   padding:14px 16px;
-  font:12.5px/1.6 var(--font-mono);
-  color:var(--ink-muted);
+  font:14px/1.6 var(--font-mono);
+  color:var(--ink-soft);
   margin-top:10px;
 }
 .hintrow::before{
   content:"İPUCU";
   display:block;
   color:var(--acc);
-  letter-spacing:.01em;
-  font-size:11px;
+  letter-spacing:.06em;
+  font-size:12px;
+  font-weight:600;
   margin-bottom:4px;
 }
 .hintrow p{margin:0}
@@ -334,7 +336,7 @@ select option{background:var(--panel);color:var(--ink)}
 .bar{
   height:3px;
   border-radius:2px;
-  background:rgba(255,255,255,.07);
+  background:rgba(var(--fg-rgb),.07);
   overflow:hidden;
 }
 .bar > i{
@@ -349,8 +351,8 @@ select option{background:var(--panel);color:var(--ink)}
   border-radius:var(--r-lg);
   border:1px solid var(--bad);
   background:var(--color-incorrect-surface);
-  padding:12px 16px;
-  font-size:13.5px;
+  padding:14px 18px;
+  font-size:15px;
   color:var(--ink);
 }
 .bilgi{
@@ -358,17 +360,17 @@ select option{background:var(--panel);color:var(--ink)}
   border:1px solid var(--line);
   border-left:3px solid var(--acc);
   background:var(--acc-soft);
-  padding:12px 16px;
-  font-size:13.5px;
+  padding:14px 18px;
+  font-size:15px;
   color:var(--ink-soft);
 }
 .bilgi code,.uyari code{font-family:var(--font-code);color:var(--ink)}
 .bilgi ul{margin:8px 0 0;padding-left:18px}
 
-.cikti{margin:10px 0 0;font:12.5px var(--font-mono);color:var(--ink-muted);min-height:1em}
+.cikti{margin:10px 0 0;font:500 14px var(--font-mono);color:var(--ink-muted);min-height:1em}
 .cikti:empty{display:none}
-.badge-done{color:var(--ok);font:500 12.5px var(--font-mono)}
-.badge-locked{color:var(--ink-muted);font:500 12.5px var(--font-mono)}
+.badge-done{color:var(--ok);font:500 13.5px var(--font-mono)}
+.badge-locked{color:var(--ink-muted);font:500 13.5px var(--font-mono)}
 
 dialog{
   border:1px solid var(--line);
@@ -383,7 +385,7 @@ dialog{
 dialog::backdrop{background:rgba(3,5,10,.7)}
 dialog .panel__head{border-radius:0}
 dialog .dlg__body{padding:26px 28px 28px;display:flex;flex-direction:column;gap:18px}
-dialog h2{font-size:20px}
+dialog h2{font-size:22px}
 dialog .form{max-width:none}
 
 
@@ -411,7 +413,7 @@ dialog .form{max-width:none}
   border:1px solid var(--acc);
   display:grid;
   place-items:center;
-  font:600 13px var(--font-mono);
+  font:600 15px var(--font-mono);
   color:var(--acc);
   text-transform:lowercase;
 }
@@ -424,7 +426,11 @@ dialog .form{max-width:none}
   background:var(--ok);
   border:2px solid var(--bg);
 }
-.avatar--sm{width:28px;height:28px;font-size:12px;border-color:var(--line);color:var(--ink-muted)}
+.avatar img{display:block;width:100%;height:100%;border-radius:50%;object-fit:cover}
+.avatar--foto{color:transparent}
+.avatar--md{width:40px;height:40px;font-size:16px}
+.avatar--md::after{display:none}
+.avatar--sm{width:30px;height:30px;font-size:13px;border-color:var(--line);color:var(--ink-muted)}
 .avatar--sm::after{display:none}
 .avatar--me{border-color:var(--acc);color:var(--acc)}
 

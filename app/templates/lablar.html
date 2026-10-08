@@ -24,7 +24,7 @@
      data-difficulty="{{ zorluk_sinif(lab.difficulty) }}" data-zorluk="{{ lab.difficulty }}">
     <div class="labcard__art">
       <img src="/static/img/lablar/{{ lab.slug }}.webp?v={{ statik_surum('img/lablar/' ~ lab.slug ~ '.webp') }}"
-           alt="{{ lab.title }}" loading="lazy" width="900" height="338"
+           alt="{{ y(lab, 'title') }}" loading="lazy" width="900" height="338"
            onerror="this.closest('.labcard__art').classList.add('labcard__art--empty')">
     </div>
     <div class="labcard__body">
@@ -32,7 +32,7 @@
         <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ _(lab.difficulty) }}</span>
         <span>{{ _("{n} puan", n=lab.total_points) }}</span>
       </div>
-      <h2 class="labcard__title">{{ lab.title }}</h2>
+      <h2 class="labcard__title">{{ y(lab, 'title') }}</h2>
       <div class="tags">
         {% for etiket in etiketler.get(lab.id, []) %}<span class="chip chip--dim">{{ etiket.name }}</span>{% endfor %}
       </div>

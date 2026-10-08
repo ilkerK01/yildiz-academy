@@ -9,14 +9,20 @@
     <form method="post" action="/academy/admin/icerik/yukle"
           enctype="multipart/form-data" class="form">
       <div>
-        <label for="dosya">Ders (.md) veya lab (.yaml)</label>
-        <input id="dosya" type="file" name="dosya" accept=".md,.yaml,.yml" required>
-        <p class="yardim">En fazla 1 MB. Yükleme kaydetmez, önce önizleme gösterir.</p>
+        <label for="dosya">Ders (.md veya .docx) ya da lab (.yaml)</label>
+        <input id="dosya" type="file" name="dosya" accept=".md,.docx,.yaml,.yml" required>
+        <p class="yardim">
+          .md ve .yaml en fazla 1 MB, .docx en fazla 25 MB. Yükleme kaydetmez, önce önizleme gösterir.<br>
+          Word belgesinde başlık, özet ve etiketler Dosya &gt; Bilgi &gt; Özellikler'deki
+          Başlık, Konu ve Etiketler alanlarından okunur; başlık yoksa ilk "Başlık 1" kullanılır.
+          Dosya adı dersin adresi olur. <code>ders-adi.en.docx</code> mevcut dersin İngilizcesi sayılır.
+        </p>
       </div>
       <button class="btn" type="submit">Önizle</button>
     </form>
 
     {% if hata %}<div class="uyari" style="margin-top:16px">{{ hata }}</div>{% endif %}
+    {% if bilgi %}<div class="bilgi" style="margin-top:16px">{% for satir in bilgi %}<div>{{ satir }}</div>{% endfor %}</div>{% endif %}
 
     {% if onizleme %}
     <div class="bilgi" style="margin-top:16px">
@@ -42,6 +48,8 @@
         <h3>{{ ders.title }}</h3>
         <div class="rowcard__meta">
           <code>{{ ders.slug }}</code>
+          <span>{{ "TR + EN" if ders.en_json else "yalnız TR" }}</span>
+          <span>{{ "video var" if videolar.get(ders.id) else "video yok" }}</span>
           <span>{{ "yayında" if ders.published else "taslak" }}</span>
           <form method="post" action="/academy/admin/icerik/ders/{{ ders.slug }}/yayin">
             <button class="btn btn--quiet" type="submit">
@@ -52,6 +60,29 @@
                 data-onay="Ders silinsin mi?">
             <button class="btn btn--quiet" type="submit">Sil</button>
           </form>
+        </div>
+        <div class="videolar">
+          {% for v in videolar.get(ders.id, []) %}
+          <div class="videolar__satir">
+            <a href="/medya/video/{{ v.id }}/{{ v.file_name }}" target="_blank" rel="noopener">▶ {{ v.lang|upper }} videosu</a>
+            <span>{{ v.original_name }} · {{ (v.size_bytes / 1048576)|round(1) }} MB</span>
+            <form method="post" action="/academy/admin/icerik/video/{{ v.id }}/sil"
+                  data-onay="{{ v.lang|upper }} videosu silinsin mi?">
+              <button class="btn btn--quiet" type="submit">Videoyu sil</button>
+            </form>
+          </div>
+          {% endfor %}
+          <form class="video-yukle" method="post" enctype="multipart/form-data"
+                action="/academy/admin/icerik/ders/{{ ders.slug }}/video" data-video-yukle>
+            <input type="file" name="dosya" accept="video/mp4,video/webm,.mp4,.m4v,.webm" required>
+            <select name="dil" aria-label="Video dili">
+              <option value="tr">TR</option>
+              <option value="en">EN</option>
+            </select>
+            <button class="btn btn--quiet" type="submit">Video yükle</button>
+          </form>
+          <div class="video-ilerleme" hidden><div class="bar"><i style="width:0%"></i></div><span>%0</span></div>
+          <p class="video-sonuc" hidden></p>
         </div>
       </div>
       {% else %}
@@ -69,6 +100,7 @@
         <div class="rowcard__meta">
           <code>{{ lab.slug }}</code>
           <span>{{ lab.steps|length }} adım · {{ lab.total_points }} puan</span>
+          <span>{{ "TR + EN" if lab.en_json else "yalnız TR" }}</span>
           <span>{{ "yayında" if lab.published else "taslak" }}</span>
           <form method="post" action="/academy/admin/icerik/lab/{{ lab.slug }}/yayin">
             <button class="btn btn--quiet" type="submit">
@@ -87,4 +119,73 @@
     </div>
   </section>
 </div>
+
+<p class="yardim" style="margin-top:20px">
+  Video: .mp4 (H.264 + AAC) ya da .webm, en fazla {{ video_sinir_mb }} MB. Aynı dile yeni video
+  yüklersen eskisinin yerine geçer. EN videosu yoksa İngilizce arayüzde TR videosu gösterilir.
+</p>
+
+<script>
+  // Videoyu ilerleme çubuğuyla yükler; JavaScript yoksa form normal gönderilir.
+  document.querySelectorAll("form[data-video-yukle]").forEach(function (form) {
+    form.addEventListener("submit", function (olay) {
+      olay.preventDefault();
+      var kutu = form.parentElement;
+      var ilerleme = kutu.querySelector(".video-ilerleme");
+      var cubuk = ilerleme.querySelector("i");
+      var yuzde = ilerleme.querySelector("span");
+      var sonuc = kutu.querySelector(".video-sonuc");
+      var dugme = form.querySelector("button");
+
+      var xhr = new XMLHttpRequest();
+      xhr.open("POST", form.action);
+      xhr.setRequestHeader("X-Istek", "xhr");
+      xhr.upload.onprogress = function (e) {
+        if (!e.lengthComputable) return;
+        var p = Math.round((e.loaded / e.total) * 100);
+        cubuk.style.width = p + "%";
+        yuzde.textContent = p < 100 ? "%" + p : "İşleniyor…";
+      };
+      function bitir(durum, metin) {
+        dugme.disabled = false;
+        ilerleme.hidden = true;
+        sonuc.hidden = false;
+        sonuc.dataset.durum = durum;
+        sonuc.innerHTML = "";
+        metin.forEach(function (satir) {
+          var d = document.createElement("div");
+          d.textContent = satir;
+          sonuc.appendChild(d);
+        });
+      }
+      xhr.onload = function () {
+        var veri = null;
+        try { veri = JSON.parse(xhr.responseText); } catch (_) {}
+        if (!veri) {
+          bitir("hata", ["Yanıt okunamadı. Oturum düşmüş olabilir, sayfayı yenileyip tekrar dene."]);
+          return;
+        }
+        if (!veri.ok) { bitir("hata", [veri.hata || "Yüklenemedi."]); return; }
+        var uyarilar = veri.uyarilar || [];
+        bitir("ok", [veri.mesaj].concat(uyarilar));
+        if (uyarilar.length) {
+          var a = document.createElement("a");
+          a.href = location.pathname;
+          a.textContent = "Listeyi yenile";
+          sonuc.appendChild(a);
+        } else {
+          setTimeout(function () { location.href = location.pathname; }, 1200);
+        }
+      };
+      xhr.onerror = function () { bitir("hata", ["Bağlantı koptu, yükleme tamamlanmadı."]); };
+
+      dugme.disabled = true;
+      sonuc.hidden = true;
+      ilerleme.hidden = false;
+      cubuk.style.width = "0%";
+      yuzde.textContent = "%0";
+      xhr.send(new FormData(form));
+    });
+  });
+</script>
 {% endblock %}
