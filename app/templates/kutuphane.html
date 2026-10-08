@@ -23,8 +23,8 @@
       <span class="tag">{{ ders_etiketleri[0].name if ders_etiketleri else _("ders") }}</span>
     </div>
     <div class="lessoncard__body">
-      <div class="lessoncard__title">{{ ders.title }}</div>
-      <div class="lessoncard__desc">{{ ders.summary }}</div>
+      <div class="lessoncard__title">{{ y(ders, 'title') }}</div>
+      <div class="lessoncard__desc">{{ y(ders, 'summary') }}</div>
       <div class="lessoncard__foot">
         <span>{{ _("{n} dk", n=ders.reading_minutes) }}</span>
         {% if ders.id in okunanlar %}

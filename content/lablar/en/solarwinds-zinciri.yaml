@@ -1,0 +1,80 @@
+# English translation. Answers, points and step order come from the Turkish file.
+lang: en
+slug: solarwinds-zinciri
+title: Unravel the SolarWinds Chain
+summary: Start from one old domain IOC and follow it to the malware, the product, the ATT&CK technique and the actor.
+
+briefing_md: |
+  An incident response team found the following domain indicator from a past
+  case in old DNS records:
+
+  `avsvmcloud[.]com`
+
+  Starting from this single IOC, research which malware, which supply chain
+  incident and which threat actor it is associated with.
+
+  Don't rely on a single source in this lab. Cross-check information from CISA,
+  MITRE ATT&CK and Microsoft threat research.
+
+  **Safety note:** Do not connect to the domain directly. Research only through
+  passive CTI/OSINT sources.
+
+steps:
+  - prompt_md: "Which backdoor is the starting domain `avsvmcloud[.]com` associated with?"
+    hints:
+      - "Search for this domain in CISA's publications on the SolarWinds incident."
+
+  - prompt_md: "Into the update chain of which legitimate software product was SUNBURST inserted?"
+    hints:
+      - "Look at the SolarWinds Compromise campaign entry on MITRE ATT&CK."
+
+  - prompt_md: "What is the MITRE ATT&CK sub-technique ID for this initial access method?"
+    hints:
+      - "Look at the sub-techniques of the Supply Chain Compromise technique in MITRE ATT&CK."
+      - "The ID you are looking for starts with T1195."
+
+  - prompt_md: "Under what name does Microsoft track the threat actor behind this operation?"
+    hints:
+      - "Research Microsoft's Nobelium Resource Center page."
+
+  - prompt_md: "Which widely used group name does MITRE ATT&CK associate this actor with?"
+    hints:
+      - "Look at the Groups section of MITRE's SolarWinds Compromise or SUNSPOT entries."
+
+  - prompt_md: "According to the official 2021 attribution by U.S. agencies, which Russian foreign intelligence service was the SolarWinds activity linked to? Write the abbreviation."
+    hints:
+      - "The abbreviation appears in the title of CISA's joint advisory from April 2021."
+
+  - prompt_md: "Which second-stage malware associated with the SolarWinds incident is covered in CISA's malware analysis report AR21-039B?"
+    hints:
+      - "Look at the names of CISA's malware analysis reports related to SolarWinds."
+
+  - prompt_md: "What is the number of the Emergency Directive CISA issued in response to the SolarWinds Orion code compromise?"
+    hints:
+      - "Look at the December 2020 entry in CISA's list of Cybersecurity Directives."
+
+  - prompt_md: "What is the ID of the SolarWinds Compromise campaign in MITRE ATT&CK?"
+    hints:
+      - "Open the SolarWinds Compromise entry in the Campaigns section of MITRE ATT&CK."
+
+solution_md: |
+  The starting IOC `avsvmcloud[.]com` is associated with the **SUNBURST**
+  backdoor.
+
+  SUNBURST was inserted into the supply chain of **SolarWinds Orion**. MITRE
+  ATT&CK classifies this access method as **T1195.002 — Compromise Software
+  Supply Chain**.
+
+  Microsoft tracks the threat actor as **NOBELIUM**. On the MITRE ATT&CK side,
+  the same operation is associated with **APT29**. In the official 2021
+  attribution by U.S. agencies, the activity was linked to Russia's **SVR**
+  foreign intelligence service.
+
+  CISA's **AR21-039B** report covers the **TEARDROP** malware. The emergency
+  directive issued against the SolarWinds Orion code compromise is **ED 21-01**.
+
+  The campaign entry on MITRE ATT&CK is **C0024 — SolarWinds Compromise**.
+
+  The goal of this lab is to practice a multi-source CTI pivot that starts from
+  an IOC and goes all the way to the malware, product, ATT&CK technique, threat
+  actor, government attribution and campaign ID.

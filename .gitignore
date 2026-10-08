@@ -1,4 +1,5 @@
 .env
+medya/
 yildiz.db
 yildiz.db-journal
 *.sqlite3

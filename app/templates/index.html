@@ -12,48 +12,99 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/landing-tokens.css?v={{ statik_surum('css/landing-tokens.css') }}">
 <link rel="stylesheet" href="/static/css/landing.css?v={{ statik_surum('css/landing.css') }}">
 </head>
 <body>
 
-<header class="hero">
+<header class="hero on-night">
   <video class="hero__video" autoplay muted loop playsinline preload="auto"
          poster="/static/img/hero-sky-poster.jpg" aria-hidden="true" tabindex="-1">
     <source src="/static/img/hero-sky.webm" type="video/webm">
     <source src="/static/img/hero-sky.mp4" type="video/mp4">
   </video>
   <div class="hero__veil" aria-hidden="true"></div>
+  <canvas class="gokyuzu" data-gokyuzu="hero" aria-hidden="true"></canvas>
 
   <nav class="hero__topbar" aria-label="{{ _('Hesap') }}">
-    {% set diger = "en" if aktif_dil() == "tr" else "tr" %}
-    <a class="hero__btn hero__btn--ghost" href="/dil/{{ diger }}?next=/" hreflang="{{ diger }}">{{ diger|upper }}</a>
-    <a class="hero__btn hero__btn--ghost" href="#giris">{{ _("Giriş yap") }}</a>
-    <a class="hero__btn hero__btn--solid" href="#kayit">{{ _("Kayıt ol") }}</a>
+    <a class="hero__marka" href="/" aria-label="Yıldız Academy">
+      <img src="/static/img/logo.png" width="200" height="200" alt="">
+    </a>
+    <div class="hero__eylemler">
+      {% set diger = "en" if aktif_dil() == "tr" else "tr" %}
+      <a class="hero__btn hero__btn--ghost" href="/dil/{{ diger }}?next=/" hreflang="{{ diger }}">{{ diger|upper }}</a>
+      <a class="hero__btn hero__btn--ghost" href="#giris">{{ _("Giriş yap") }}</a>
+      <a class="hero__btn hero__btn--solid" href="#kayit">{{ _("Kayıt ol") }}</a>
+    </div>
   </nav>
 
   <div class="hero__in">
-    <h1 class="hero__title">Yıldız Academy</h1>
+    <p class="hero__eyebrow giris-anim" style="--g:0">
+      <span class="nabiz" aria-hidden="true"></span>{{ _("Siber tehdit istihbaratı akademisi") }}
+    </p>
 
-    <img class="hero__logo" src="/static/img/logo.png" width="200" height="200"
-         alt="Yıldız CTI">
+    <div class="hero__amblem giris-anim" style="--g:1" aria-hidden="true">
+      <span class="hero__hale"></span>
+      <img class="hero__logo" src="/static/img/logo.png" width="200" height="200" alt="">
+    </div>
 
-    <p class="hero__lede">{{ _("Ülkesini en çok seven işini en iyi yapandır.") }}</p>
+    <h1 class="hero__title" data-harfler>Yıldız Academy</h1>
+
+    <p class="hero__lede giris-anim" style="--g:5">{{ _("Ülkesini en çok seven işini en iyi yapandır.") }}</p>
+
+    <p class="hero__iz giris-anim" style="--g:6" aria-hidden="true">
+      <span class="hero__iz-p">$</span>
+      <span data-yaz='{{ [
+        _("pivot --hash 9f86d08… → zararlı ailesi?"),
+        _("whois suphe-li[.]net → kayıt: 3 gün önce"),
+        _("tor --cikis 185.220.101.4 → düğüm doğrulandı"),
+        _("iz → bağlam → aktör"),
+      ]|tojson|forceescape }}'></span><span class="hero__iz-imlec"></span>
+    </p>
+
+    <div class="hero__cta giris-anim" style="--g:7">
+      <a class="hero__btn hero__btn--solid hero__btn--lg" href="#kayit">{{ _("Ücretsiz başla") }}</a>
+      <a class="hero__btn hero__btn--ghost hero__btn--lg" href="#nasil">{{ _("Nasıl çalışır?") }}</a>
+    </div>
   </div>
 
-  <a class="hero__cue" href="#devam">{{ _("Aşağı") }}<span aria-hidden="true"></span></a>
+  <a class="hero__cue" href="#rakamlar">{{ _("Aşağı") }}<span aria-hidden="true"></span></a>
 </header>
 
 <main id="devam">
 
+{% set s = sayilar or {} %}
+<section class="rakamlar on-night" id="rakamlar" aria-label="{{ _('Akademi rakamları') }}">
+  <div class="wrap rakamlar__izgara">
+    <div class="rakam reveal">
+      <b data-say="{{ s.ders or 0 }}">{{ s.ders or 0 }}</b>
+      <span>{{ _("kısa ders") }}</span>
+    </div>
+    <div class="rakam reveal">
+      <b data-say="{{ s.lab or 0 }}">{{ s.lab or 0 }}</b>
+      <span>{{ _("araştırma laboratuvarı") }}</span>
+    </div>
+    <div class="rakam reveal">
+      <b data-say="{{ s.puan or 0 }}">{{ s.puan or 0 }}</b>
+      <span>{{ _("toplanacak puan") }}</span>
+    </div>
+    <div class="rakam reveal">
+      <b data-say="{{ s.etiket or 0 }}">{{ s.etiket or 0 }}</b>
+      <span>{{ _("konu etiketi") }}</span>
+    </div>
+  </div>
+</section>
+
 <section class="sec on-night" id="iki-yari">
   <div class="wrap">
     <div class="sec__head reveal">
+      <span class="sec__kicker">01 · {{ _("Akademi") }}</span>
       <h2>{{ _("Okumak ve aramak ayrı işlerdir") }}</h2>
       <p>{{ _("Bir tarafta okuyacağın şey var, diğer tarafta arayacağın şey.") }}</p>
     </div>
 
     <div class="duo">
-      <article class="half reveal">
+      <article class="half reveal" data-isik>
         <figure class="half__fig">
           <img src="/static/img/02-cti.webp" alt="" loading="lazy" decoding="async">
         </figure>
@@ -69,7 +120,7 @@
         </div>
       </article>
 
-      <article class="half reveal">
+      <article class="half reveal" data-isik>
         <figure class="half__fig">
           <img src="/static/img/05-method.webp" alt="" loading="lazy" decoding="async">
         </figure>
@@ -89,6 +140,35 @@
     <p class="bridge reveal">
       {{ _("İkisi ayrı duruyor ama kopuk değil: aynı <b>etiketleri</b> taşıyorlar.")|safe }}
     </p>
+  </div>
+</section>
+
+<section class="sec on-night sec--nasil" id="nasil">
+  <div class="wrap">
+    <div class="sec__head reveal">
+      <span class="sec__kicker">02 · {{ _("Yöntem") }}</span>
+      <h2>{{ _("Bir iz, üç adım") }}</h2>
+      <p>{{ _("Her laboratuvar aynı ritimle ilerler: önce öğren, sonra iz sür, en sonunda kanıtla.") }}</p>
+    </div>
+
+    <ol class="yol" data-yol>
+      <li class="yol__adim reveal">
+        <span class="yol__no">1</span>
+        <h3>{{ _("Oku") }}</h3>
+        <p>{{ _("Kütüphaneden konuyu öğren. Her ders birkaç dakikada biter ve ilgili laboratuvarlara bağlanır.") }}</p>
+      </li>
+      <li class="yol__adim reveal">
+        <span class="yol__no">2</span>
+        <h3>{{ _("İzi sür") }}</h3>
+        <p>{{ _("Sana bir iz verilir: bir hash, bir alan adı, bir forum adı. Araştırmayı kendi makinende yaparsın.") }}</p>
+      </li>
+      <li class="yol__adim reveal">
+        <span class="yol__no">3</span>
+        <h3>{{ _("Doğrula") }}</h3>
+        <p>{{ _("Cevabını gönderirsin. Doğrulama sunucuda yapılır, puanın sıralamaya yazılır.") }}</p>
+      </li>
+      <span class="yol__cizgi" aria-hidden="true"><i></i></span>
+    </ol>
   </div>
 </section>
 
@@ -113,6 +193,18 @@
   </figure>
 </section>
 
+<section class="basla on-night" id="basla">
+  <canvas class="gokyuzu" data-gokyuzu="basla" aria-hidden="true"></canvas>
+  <div class="wrap basla__in reveal">
+    <h2>{{ _("İlk izini bugün sür.") }}</h2>
+    <p>{{ _("Kayıt ücretsiz. Kayıt olduğun anda kütüphane ve laboratuvarlar açılır.") }}</p>
+    <div class="hero__cta">
+      <a class="hero__btn hero__btn--solid hero__btn--lg" href="#kayit">{{ _("Hesap oluştur") }}</a>
+      <a class="hero__btn hero__btn--ghost hero__btn--lg" href="#giris">{{ _("Giriş yap") }}</a>
+    </div>
+  </div>
+</section>
+
 </main>
 
 <footer class="foot">
@@ -123,6 +215,7 @@
     </div>
     <nav class="foot__links" aria-label="{{ _('Alt bağlantılar') }}">
       <a href="#iki-yari">{{ _("Akademi") }}</a>
+      <a href="#nasil">{{ _("Nasıl çalışır?") }}</a>
       <a href="/hakkinda">{{ _("Hakkında") }}</a>
       <a href="#giris">{{ _("Giriş yap") }}</a>
     </nav>
@@ -253,5 +346,6 @@
 </script>
 <script src="/static/js/app.js?v={{ statik_surum('js/app.js') }}"></script>
 <script src="/static/js/auth.js?v={{ statik_surum('js/auth.js') }}"></script>
+<script src="/static/js/vitrin.js?v={{ statik_surum('js/vitrin.js') }}"></script>
 </body>
 </html>

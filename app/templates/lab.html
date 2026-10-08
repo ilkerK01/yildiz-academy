@@ -10,13 +10,11 @@
       <a class="back" href="/lab">← {{ _("Laboratuvarlar") }}</a>
       <div class="meta">
         <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ _(lab.difficulty) }}</span>
-        <span class="label">
-          {% for etiket in etiketler %}<a class="chip chip--dim" href="/etiket/{{ etiket.slug }}">{{ etiket.name }}</a> {% endfor %}
-          {{ _("{n} puan", n=lab.total_points) }}
-        </span>
+        {% for etiket in etiketler %}<a class="chip chip--dim" href="/etiket/{{ etiket.slug }}">{{ etiket.name }}</a>{% endfor %}
+        <span class="label">{{ _("{n} puan", n=lab.total_points) }}</span>
       </div>
-      <h1>{{ lab.title }}</h1>
-      <p class="desc">{{ lab.summary }}</p>
+      <h1>{{ y(lab, 'title') }}</h1>
+      <p class="desc">{{ y(lab, 'summary') }}</p>
     </div>
 
     <div class="steps">
@@ -35,10 +33,10 @@
     </p>
     {% endif %}
 
-    {% if lab.briefing_html %}
+    {% if y(lab, 'briefing_html') %}
     <section class="panel brief">
       <div class="panel__head">~/lab/{{ lab.slug }}/{{ _("senaryo") }}</div>
-      <div class="panel__body prose">{{ lab.briefing_html|safe }}</div>
+      <div class="panel__body prose">{{ y(lab, 'briefing_html')|safe }}</div>
     </section>
     {% endif %}
 
@@ -106,7 +104,7 @@
     <section class="solution" id="cozum" {% if not cozum_acik %}hidden{% endif %}>
       <span class="label">~/lab/{{ lab.slug }}/{{ _("cozum") }}</span>
       <div class="prose" id="cozum-govde">
-        {% if cozum_acik %}{{ lab.solution_html|safe }}{% endif %}
+        {% if cozum_acik %}{{ y(lab, 'solution_html')|safe }}{% endif %}
       </div>
     </section>
   </div>
@@ -127,7 +125,7 @@
     <div class="card card--pad">
       <div class="card__title">{{ _("Durum") }}</div>
       <div class="aside-list">
-        <a href="#adimlar">Lab
+        <a href="#adimlar">{{ _("Laboratuvar") }}
           {% if durum.status == 'tamamlandi' %}<span class="ok">{{ _("Tamamlandı") }}</span>
           {% elif durum.status == 'pes_etti' %}<span>{{ _("Pes edildi") }}</span>
           {% else %}<span>{{ _("Adım {n}", n=(aktif_adim if aktif_adim <= adimlar|length else adimlar|length)) }}</span>{% endif %}

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "_rozetler.html" import rozet_izgarasi with context %}
+{% from "_avatar.html" import avatar %}
 
 {% block govde %}
 <div class="main__head">
@@ -51,8 +52,8 @@
 </div>
 <a class="devam" href="/lab/{{ devam.lab.slug }}">
   <div class="devam__body">
-    <div class="devam__title">{{ devam.lab.title }}</div>
-    <div class="devam__desc">{{ devam.lab.summary }}</div>
+    <div class="devam__title">{{ y(devam.lab, 'title') }}</div>
+    <div class="devam__desc">{{ y(devam.lab, 'summary') }}</div>
     <div class="devam__meta">
       <span class="chip" data-difficulty="{{ zorluk_sinif(devam.lab.difficulty) }}">{{ _(devam.lab.difficulty) }}</span>
       <span>{{ _("Adım {n} / {toplam}", n=devam.aktif, toplam=devam.toplam) }}</span><span class="sep">·</span>
@@ -80,10 +81,8 @@
     {% for satir in podyum %}
     <div class="pod" data-rank="{{ satir.rank }}">
       <div class="pod__card">
-        <div class="panel__head">~/rank/{{ satir.rank }}</div>
         <div class="pod__body">
-          <div class="pod__cmd"><span class="p">$</span> whoami</div>
-          <div class="pod__rank">#{{ satir.rank }}</div>
+          <div class="pod__top">{{ avatar(satir, "avatar--md") }}<span class="pod__rank">#{{ satir.rank }}</span></div>
           <a class="pod__name" href="/profil/{{ satir.public_id }}">{{ satir.display_name }}</a>
           <div class="pod__rule"></div>
           <div class="pod__pts"><b>{{ satir.points }}</b><span>{{ _("puan") }}</span></div>
@@ -101,7 +100,7 @@
       <div class="rank__row" data-ben="{{ 1 if satir.user_id == user.id else 0 }}">
         <span class="rank__n">{{ satir.rank }}</span>
         <span class="rank__who">
-          <span class="avatar avatar--sm {% if satir.user_id == user.id %}avatar--me{% endif %}">{{ satir.display_name[:1] }}</span>
+          {{ avatar(satir, "avatar--sm" ~ (" avatar--me" if satir.user_id == user.id else "")) }}
           <a class="name" href="/profil/{{ satir.public_id }}">{{ satir.display_name }}</a>
           {% if satir.user_id == user.id %}<span class="rank__tag">{{ _("Sen") }}</span>{% endif %}
         </span>

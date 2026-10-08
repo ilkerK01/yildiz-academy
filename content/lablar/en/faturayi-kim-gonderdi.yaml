@@ -1,0 +1,93 @@
+# English translation. Answers, points and step order come from the Turkish file.
+lang: en
+slug: faturayi-kim-gonderdi
+title: Who Sent the Invoice?
+summary: A suspicious "overdue invoice" email reached the finance team. Read the headers and pull out the IOCs.
+
+briefing_md: |
+  A user on the finance team received a suspicious email titled "Overdue
+  Invoice Notice". The user forwarded the message to the SOC team without
+  clicking the link.
+
+  As a CTI analyst, examine the email headers, assess whether the message
+  really came from the displayed sender, and identify the IOCs that can be
+  extracted.
+
+  **Safety note:** The domains and IP addresses in this lab are sample values
+  reserved for training. No connection is made to any real system.
+
+  Email headers to examine:
+
+  ```text
+  From: "Example Corp Accounting" <invoice@example-corp.com>
+  To: finance@victim.example
+  Subject: Overdue Invoice Notice
+  Date: Mon, 07 Sep 2026 10:14:22 +0300
+  Message-ID: <20260907101422.1842@mailer.billing-secure.example>
+  Return-Path: <bounce@mailer.billing-secure.example>
+  Reply-To: accounts@billing-secure.example
+  Received: from mailer.billing-secure.example (203.0.113.77)
+          by mx.victim.example with ESMTP id 4F2A91
+          for <finance@victim.example>;
+          Mon, 07 Sep 2026 10:14:25 +0300
+  Authentication-Results: mx.victim.example;
+          spf=fail smtp.mailfrom=mailer.billing-secure.example;
+          dkim=none;
+          dmarc=fail header.from=example-corp.com
+  Content-Type: text/html; charset="UTF-8"
+  ```
+
+steps:
+  - prompt_md: "What is the source IP address that delivered the email?"
+    hints:
+      - "Examine the Received line."
+      - "Focus on the IPv4 address in parentheses."
+
+  - prompt_md: "What is the full domain shown in the Return-Path field?"
+    hints:
+      - "Write the part of the email address in Return-Path that comes after the @ sign."
+
+  - prompt_md: "What is the message's SPF verification result?"
+    hints:
+      - "Look at the spf= value in the Authentication-Results line."
+
+  - prompt_md: "If the user replies, which address will the email go to?"
+    hints:
+      - "Look at the Reply-To field, not the From field."
+
+  - prompt_md: "What is the suspicious domain IOC that can be extracted from this incident?"
+    hints:
+      - "Notice that the same root domain repeats in the Message-ID, Return-Path and Reply-To fields."
+      - "Drop the mailer subdomain part."
+
+  - prompt_md: "Taking the displayed sender domain and the email authentication failures together, what type of attack does this incident point to?"
+    artifact: |
+      From: "Example Corp Accounting" <invoice@example-corp.com>
+      Authentication-Results: mx.victim.example;
+              spf=fail;
+              dkim=none;
+              dmarc=fail header.from=example-corp.com
+    hints:
+      - "The message is made to look as if it comes from a legitimate organization."
+      - "Write the general name of the attack type."
+
+solution_md: |
+  The source IP shown in the email headers is **203.0.113.77**.
+
+  Although the displayed sender is `invoice@example-corp.com`, the Return-Path
+  shows `mailer.billing-secure.example` and the Reply-To shows
+  `accounts@billing-secure.example`.
+
+  In the authentication results, **SPF failed**, **DKIM is missing** and
+  **DMARC failed**. These indicators support the conclusion that the displayed
+  sender identity cannot be trusted.
+
+  Key IOCs that can be extracted from the incident:
+
+  - IP: `203.0.113.77`
+  - Domain: `billing-secure.example`
+  - Subdomain: `mailer.billing-secure.example`
+  - Email: `accounts@billing-secure.example`
+
+  The goal of this lab is to teach you to extract technical indicators from a
+  phishing email, interpret email headers and produce IOCs.

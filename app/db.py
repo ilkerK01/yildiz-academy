@@ -31,6 +31,9 @@ _EK_KOLONLAR = (
     ("lab_progress", "best_points", "INTEGER NOT NULL DEFAULT 0"),
     ("lab_progress", "best_at", "DATETIME"),
     ("user", "public_id", "VARCHAR(16)"),
+    ("user", "avatar_file", "VARCHAR(40)"),
+    ("lesson", "en_json", "TEXT"),
+    ("lab", "en_json", "TEXT"),
 )
 
 

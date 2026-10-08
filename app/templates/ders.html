@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block govde %}
+<div class="ders">
 <div class="labdetay__head" style="margin-bottom:32px">
   <a class="back" href="/kutuphane">← {{ _("Kütüphane") }}</a>
   <div class="meta">
@@ -10,11 +11,20 @@
     <span class="label">{{ _("{n} dk okuma", n=ders.reading_minutes) }}</span>
     {% if okundu %}<span class="chip chip--ok">{{ _("Okundu") }}</span>{% endif %}
   </div>
-  <h1>{{ ders.title }}</h1>
-  {% if ders.summary %}<p class="desc">{{ ders.summary }}</p>{% endif %}
+  <h1>{{ y(ders, 'title') }}</h1>
+  {% if y(ders, 'summary') %}<p class="desc">{{ y(ders, 'summary') }}</p>{% endif %}
 </div>
 
-<article class="prose">{{ ders.body_html|safe }}</article>
+{% if video %}
+<figure class="video">
+  <video controls preload="metadata" playsinline controlslist="nodownload"
+         src="/medya/video/{{ video.id }}/{{ video.file_name }}" type="{{ video.mime }}">
+    {{ _("Tarayıcın bu videoyu oynatamıyor.") }}
+  </video>
+</figure>
+{% endif %}
+
+<article class="prose">{{ y(ders, 'body_html')|safe }}</article>
 
 <div class="ders-foot">
   <button class="btn" id="okudum-btn" data-slug="{{ ders.slug }}"
@@ -31,7 +41,7 @@
     <div class="grid grid--2">
     {% for lab in ilgili_lablar %}
       <a class="rowcard" href="/lab/{{ lab.slug }}">
-        <h3>{{ lab.title }}</h3>
+        <h3>{{ y(lab, 'title') }}</h3>
         <div class="rowcard__meta">
           <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ _(lab.difficulty) }}</span>
           <span>{{ _("{n} puan", n=lab.total_points) }}</span>
@@ -42,6 +52,7 @@
   </div>
 </section>
 {% endif %}
+</div>
 {% endblock %}
 
 {% block script %}<script src="/static/js/ders.js?v={{ statik_surum('js/ders.js') }}"></script>{% endblock %}

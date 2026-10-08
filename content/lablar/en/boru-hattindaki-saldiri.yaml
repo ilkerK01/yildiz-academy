@@ -1,0 +1,75 @@
+# English translation. Answers, points and step order come from the Turkish file.
+lang: en
+slug: boru-hattindaki-saldiri
+title: Attack on the Pipeline
+summary: A ransomware incident that hit critical infrastructure. Uncover the ecosystem behind it.
+
+briefing_md: |
+  In May 2021, a ransomware incident hit a major fuel pipeline operator in the
+  United States. The incident drew attention not only for its technical impact
+  but also for its operational consequences on critical infrastructure.
+
+  As a CTI analyst, research this incident through open sources and identify
+  the ransomware ecosystem behind the attack.
+
+  Starting clue:
+
+  **Organization:** Colonial Pipeline
+  **Date:** May 2021
+
+  You can use the official statements and advisories published by the FBI and
+  CISA for your research.
+
+steps:
+  - prompt_md: "What is the name of the ransomware family the FBI confirmed was responsible for the Colonial Pipeline incident?"
+    artifact: "Colonial Pipeline — May 2021"
+    hints:
+      - "Look for the FBI's statement on Colonial Pipeline dated May 10, 2021."
+
+  - prompt_md: "What service model did DarkSide use? Write the abbreviation."
+    hints:
+      - "The FBI and CISA describe DarkSide as an 'as-a-service' model."
+      - "The abbreviation you are looking for has four letters."
+
+  - prompt_md: "According to the CISA/FBI advisory, which network was the ransomware deployed directly on: IT or OT?"
+    hints:
+      - "The CISA statement notes there was no indication that OT systems were directly affected."
+
+  - prompt_md: "Which country did the FBI associate the DarkSide group with?"
+    hints:
+      - "Look at the FBI's statements from June 2021."
+
+  - prompt_md: "Roughly how many million dollars of ransom proceeds did the FBI announce it had seized in the Colonial Pipeline case?"
+    hints:
+      - "In June 2021, the FBI announced it had seized part of the ransom payment."
+
+  - prompt_md: "From a CTI perspective, which category does this incident best exemplify?"
+    artifact: |
+      Correlating IOCs and technical findings with the threat actor, the
+      ransomware ecosystem, critical infrastructure targeting and official
+      government statements.
+    choices:
+      - "Threat actor and campaign correlation"
+      - "Vulnerability scanning only"
+      - "Web application performance testing"
+      - "Password policy audit"
+    hints:
+      - "This is not just about a technical IOC; the actor, campaign and target context are evaluated together."
+
+solution_md: |
+  The FBI confirmed that the **DarkSide** ransomware was responsible for the
+  Colonial Pipeline incident.
+
+  DarkSide used a **Ransomware-as-a-Service (RaaS)** model.
+
+  According to the CISA/FBI advisory, the ransomware was deployed on the
+  company's **IT network**. At the time, there was reportedly no indication
+  that the OT networks were directly affected.
+
+  The FBI also described DarkSide as a **Russia-based** cybercrime group and
+  announced in June 2021 that it had seized ransom proceeds worth roughly
+  **$2.3 million**.
+
+  From a CTI perspective, this case is a good example of correlating technical
+  indicators with the attacker group, campaign, target sector and operational
+  impact, rather than evaluating them in isolation.

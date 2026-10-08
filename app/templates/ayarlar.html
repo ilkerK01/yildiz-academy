@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from "_avatar.html" import avatar %}
 
 {% block govde %}
 <div class="main__head">
@@ -9,6 +10,39 @@
 </div>
 
 <div class="ayarlar">
+
+  <section class="ayar ayar--genis">
+    <header class="ayar__head">
+      <h2>{{ _("Profil fotoğrafı") }}</h2>
+      <p>{{ _("Menüde, profilinde ve sıralamada adının yanında görünür.") }}</p>
+    </header>
+    <div class="ayar__govde">
+      <form class="avatar-yukle" onsubmit="return avatarYukle(event)">
+        <div class="avatar-yukle__onizleme">
+          {{ avatar(user, "avatar--xl") }}
+        </div>
+        <div class="avatar-yukle__alan">
+          <label class="avatar-yukle__secici" for="avatar-dosya">
+            <input id="avatar-dosya" name="dosya" type="file" accept="{{ avatar_ayar.kabul }}" required>
+            <span class="avatar-yukle__ikon" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10.5V2.5M5 5.5l3-3 3 3M2.5 10.5v2a1 1 0 0 0 1 1h9a1 1 0 0 0 1-1v-2"/></svg>
+            </span>
+            <span>
+              <b data-avatar-ad>{{ _("Görsel seç ya da buraya sürükle") }}</b>
+              <small>{{ _("PNG, JPG, WebP veya GIF · en fazla {mb} MB · en az {px} px", mb=avatar_ayar.mb, px=avatar_ayar.min_px) }}</small>
+            </span>
+          </label>
+          <p class="yardim">{{ _("Görsel ortadan kare kırpılır ve {b}×{b} piksele küçültülür.", b=avatar_ayar.boyut) }}</p>
+          <div class="ayar__eylem">
+            <button class="btn" type="submit">{{ _("Yükle") }}</button>
+            <button class="btn btn--quiet" type="button" onclick="avatarKaldir()" data-avatar-kaldir
+                    {% if not user.avatar_file %}hidden{% endif %}>{{ _("Kaldır") }}</button>
+            <p class="cikti" id="avatar-cikti"></p>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
 
   <section class="ayar">
     <header class="ayar__head">
@@ -62,8 +96,12 @@
     <div class="ayar__govde">
       <div class="tema-secim" data-tema-secim>
         <button type="button" class="tema" data-tema="gece" aria-pressed="false">
-          <span class="tema__swatch"><i style="background:#070a12"></i><i style="background:#0c1220"></i><i style="background:#e8b85a"></i></span>
+          <span class="tema__swatch"><i style="background:#0f131a"></i><i style="background:#151a23"></i><i style="background:#d9b064"></i></span>
           <span class="tema__ad">{{ _("Gece") }}</span>
+        </button>
+        <button type="button" class="tema" data-tema="acik" aria-pressed="false">
+          <span class="tema__swatch"><i style="background:#f5f4f0"></i><i style="background:#ffffff"></i><i style="background:#9a6b14"></i></span>
+          <span class="tema__ad">{{ _("Açık") }}</span>
         </button>
         <button type="button" class="tema" data-tema="fosfor" aria-pressed="false">
           <span class="tema__swatch"><i style="background:#05080a"></i><i style="background:#0a1012"></i><i style="background:#9fef00"></i></span>

@@ -10,7 +10,7 @@ from app import config, i18n
 from app.db import get_db
 from app.deps import require_user_api
 from app.models import Lab, LabStep, User, now
-from app.services import answers, progress, scoring, security
+from app.services import answers, progress, scoring, security, yerel
 
 router = APIRouter(prefix="/api/lab", tags=["lab"])
 
@@ -98,7 +98,7 @@ def cevapla(
         "lab_bitti": bitti,
         "lab_puani": lab_progress.earned_points,
         "puan_kilitli": bitti and lab_progress.earned_points == 0,
-        "cozum_html": lab.solution_html if bitti else None,
+        "cozum_html": yerel.alan(lab, "solution_html", i18n.dil(request)) if bitti else None,
     }
 
 
@@ -121,14 +121,14 @@ def ipucu(
     if row.hints_used >= len(step.hints):
         return {"ok": False, "hata": _m(request, "Bu adımda başka ipucu yok.")}
 
-    hint = step.hints[row.hints_used]
+    ipucu_html = yerel.adim(step, i18n.dil(request))["hints"][row.hints_used]
     row.hints_used += 1
     progress.get_lab_progress(db, user.id, lab)
     db.commit()
 
     return {
         "ok": True,
-        "ipucu_html": hint.text_html or hint.text_md,
+        "ipucu_html": ipucu_html,
         "yeni_puan": scoring.step_award(step, row.hints_used),
         "kalan_ipucu": len(step.hints) - row.hints_used,
     }
@@ -145,7 +145,7 @@ def pes(
     progress.give_up(db, user.id, lab)
     return {
         "ok": True,
-        "cozum_html": lab.solution_html,
+        "cozum_html": yerel.alan(lab, "solution_html", i18n.dil(request)),
         "mesaj": _m(request, "Çözüm açıldı. Bu labdan artık puan kazanamazsın."),
     }
 

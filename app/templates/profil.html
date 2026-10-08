@@ -1,11 +1,12 @@
 {% extends "base.html" %}
 {% from "_rozetler.html" import rozet_izgarasi with context %}
+{% from "_avatar.html" import avatar %}
 
 {% block govde %}
 {% set kazanilan = rozetler|selectattr("earned")|list|length %}
 <div class="main__head">
   <div class="profil">
-    <span class="avatar avatar--lg">{{ kisi.display_name[:1] }}</span>
+    {{ avatar(kisi, "avatar--lg") }}
     <div>
       <div class="title-row">
         <h1>{{ kisi.display_name }}</h1>
@@ -56,7 +57,7 @@
 <div class="grid grid--2" style="margin-top:20px">
   {% for satir in tamamlananlar %}
     <a class="rowcard" href="/lab/{{ satir.lab.slug }}">
-      <h3>{{ satir.lab.title }}</h3>
+      <h3>{{ y(satir.lab, 'title') }}</h3>
       <div class="rowcard__meta">
         <span class="chip" data-difficulty="{{ zorluk_sinif(satir.lab.difficulty) }}">{{ _(satir.lab.difficulty) }}</span>
         <span>{{ _("{n} / {toplam} puan", n=satir.puan, toplam=satir.lab.total_points) }}</span>

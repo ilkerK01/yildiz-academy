@@ -1,0 +1,11 @@
+{# Profil fotoğrafı varsa onu, yoksa adın baş harfini gösterir.
+   kisi: display_name ve avatar_file alanları olan herhangi bir nesne. #}
+{% macro avatar(kisi, sinif="") -%}
+<span class="avatar {{ sinif }}{% if kisi.avatar_file %} avatar--foto{% endif %}" data-avatar data-harf="{{ kisi.display_name[:1] }}">
+  {%- if kisi.avatar_file -%}
+    <img src="/medya/avatar/{{ kisi.avatar_file }}" alt="" loading="lazy" decoding="async">
+  {%- else -%}
+    {{ kisi.display_name[:1] }}
+  {%- endif -%}
+</span>
+{%- endmacro %}

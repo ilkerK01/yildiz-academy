@@ -15,7 +15,7 @@
     <div class="panel__body">
       {% for ders in dersler %}
         <a class="rowcard" href="/kutuphane/{{ ders.slug }}">
-          <h3>{{ ders.title }}</h3>
+          <h3>{{ y(ders, 'title') }}</h3>
           <div class="rowcard__meta"><span>{{ _("{n} dk", n=ders.reading_minutes) }}</span></div>
         </a>
       {% else %}
@@ -28,7 +28,7 @@
     <div class="panel__body">
       {% for lab in lablar %}
         <a class="rowcard" href="/lab/{{ lab.slug }}">
-          <h3>{{ lab.title }}</h3>
+          <h3>{{ y(lab, 'title') }}</h3>
           <div class="rowcard__meta">
             <span class="chip" data-difficulty="{{ zorluk_sinif(lab.difficulty) }}">{{ _(lab.difficulty) }}</span>
             <span>{{ _("{n} puan", n=lab.total_points) }}</span>

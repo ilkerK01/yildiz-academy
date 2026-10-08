@@ -15,6 +15,7 @@ class RankRow:
     display_name: str
     points: int
     rank: int
+    avatar_file: str | None = None
 
 
 def leaderboard(db: DbSession, limit: int = 20) -> list[RankRow]:
@@ -24,6 +25,7 @@ def leaderboard(db: DbSession, limit: int = 20) -> list[RankRow]:
             User.id,
             User.public_id,
             User.display_name,
+            User.avatar_file,
             toplam.label("puan"),
             func.max(LabProgress.best_at).label("son_bitis"),
         )
@@ -36,7 +38,14 @@ def leaderboard(db: DbSession, limit: int = 20) -> list[RankRow]:
     )
     rows = db.execute(stmt).all()
     return [
-        RankRow(user_id=r[0], public_id=r[1], display_name=r[2], points=int(r[3]), rank=i + 1)
+        RankRow(
+            user_id=r[0],
+            public_id=r[1],
+            display_name=r[2],
+            avatar_file=r[3],
+            points=int(r[4]),
+            rank=i + 1,
+        )
         for i, r in enumerate(rows)
     ]
 

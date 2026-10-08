@@ -1,0 +1,53 @@
+# English translation. Answers, points and step order come from the Turkish file.
+lang: en
+slug: supheli-ip-izinde
+title: On the Trail of a Suspicious IP
+summary: A client on the network talked to an unknown IP:port. Find out what that infrastructure is used for.
+
+briefing_md: |
+  The organization's network logs show a client connecting to
+  `165.227.199.109:8539`.
+
+  As a CTI analyst, research this IOC through passive open sources and
+  determine what the infrastructure is used for and which malware it is
+  associated with.
+
+  **Safety note:** Do not connect to the IOC directly. Use only ThreatFox,
+  MalwareBazaar and similar passive CTI/OSINT sources.
+
+steps:
+  - prompt_md: "What is the ASN number this IP address belongs to?"
+    hints:
+      - "Look at the ASN field in the IOC record."
+      - "You can search for the IP:port value on ThreatFox."
+
+  - prompt_md: "Which malware is this IOC associated with?"
+    hints:
+      - "Check the Malware field in the ThreatFox record."
+
+  - prompt_md: "Which value does ThreatFox use to classify this IOC's threat type?"
+    hints:
+      - "Find the Threat Type field in the IOC details."
+
+  - prompt_md: "On what date was this IOC first seen? Write the answer as YYYY-MM-DD."
+    hints:
+      - "Use the First seen field in the ThreatFox record."
+
+  - prompt_md: "Write the SHA-256 value of one of the malware samples associated with this IOC."
+    hints:
+      - "Look at the Malware Samples section on the ThreatFox page."
+      - "Use the SHA-256 value at the top of the list."
+
+solution_md: |
+  The IOC `165.227.199.109:8539` is classified on ThreatFox as **botnet_cc**
+  and is associated with the **Remus** malware.
+
+  The IOC's infrastructure is hosted on **AS14061 DIGITALOCEAN-ASN**. The
+  ThreatFox record lists the first seen date as **2026-08-22**.
+
+  One of the malware samples associated with the same IOC:
+
+  `3c6126417211aacd1bb0ebadcd474747890e8930a4684ccabe448d1390b3c064`
+
+  The goal of this lab is to teach you to start from a single network IOC and
+  pivot to its ASN, threat type, malware family and related samples.
