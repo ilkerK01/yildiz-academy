@@ -5,6 +5,9 @@ var. Kütüphanede kısa dersler duruyor; laboratuvarda ise gerçek bir iz veril
 (bir hash, bir onion gönderisi, bir takma ad), araştırmayı kullanıcı kendi
 makinesinde yapıyor, bulduğu cevabı siteye yazıyor.
 
+Şu an kütüphanede 19 ders, laboratuvarda 6 lab var; hepsinin Türkçe ve
+İngilizce sürümü bulunur. Her dersin bir Türkçe eğitim videosu vardır.
+
 Kayıt olmadan görülebilen tek yer açılış sayfasıdır. Geri kalan her şey giriş
 arkasında.
 
@@ -22,6 +25,11 @@ açılır. Profil adresi sıralı bir numara değil, her kullanıcıya verilen r
 bir kimliktir (`/profil/voVdffHgEPy8` gibi); adresler tahmin edilip tek tek
 gezilemez. E-posta profilde de görünmez.
 
+Profil fotoğrafı ayarlar sayfasından yüklenir: PNG, JPG, WebP ya da GIF, en
+fazla 5 MB. Görsel ortadan kare kırpılır, 256 piksele küçültülür ve WebP olarak
+saklanır; orijinal dosya tutulmaz. Fotoğraf yoksa adın baş harfi gösterilir.
+Fotoğraflar da yalnızca giriş yapmış kullanıcılara açıktır.
+
 ![Profil](ekran/profil.jpg)
 
 Arayüz Türkçe ve İngilizcedir. Dil sol menünün altından seçilir ve tarayıcıda
@@ -29,7 +37,7 @@ saklanır; hata mesajları ve parola sıfırlama e-postası da seçilen dilde ge
 
 ## Yığın
 
-FastAPI · Jinja2 · SQLAlchemy 2 · SQLite · Argon2id · Vanilla JS
+FastAPI, Jinja2, SQLAlchemy 2, SQLite, Argon2id, Pillow, mammoth, Vanilla JS
 
 Node çalışma zamanı bağımlılığı yoktur. Giriş sonrası arayüzün renkleri ve
 yazı tipleri `static/css/tokens.css` içindedir ve elle düzenlenir.
@@ -46,6 +54,12 @@ pip install -r requirements.txt
 copy .env.example .env
 python seed.py
 ```
+
+`seed.py` dersleri ve labları bastıktan sonra `content/videolar/` altındaki 19
+eğitim videosunu `medya/videolar/` klasörüne kopyalayıp ilgili derslere bağlar
+(yaklaşık 420 MB). Tekrar çalıştırmak mükerrer kayıt üretmez, panelden
+yüklenmiş videolara dokunmaz. Yalnızca videoları bağlamak için
+`python sync_videos.py` yeterlidir.
 
 `.env` içinde parola yoktur. Yönetici hesabı ayrı bir araçla açılır:
 
@@ -74,15 +88,17 @@ dosyasında eksik kolon ve tablo varsa ekler, elle `ALTER TABLE` gerekmez.
 
 | Yol | Ne |
 |---|---|
-| `app/models.py` | 13 tablo: içerik, kimlik, ilerleme |
+| `app/models.py` | 14 tablo: içerik, video, kimlik, ilerleme |
 | `app/routers/` | Sayfalar, kimlik, ders, lab, yönetim |
 | `app/services/` | Cevap doğrulama, puanlama, ilerleme, sıralama, içe aktarma, e-posta |
 | `app/templates/` | Jinja şablonları |
 | `app/i18n.py` | Türkçe ve İngilizce arayüz metinleri |
 | `hesap.py` | Yönetici ve kullanıcı hesabı açma aracı |
-| `seed.py` | `content/` klasörünü veritabanına basar |
+| `seed.py` | `content/` klasörünü veritabanına basar, ardından videoları bağlar |
+| `sync_videos.py` | Eğitim videolarını derslere bağlayan araç |
 | `content/dersler/*.md`, `*.docx` | Ders kaynakları: frontmatter + Markdown ya da Word belgesi |
-| `medya/` | Yüklenen ders videoları ve Word görselleri (git'e girmez, yedeklenmeli) |
+| `content/videolar/` | Derslerin Türkçe eğitim videoları |
+| `medya/` | Ders videoları, Word görselleri ve profil fotoğrafları (git'e girmez, yedeklenmeli) |
 | `content/lablar/*.yaml` | Lab tanımları: adımlar, ipuçları, çözüm |
 | `content/dersler/en/`, `content/lablar/en/` | Ders ve labların İngilizce çevirileri |
 | `design/tokens.json` | İlk tasarımın token kaynağı |
@@ -165,7 +181,8 @@ Giriş hatası hangi alanın yanlış olduğunu söylemez.
   `frame-ancestors 'none'` içeren bir CSP gider; site başka bir sayfaya
   çerçeve olarak gömülemez.
 - Başka bir siteden gelen POST istekleri (`Origin` veya `Sec-Fetch-Site`
-  uyuşmazsa) reddedilir. 2 MB'tan büyük istek gövdeleri kabul edilmez.
+  uyuşmazsa) reddedilir. 2 MB'tan büyük istek gövdeleri kabul edilmez;
+  video, Word ve profil fotoğrafı yüklemeleri kendi sınırlarına tabidir.
 - Giriş, kayıt, parola sıfırlama ve cevap denemeleri IP başına hız
   sınırına tabidir. IP, bağlantının kendisinden alınır; `X-Forwarded-For`
   başlığına güvenilmez. Uygulama bir ters proxy arkasında çalışacaksa
@@ -200,7 +217,9 @@ altına kaydedilir. Bilgiler belgenin özelliklerinden okunur
 
 ### Ders videoları
 
-İçerik sayfasında her dersin altından TR ve isteğe bağlı EN video yüklenir.
+19 dersin Türkçe videosu depoyla birlikte gelir ve `seed.py` ile kurulur.
+Bunlara ek olarak içerik sayfasında her dersin altından TR ve isteğe bağlı EN
+video yüklenir.
 EN videosu yoksa İngilizce arayüzde TR videosu gösterilir. Yeni yükleme aynı
 dildeki eskisinin yerini alır.
 
@@ -231,10 +250,10 @@ e-posta adresine gönderir; kendi alan adıyla `SMTP_FROM` değiştirilir.
 
 ## Fontlar
 
-Giriş sonrası arayüz sistem yazı tipi yığınını kullanır
-(`"Atlassian Sans", ui-sans-serif, -apple-system, "Segoe UI", ...`); Windows'ta
-Segoe UI olarak görünür. Sol üstteki "Yıldız Academy" yazısı Google Sans'tır.
-Hash ve kod gibi teknik veriler eş genişlikli yazı tipindedir.
+Giriş sonrası arayüz ve sol üstteki "Yıldız Academy" yazısı Trebuchet MS
+kullanır (`"Trebuchet MS", ui-sans-serif, -apple-system, "Segoe UI", ...`);
+yüklü değilse sistem yazı tipine düşer. Kod blokları ve hash gibi değerler eş
+genişlikli yazı tipindedir.
 
 `static/fonts/` altındaki Stokeda demo sürümü ve Hemmet yalnızca açılış
 sayfasında kullanılır ve kişisel kullanım lisanslıdır. Ticari yayın kararı
