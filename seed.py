@@ -5,6 +5,7 @@ import sys
 from app.config import CONTENT_DIR
 from app.db import SessionLocal, sema_guncelle
 from app.services.ingest import IngestError, ingest_directory
+from sync_videos import sync_videos
 
 
 def main() -> int:
@@ -29,7 +30,20 @@ def main() -> int:
 
     for satir in satirlar:
         print(satir)
+
     print(f"\n{len(satirlar)} içerik basıldı.")
+
+    # Derslerin içe aktarılması tamamlandıktan sonra
+    # eğitim videolarını ilgili derslere eşleştir.
+    print("\nEğitim videoları eşleştiriliyor...")
+
+    try:
+        sync_videos()
+    except Exception as exc:
+        print(f"HATA: Video eşleştirme başarısız: {exc}")
+        return 1
+
+    print("\nİçerik ve video kurulumu tamamlandı.")
     return 0
 
 
