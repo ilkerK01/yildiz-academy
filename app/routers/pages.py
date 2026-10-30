@@ -99,6 +99,11 @@ def hakkinda(request: Request, user: User | None = Depends(current_user)):
     return page(request, "hakkinda.html", user=user)
 
 
+@router.get("/kvkk")
+def kvkk(request: Request, user: User | None = Depends(current_user)):
+    return page(request, "kvkk.html", user=user)
+
+
 @router.get("/stil")
 def stil():
     path = STATIC_DIR / "styleguide.html"

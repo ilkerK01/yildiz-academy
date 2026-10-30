@@ -175,7 +175,9 @@
 <section class="sec on-paper" id="yildiz-cti">
   <div class="wrap">
     <div class="sec__head reveal">
-      <img class="ctilogo" src="/static/img/yildiz-cti.webp" width="720" height="184" alt="Yıldız CTI">
+      <a class="ctilogo" href="https://yildizcti.com.tr/" target="_blank" rel="noopener">
+        <img src="/static/img/yildiz-cti.webp" width="720" height="184" alt="Yıldız CTI">
+      </a>
       <h2>{{ _("Akademinin arkasında kim var?") }}</h2>
       <p>{{ _("Yıldız Academy, Yıldız CTI’nin öğrenme kolu.") }}</p>
     </div>
@@ -211,12 +213,13 @@
   <div class="wrap foot__in">
     <div class="foot__brand">
       <img src="/static/img/logo.png" width="200" height="200" alt="">
-      <span>Yıldız CTI &middot; {{ _("Tüm hakları saklıdır") }} &middot; 2026</span>
+      <span>&copy; 2026 Yıldız CTI. {{ _("Tüm hakları saklıdır") }}.</span>
     </div>
     <nav class="foot__links" aria-label="{{ _('Alt bağlantılar') }}">
       <a href="#iki-yari">{{ _("Akademi") }}</a>
       <a href="#nasil">{{ _("Nasıl çalışır?") }}</a>
       <a href="/hakkinda">{{ _("Hakkında") }}</a>
+      <a href="/kvkk">{{ _("KVKK Aydınlatma Metni") }}</a>
       <a href="#giris">{{ _("Giriş yap") }}</a>
     </nav>
   </div>
@@ -247,7 +250,8 @@
 
     <p class="modal__hata" id="k-hata" hidden></p>
 
-    <p class="modal__gizli">{{ _("E-postan yalnızca giriş için kullanılır. Sıralamada ve laboratuvarlarda takma adın görünür, e-postan kimseye gösterilmez.") }}</p>
+    <p class="modal__gizli">{{ _("E-postan yalnızca giriş için kullanılır. Sıralamada ve laboratuvarlarda takma adın görünür, e-postan kimseye gösterilmez.") }}
+      <a href="/kvkk" target="_blank" rel="noopener">{{ _("KVKK Aydınlatma Metni") }}</a></p>
 
     <button class="modal__submit" type="submit">{{ _("Hesap oluştur") }}</button>
 

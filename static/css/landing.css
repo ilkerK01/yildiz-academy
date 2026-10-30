@@ -523,7 +523,9 @@ html{scroll-behavior:smooth}
 }
 #yildiz-cti .sec__head p{max-width:54ch}
 #yildiz-cti .sec__head h2{font-size:clamp(2.1rem,4vw,3.25rem)}
-.ctilogo{display:block;width:min(260px,70%);height:auto;margin:0 auto var(--primitive-spacing-8)}
+.ctilogo{display:block;width:min(260px,70%);margin:0 auto var(--primitive-spacing-8);transition:opacity .2s ease}
+.ctilogo:hover{opacity:.8}
+.ctilogo img{display:block;width:100%;height:auto}
 .ctigrid{display:block}
 .ctitext{text-align:center}
 .ctitext p{margin:0 auto var(--primitive-spacing-5);max-width:68ch;color:var(--color-ink-soft)}
@@ -729,6 +731,7 @@ dialog.modal[open]::backdrop{animation:veilIn .55s ease}
   line-height:1.5;
   color:var(--color-ink-soft);
 }
+.modal__gizli a{color:var(--color-accent)}
 .modal__hata{
   margin:0 0 var(--primitive-spacing-4);
   padding:var(--primitive-spacing-3) var(--primitive-spacing-4);

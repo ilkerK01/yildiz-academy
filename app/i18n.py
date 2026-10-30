@@ -132,6 +132,7 @@ EN: dict[str, str] = {
     "Hiçbir şey eşleşmedi.": "Nothing matched.",
 
     "Hakkında": "About",
+    "KVKK Aydınlatma Metni": "Privacy Notice",
     "Yıldız Academy, siber tehdit istihbaratı öğrenmek isteyenler için kurulmuş bir öğrenme platformudur. Yıldız CTI marka ailesinin parçasıdır.": "Yıldız Academy is a learning platform for people who want to learn cyber threat intelligence. It is part of the Yıldız CTI brand family.",
     "İki yarısı vardır ve bunlar bilerek ayrı durur: <strong>Kütüphane</strong> kısa dersleri, <strong>Laboratuvar</strong> ise CTF tarzı araştırma egzersizlerini barındırır. Birbirine yalnızca etiketle bağlanırlar.": "It has two halves, kept apart on purpose: the <strong>Library</strong> holds short lessons, the <strong>Lab</strong> holds CTF-style research exercises. They are linked only by tags.",
     "Laboratuvarlarda cevap doğrulaması sunucuda yapılır. Doğru cevap hiçbir koşulda sayfa kaynağına girmez.": "Lab answers are checked on the server. The correct answer never appears in the page source.",

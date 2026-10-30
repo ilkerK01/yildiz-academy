@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% macro icerik() %}
+{% set eposta = "" %}
+<article class="prose" style="max-width:72ch;margin:0 auto;padding:60px 24px">
+  <span class="label">~/kvkk</span>
+{% if aktif_dil() == "en" %}
+  <h1 style="margin:12px 0 8px">Privacy Notice</h1>
+  <p><em>Under the Turkish Personal Data Protection Law No. 6698 (KVKK). Last updated: 30 October 2026. This is a translation; the Turkish text prevails.</em></p>
+
+  <h2>Data controller</h2>
+  <p>Yıldız Academy is run by Yıldız CTI, a cyber threat intelligence team of the <a href="https://sibervatan.org/takimlarimiz" target="_blank" rel="noopener">Siber Vatan Programme</a>. Yıldız CTI processes your personal data as the data controller, within the scope described below.</p>
+  {% if eposta %}<p>E-mail: <a href="mailto:{{ eposta }}">{{ eposta }}</a></p>{% endif %}
+
+  <h2>Personal data we process</h2>
+  <table>
+    <tr><th>Category</th><th>Data</th></tr>
+    <tr><td>Identity</td><td>Nickname (display name)</td></tr>
+    <tr><td>Contact</td><td>E-mail address</td></tr>
+    <tr><td>Visual</td><td>Profile photo, only if you upload one</td></tr>
+    <tr><td>Platform use</td><td>Lessons read, lab progress, number of answer attempts, hints used, points, ranking and achievements</td></tr>
+    <tr><td>Transaction security</td><td>One-way hash of your password, session records, account creation and last login time, password reset records, IP address</td></tr>
+  </table>
+  <p>Your password is never stored in plain text. Your IP address is not written to the application database; it is kept in memory for a short time only to limit repeated login attempts. It may technically appear in server access logs.</p>
+
+  <h2>Purposes</h2>
+  <ul>
+    <li>Creating and managing your membership account</li>
+    <li>Providing lessons and labs and saving your progress</li>
+    <li>Showing the leaderboard, profiles and achievements</li>
+    <li>Sending password reset e-mails</li>
+    <li>Keeping accounts secure and preventing unauthorised access and abuse</li>
+    <li>Answering your requests and applications</li>
+    <li>Fulfilling legal obligations</li>
+  </ul>
+
+  <h2>Collection method and legal grounds</h2>
+  <p>Your data is collected electronically, partly by automated means, through the sign-up form, the settings page and your use of the platform. The legal grounds under Article 5(2) of KVKK are:</p>
+  <ul>
+    <li>Necessity for the establishment and performance of the membership contract (c): account, progress, points, ranking, profile photo, password reset</li>
+    <li>Legitimate interest of the data controller (f): information security and abuse prevention</li>
+    <li>Compliance with a legal obligation (ç): requests from competent authorities and statutory retention</li>
+    <li>Establishment, exercise or protection of a right (e): possible disputes</li>
+  </ul>
+
+  <h2>Who can see your data</h2>
+  <p>Your nickname, profile photo, points, ranking and completed labs are visible to other members. Your e-mail address is never shown to other members.</p>
+
+  <h2>Transfers</h2>
+  <p>Your personal data is not sold or shared for advertising. It is transferred only in the following cases:</p>
+  <ul>
+    <li>To hosting and infrastructure providers, to the extent needed to run the platform</li>
+    <li>To the e-mail delivery provider, limited to your e-mail address and the message content, for password reset e-mails</li>
+    <li>To competent public authorities, where required by law</li>
+  </ul>
+  <p>The servers of the e-mail delivery provider may be located abroad. Transfers abroad are carried out in line with Article 9 of KVKK.</p>
+  <p>Fonts on the pages are loaded from Google Fonts. While doing so, your browser sends technical connection data, including your IP address, directly to Google servers.</p>
+
+  <h2>Cookies and browser storage</h2>
+  <table>
+    <tr><th>Name</th><th>Purpose</th><th>Duration</th></tr>
+    <tr><td><code>ya_oturum</code></td><td>Recognising your logged-in session</td><td>30 days</td></tr>
+    <tr><td><code>ya_dil</code></td><td>Your language preference</td><td>1 year</td></tr>
+    <tr><td><code>ya-tema</code>, <code>ya-side-w</code></td><td>Theme and menu width preference (browser storage)</td><td>Until you clear it</td></tr>
+  </table>
+  <p>No analytics, advertising or tracking cookies are used.</p>
+
+  <h2>Retention</h2>
+  <p>Your data is kept for as long as your account remains open. If you want your account deleted, you can request it as described under How to apply; your account and the progress records linked to it will be deleted. Session records become invalid when they expire, and password reset records become invalid once used or expired. Records that must be kept by law are retained for the required period.</p>
+
+  <h2>Your rights (Article 11 of KVKK)</h2>
+  <ul>
+    <li>To learn whether your personal data is processed</li>
+    <li>To request information if it has been processed</li>
+    <li>To learn the purpose of processing and whether it is used for that purpose</li>
+    <li>To know the third parties in Türkiye or abroad to whom it is transferred</li>
+    <li>To request correction if it is incomplete or inaccurate</li>
+    <li>To request deletion or destruction under the conditions in Article 7 of KVKK</li>
+    <li>To request that correction and deletion be notified to third parties to whom the data was transferred</li>
+    <li>To object to a result against you arising solely from automated analysis</li>
+    <li>To claim compensation if you suffer damage due to unlawful processing</li>
+  </ul>
+
+  <h2>How to apply</h2>
+  <p>{% if eposta %}You can send your application to <a href="mailto:{{ eposta }}">{{ eposta }}</a> from the e-mail address registered on the platform.{% else %}The contact address for applications will be added to this page soon.{% endif %} Your application will be concluded free of charge within 30 days at the latest. If the process requires an additional cost, the fee set by the Board may apply.</p>
+{% else %}
+  <h1 style="margin:12px 0 8px">KVKK Aydınlatma Metni</h1>
+  <p><em>6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında. Son güncelleme: 30 Ekim 2026.</em></p>
+
+  <h2>Veri sorumlusu</h2>
+  <p>Yıldız Academy, <a href="https://sibervatan.org/takimlarimiz" target="_blank" rel="noopener">Siber Vatan Programı</a> takımlarından Yıldız CTI siber tehdit istihbaratı takımı tarafından yürütülür. Kişisel verilerin, veri sorumlusu sıfatıyla Yıldız CTI tarafından aşağıda açıklanan kapsamda işlenir.</p>
+  {% if eposta %}<p>E-posta: <a href="mailto:{{ eposta }}">{{ eposta }}</a></p>{% endif %}
+
+  <h2>İşlenen kişisel veriler</h2>
+  <table>
+    <tr><th>Kategori</th><th>Veriler</th></tr>
+    <tr><td>Kimlik</td><td>Takma ad (görünen ad)</td></tr>
+    <tr><td>İletişim</td><td>E-posta adresi</td></tr>
+    <tr><td>Görsel</td><td>Profil fotoğrafı, yalnızca yüklersen</td></tr>
+    <tr><td>Platform kullanımı</td><td>Okunan dersler, laboratuvar ilerlemesi, cevap denemesi sayıları, kullanılan ipuçları, puanlar, sıralama ve başarımlar</td></tr>
+    <tr><td>İşlem güvenliği</td><td>Parolanın geri döndürülemez özeti, oturum kayıtları, hesap oluşturma ve son giriş zamanı, parola sıfırlama kayıtları, IP adresi</td></tr>
+  </table>
+  <p>Parolan hiçbir zaman açık metin olarak saklanmaz. IP adresin uygulama veritabanına yazılmaz; yalnızca art arda yapılan giriş denemelerini sınırlamak için kısa süre bellekte tutulur. Sunucu erişim kayıtlarında teknik olarak yer alabilir.</p>
+
+  <h2>İşleme amaçları</h2>
+  <ul>
+    <li>Üyelik hesabını oluşturmak ve yönetmek</li>
+    <li>Dersleri ve laboratuvarları sunmak, ilerlemeni kaydetmek</li>
+    <li>Sıralamayı, profilleri ve başarımları göstermek</li>
+    <li>Parola sıfırlama e-postası göndermek</li>
+    <li>Hesap güvenliğini sağlamak, yetkisiz erişimi ve kötüye kullanımı önlemek</li>
+    <li>Başvuru ve taleplerini yanıtlamak</li>
+    <li>Mevzuattan doğan yükümlülükleri yerine getirmek</li>
+  </ul>
+
+  <h2>Toplama yöntemi ve hukuki sebepler</h2>
+  <p>Verilerin kayıt formu, ayarlar sayfası ve platformu kullanman sırasında elektronik ortamda, kısmen otomatik yollarla toplanır. KVKK m.5/2 kapsamındaki hukuki sebepler şunlardır:</p>
+  <ul>
+    <li>Üyelik sözleşmesinin kurulması ve ifası (c): hesap, ilerleme, puan, sıralama, profil fotoğrafı, parola sıfırlama</li>
+    <li>Veri sorumlusunun meşru menfaati (f): bilgi güvenliği ve kötüye kullanımın önlenmesi</li>
+    <li>Hukuki yükümlülüğün yerine getirilmesi (ç): yetkili kurumların talepleri ve mevzuat gereği saklama</li>
+    <li>Bir hakkın tesisi, kullanılması veya korunması (e): olası uyuşmazlıklar</li>
+  </ul>
+
+  <h2>Verilerini kimler görebilir</h2>
+  <p>Takma adın, profil fotoğrafın, puanın, sıralaman ve tamamladığın laboratuvarlar diğer üyelere görünür. E-posta adresin diğer üyelere hiçbir zaman gösterilmez.</p>
+
+  <h2>Aktarım</h2>
+  <p>Kişisel verilerin satılmaz, reklam amacıyla paylaşılmaz. Yalnızca şu durumlarda aktarılır:</p>
+  <ul>
+    <li>Barındırma ve altyapı hizmeti sağlayıcılarına, platformun çalışması için gerekli ölçüde</li>
+    <li>E-posta gönderim hizmeti sağlayıcısına, parola sıfırlama e-postası için yalnızca e-posta adresin ve ileti içeriğiyle sınırlı olarak</li>
+    <li>Yetkili kamu kurum ve kuruluşlarına, kanunen zorunlu hallerde</li>
+  </ul>
+  <p>E-posta gönderim hizmeti sağlayıcısının sunucuları yurt dışında bulunabilir. Yurt dışına aktarım KVKK m.9'a uygun olarak yapılır.</p>
+  <p>Sayfalardaki yazı tipleri Google Fonts üzerinden yüklenir. Bu sırada tarayıcın, IP adresini de içeren teknik bağlantı bilgilerini doğrudan Google sunucularına iletir.</p>
+
+  <h2>Çerezler ve tarayıcı depolaması</h2>
+  <table>
+    <tr><th>Ad</th><th>Amaç</th><th>Süre</th></tr>
+    <tr><td><code>ya_oturum</code></td><td>Giriş yaptığın oturumu tanımak</td><td>30 gün</td></tr>
+    <tr><td><code>ya_dil</code></td><td>Dil tercihin</td><td>1 yıl</td></tr>
+    <tr><td><code>ya-tema</code>, <code>ya-side-w</code></td><td>Tema ve menü genişliği tercihi (tarayıcı depolaması)</td><td>Sen silene kadar</td></tr>
+  </table>
+  <p>Analiz, reklam veya takip çerezi kullanılmaz.</p>
+
+  <h2>Saklama süresi</h2>
+  <p>Verilerin hesabın açık kaldığı sürece saklanır. Hesabını sildirmek istersen Başvuru bölümünde anlatılan yolla talep edebilirsin; hesabın ve ona bağlı ilerleme kayıtların silinir. Oturum kayıtları süresi dolunca, parola sıfırlama kayıtları kullanıldığında ya da süresi dolduğunda geçersiz olur. Mevzuat gereği saklanması gereken kayıtlar ilgili süre boyunca saklanır.</p>
+
+  <h2>Hakların (KVKK m.11)</h2>
+  <ul>
+    <li>Kişisel verilerinin işlenip işlenmediğini öğrenme</li>
+    <li>İşlenmişse buna ilişkin bilgi talep etme</li>
+    <li>İşlenme amacını ve amacına uygun kullanılıp kullanılmadığını öğrenme</li>
+    <li>Yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme</li>
+    <li>Eksik veya yanlış işlenmişse düzeltilmesini isteme</li>
+    <li>KVKK m.7'deki şartlar çerçevesinde silinmesini veya yok edilmesini isteme</li>
+    <li>Düzeltme ve silme işlemlerinin, verilerin aktarıldığı üçüncü kişilere bildirilmesini isteme</li>
+    <li>Yalnızca otomatik sistemlerle analiz edilmesi sonucu aleyhine bir sonuç çıkmasına itiraz etme</li>
+    <li>Kanuna aykırı işleme nedeniyle zarara uğrarsan zararın giderilmesini talep etme</li>
+  </ul>
+
+  <h2>Başvuru</h2>
+  <p>{% if eposta %}Başvurunu platforma kayıtlı e-posta adresinden <a href="mailto:{{ eposta }}">{{ eposta }}</a> adresine iletebilirsin.{% else %}Başvurular için iletişim adresi yakında bu sayfaya eklenecek.{% endif %} Başvurun en geç 30 gün içinde ücretsiz sonuçlandırılır. İşlemin ayrıca bir maliyet gerektirmesi halinde Kurulca belirlenen tarife uygulanabilir.</p>
+{% endif %}
+  <p><a class="btn btn--quiet btn--sm" href="/">← {{ _("Ana sayfa") }}</a></p>
+</article>
+{% endmacro %}
+
+{% block govde %}{{ icerik() }}{% endblock %}
+{% block anonim %}<div class="page">{{ icerik() }}</div>{% endblock %}
